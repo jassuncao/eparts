@@ -1,0 +1,15 @@
+<RCC>
+    <qresource>
+        <file>images/single-drawer_16x16.png</file>
+        <file>images/delete_22x22.png</file>
+        <file>images/drawer-close_16x16.png</file>
+        <file>images/drawer-open_16x16.png</file>
+        <file>images/edit_add_16x16.png</file>
+        <file>images/edit_add_22x22.png</file>
+        <file>images/edit_remove_16x16.png</file>
+        <file>images/edit_remove_22x22.png</file>
+        <file>images/filenew_22x22.png</file>
+        <file>images/find_16x16.png</file>
+        <file>images/search_16x16.png</file>
+    </qresource>
+</RCC>
