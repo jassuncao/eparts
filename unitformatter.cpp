@@ -9,6 +9,12 @@ UnitFormatter::UnitFormatter()
 {
 }
 
+const QChar UnitFormatter::resistance(0x2126);
+const QChar UnitFormatter::capacitance('F');
+const QChar UnitFormatter::inductance('H');
+const QChar UnitFormatter::power('W');
+const QChar UnitFormatter::percentage('%');
+
 QString UnitFormatter::format(PartParameter::ParameterType paramType, double value){
     switch(paramType){
         case PartParameter::Resistance:
@@ -23,6 +29,24 @@ QString UnitFormatter::format(PartParameter::ParameterType paramType, double val
             return formatPercentage(value);
         default:
             return QString::number(value);
+    }
+}
+
+QChar UnitFormatter::getUnitSymbol(PartParameter::ParameterType paramType)
+{
+    switch(paramType){
+        case PartParameter::Resistance:
+            return resistance;
+        case PartParameter::Capacitance:
+            return capacitance;
+        case PartParameter::Inductance:
+            return inductance;
+        case PartParameter::Power:
+            return power;
+        case PartParameter::Percentage:
+            return percentage;
+        default:
+            return 0;
     }
 }
 
