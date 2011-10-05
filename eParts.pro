@@ -22,7 +22,8 @@ SOURCES += main.cpp\
     database.cpp \
     unitformatter.cpp \
     test1.cpp \
-    partmodel.cpp
+    partmodel.cpp \
+    qunitlineedit.cpp
 
 HEADERS  += mainwindow.h \
     connection.h \
@@ -40,13 +41,16 @@ HEADERS  += mainwindow.h \
     unitformatter.h \
     AutoTest.h \
     test1.h \
-    partmodel.h
+    partmodel.h \
+    qunitlineedit.h
 
 FORMS    += mainwindow.ui \
     partsmainwidget.ui
 
 RESOURCES += \
     resources.qrc
+
+
 
 
 

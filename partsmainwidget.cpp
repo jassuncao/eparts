@@ -10,6 +10,7 @@
 #include <QLineEdit>
 #include <QLabel>
 #include "unitformatter.h"
+#include "qunitlineedit.h"
 
 
 PartsMainWidget::PartsMainWidget(QWidget *parent) :
@@ -88,14 +89,13 @@ void PartsMainWidget::initDetailsViewWidget()
 
     //Build a row of widgets for the parts value
     QLabel * valueFieldLabel = new QLabel(tr("Value:"));
-    QLineEdit * valueFieldValue = new QLineEdit(); 
+    QUnitLineEdit * valueFieldValue = new QUnitLineEdit(UnitFormatter::getUnitSymbol(_partModel.valueType()));
+    valueFieldValue->setAlignment(Qt::AlignTrailing);
     valueFieldValue->setValidator(validator);
-    QLabel * unitLabel = new QLabel(UnitFormatter::getUnitSymbol(_partModel.valueType()));
 
     QHBoxLayout *layout = new QHBoxLayout();
     layout->addWidget(valueFieldLabel);
     layout->addWidget(valueFieldValue);        
-    layout->addWidget(unitLabel);
     layout->addStretch(0);
     verticalLayout->addLayout(layout);
 
@@ -106,14 +106,13 @@ void PartsMainWidget::initDetailsViewWidget()
         PartParameter::ParameterType valueType = (PartParameter::ParameterType)param.type.get().toUInt();
 
         QLabel * fieldLabel = new QLabel(param.name+":");
-        QLineEdit * fieldValue = new QLineEdit();
-        QLabel * fieldUnitLabel = new QLabel(UnitFormatter::getUnitSymbol(valueType));
+        QUnitLineEdit * fieldValue = new QUnitLineEdit(UnitFormatter::getUnitSymbol(valueType));
+        fieldValue->setAlignment(Qt::AlignTrailing);
 
         QHBoxLayout *fieldLayout = new QHBoxLayout();
         fieldLayout->setObjectName("fieldLayout2");
         fieldLayout->addWidget(fieldLabel);
         fieldLayout->addWidget(fieldValue);
-        fieldLayout->addWidget(fieldUnitLabel);
         fieldLayout->addStretch(0);
         verticalLayout->addLayout(fieldLayout);
     }
