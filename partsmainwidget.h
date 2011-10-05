@@ -2,6 +2,7 @@
 #define PARTSMAINWIDGET_H
 
 #include <QWidget>
+#include "partmodel.h"
 
 class QModelIndex;
 
@@ -18,6 +19,7 @@ public:
     ~PartsMainWidget();
 
 private:
+    PartModel _partModel;
     Ui::PartsMainWidget *ui;
     void buildPartsModel();
     void initDetailsViewWidget();

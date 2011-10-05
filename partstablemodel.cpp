@@ -10,8 +10,8 @@
 
 //using namespace EParts;
 
-PartsTableModel::PartsTableModel(const int partTypeId, QObject *parent) :
-    QAbstractTableModel (parent), _partTypeId(partTypeId)
+PartsTableModel::PartsTableModel(const PartModel * partModel, QObject *parent) :
+    QAbstractTableModel (parent), _partModel(partModel)
 {
 }
 
@@ -41,23 +41,14 @@ void PartsTableModel::loadRowData(PartRow * row) const
 void PartsTableModel::load()
 {
     _columnNames.clear();
-    _parameters.clear();
     _rows.clear();
     _columnNames.append("Quantity");
     _columnNames.append("Value");
 
-    if(!_partType.load(DQWhere("id")==_partTypeId)){
-        //TODO: Show some warning/error
-    }
-
-    DQQuery<PartParameter> parametersQuery;    
-    parametersQuery = parametersQuery.filter(DQWhere("partType") == _partTypeId).orderBy("orderIndex");
-    if(parametersQuery.exec()){
-        while(parametersQuery.next()){
-            PartParameter param = parametersQuery.record();
-            _parameters.append(param);
-            _columnNames.append(param.name);
-        }
+    const QList<PartParameter>  * parameters = _partModel->parameters();
+    for (int i = 0; i < parameters->size(); ++i) {
+        PartParameter param = parameters->at(i);
+        _columnNames.append(param.name);
     }
 
     DQQuery<Part> partsQuery;
@@ -108,16 +99,16 @@ int PartsTableModel::rowCount(const QModelIndex &parent) const
              return row->part.quantity;
          }
          else if(column==1){
-            if(_partType.valueType==PartParameter::Text){
+             PartParameter::ParameterType type = _partModel->valueType();
+            if(type==PartParameter::Text){
                 return row->part.textValue;
             }
-            else{
-                PartParameter::ParameterType type = (PartParameter::ParameterType)_partType.valueType.get().toUInt();
+            else{               
                 return UnitFormatter::format(type, row->part.numericValue);
             }
          }
          else{
-             PartParameter param = _parameters.at(column-2);
+             PartParameter param = _partModel->parameters()->at(column-2);
              ParameterValue value = row->paramValues.value(param.id);
              if(param.type==PartParameter::Text){
                  return value.textValue;
