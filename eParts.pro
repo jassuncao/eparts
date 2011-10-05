@@ -4,17 +4,15 @@
 #
 #-------------------------------------------------
 
-QT       += core gui sql testlib
+QT += core gui sql testlib
 
 TARGET = eParts
 TEMPLATE = app
 
-PREFIX=F:\MyProjects\QtApps
+win32:DQUEST_INCLUDE_PATH=$$quote(F:\MyProjects\QtApps\include\dquest\dquest.pri)
+unix:DQUEST_INCLUDE_PATH=$$quote(/usr/local/include/dquest/dquest.pri)
 
-#LIBS += -L$$PREFIX/lib/dquest -ldquest
-#LIBS += -L$$PREFIX/lib/dquest -ldquest
-
-include(F:\MyProjects\QtApps\include\dquest\dquest.pri)
+include($$DQUEST_INCLUDE_PATH)
 
 SOURCES += main.cpp\
         mainwindow.cpp \
