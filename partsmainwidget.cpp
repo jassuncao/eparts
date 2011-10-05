@@ -95,9 +95,12 @@ void PartsMainWidget::buildPartsModel()
     }
     */
     ui->treeView->setModel(model);
-    PartsTableModel * tableModel = new PartsTableModel(1, ui->tableView);
-    tableModel->load();
+    PartsTableModel * tableModel = new PartsTableModel(1, ui->tableView);    
+    tableModel->load();    
     ui->tableView->setModel(tableModel);
+    connect(ui->tableView->selectionModel(),
+            SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
+            SLOT(currentRowChanged(QModelIndex,QModelIndex)));
     initDetailsViewWidget();
 }
 
@@ -144,4 +147,13 @@ void PartsMainWidget::initDetailsViewWidget()
     }
     ui->frame1->setLayout(verticalLayout);
 
+}
+
+
+void PartsMainWidget::currentRowChanged ( const QModelIndex & current, const QModelIndex & previous ){
+    QAbstractItemModel * model = ui->tableView->model();
+    if(model!=NULL){
+
+    }
+    qDebug()<<"Row changed"<<current.row();
 }

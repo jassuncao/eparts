@@ -5,11 +5,21 @@
 #include <QString>
 #include <QList>
 #include "parttype.h"
+#include "part.h"
+#include "parametervalue.h"
 
 
-class PartRow;
+
 class PartParameter;
 class PartType;
+
+class PartRow {
+public:
+    PartRow(Part part) : part(part), loaded(false) {}
+    Part part;
+    bool loaded;
+    QHash<int,ParameterValue> paramValues;
+};
 
 class PartsTableModel : public QAbstractTableModel 
 {
@@ -22,6 +32,7 @@ public:
     int columnCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+    PartRow * rowData(const QModelIndex &index) const;
     void load();
 
 signals:

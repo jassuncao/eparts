@@ -10,15 +10,6 @@
 
 //using namespace EParts;
 
-class PartRow{
-public:
-    PartRow(Part part) : part(part), loaded(false)
-    {}
-    Part part;
-    bool loaded;
-    QHash<int,ParameterValue> paramValues;
-};
-
 PartsTableModel::PartsTableModel(const int partTypeId, QObject *parent) :
     QAbstractTableModel (parent), _partTypeId(partTypeId)
 {
@@ -89,6 +80,15 @@ int PartsTableModel::rowCount(const QModelIndex &parent) const
  {
      Q_UNUSED(parent);     
      return _columnNames.size();
+ }
+
+ PartRow * PartsTableModel::rowData(const QModelIndex &index) const{
+     if(!index.isValid())
+         return NULL;
+     int row = index.row();
+     if(row<_rows.count())
+         return NULL;
+     return _rows.at(row);
  }
 
  QVariant PartsTableModel::data(const QModelIndex &index, int role) const
