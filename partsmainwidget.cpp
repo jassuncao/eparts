@@ -9,6 +9,7 @@
 #include "partparameter.h"
 #include <QLineEdit>
 #include <QLabel>
+#include "unitformatter.h"
 
 
 PartsMainWidget::PartsMainWidget(QWidget *parent) :
@@ -111,13 +112,15 @@ void PartsMainWidget::initDetailsViewWidget()
     QLabel * valueFieldLabel = new QLabel();
     valueFieldLabel->setText(tr("Value:"));
     QLineEdit * valueFieldValue = new QLineEdit();
-    QRegExp rx("\\b[0-9]+(\\.[0-9]+)?[k,K]?\\b");
+    QRegExp rx("\\b[0-9]+(\\.[0-9]+)?[k,M,G,T,P,E,Z,Y,m,u,n,p,f,a,z,y]?\\b");
     QValidator *validator = new QRegExpValidator(rx, this);
     valueFieldValue->setValidator(validator);
 
     QHBoxLayout *layout = new QHBoxLayout();
     layout->addWidget(valueFieldLabel);
-    layout->addWidget(valueFieldValue);
+    layout->addWidget(valueFieldValue);    
+    PartParameter::ParameterType valueType = (PartParameter::ParameterType)partType.valueType.get().toUInt();
+    layout->addWidget(new QLabel(UnitFormatter::getUnitSymbol(valueType)));
     verticalLayout->addLayout(layout);
 
     DQQuery<PartParameter> parametersQuery;
@@ -134,6 +137,8 @@ void PartsMainWidget::initDetailsViewWidget()
             fieldLayout->setObjectName("fieldLayout2");
             fieldLayout->addWidget(fieldLabel);
             fieldLayout->addWidget(fieldValue);
+            PartParameter::ParameterType valueType = (PartParameter::ParameterType)param.type.get().toUInt();
+            fieldLayout->addWidget(new QLabel(UnitFormatter::getUnitSymbol(valueType)));
             verticalLayout->addLayout(fieldLayout);
         }
     }

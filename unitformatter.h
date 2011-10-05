@@ -8,12 +8,20 @@
 class UnitFormatter
 {
 private:
-    const static ushort ohmSymbol = 0x2126;
-    const static ushort microSymbol = 0x03BC;
+
 
     UnitFormatter();
 
 public:
+    const static ushort ohmSymbol = 0x2126;
+    const static ushort microSymbol = 0x03BC;
+    const static QChar resistance;
+    const static QChar capacitance;
+    const static QChar inductance;
+    const static QChar power;
+    const static QChar percentage;
+
+
     static QString formatUnit(double value, QChar unit);
 
     inline static QString formatResistance(double value)
@@ -38,6 +46,8 @@ public:
     static QString formatPercentage(double value);
 
     static QString format(PartParameter::ParameterType paramType, double value);
+
+    static QChar getUnitSymbol(PartParameter::ParameterType paramType);
 
 };
 

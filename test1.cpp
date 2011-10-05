@@ -15,7 +15,7 @@ void Test1::test1()
     expected = QString("4.78MF");
     QCOMPARE(res, expected);
 
-    res = UnitFormatter::formatCapacitance(4780000000);
+    res = UnitFormatter::formatCapacitance(4780000000.0);
     expected = QString("4.78GF");
     QCOMPARE(res, expected);
 
