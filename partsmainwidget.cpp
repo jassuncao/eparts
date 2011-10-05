@@ -84,20 +84,14 @@ void PartsMainWidget::initDetailsViewWidget()
     QRegExp rx("\\b[0-9]+(\\.[0-9]+)?[k,M,G,T,P,E,Z,Y,m,u,n,p,f,a,z,y]?\\b");
     QValidator *validator = new QRegExpValidator(rx, this);
 
-    QVBoxLayout *verticalLayout = new QVBoxLayout();
-    verticalLayout->setMargin(0);
-
     //Build a row of widgets for the parts value
     QLabel * valueFieldLabel = new QLabel(tr("Value:"));
     QUnitLineEdit * valueFieldValue = new QUnitLineEdit(UnitFormatter::getUnitSymbol(_partModel.valueType()));
+    valueFieldValue->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
     valueFieldValue->setAlignment(Qt::AlignTrailing);
     valueFieldValue->setValidator(validator);
-
-    QHBoxLayout *layout = new QHBoxLayout();
-    layout->addWidget(valueFieldLabel);
-    layout->addWidget(valueFieldValue);        
-    layout->addStretch(0);
-    verticalLayout->addLayout(layout);
+    int row = 0;
+    ui->formLayout->insertRow(row++,valueFieldLabel, valueFieldValue);
 
     //Create a row of widgets for each parameter
     const QList<PartParameter>  * parameters = _partModel.parameters();
@@ -107,16 +101,12 @@ void PartsMainWidget::initDetailsViewWidget()
 
         QLabel * fieldLabel = new QLabel(param.name+":");
         QUnitLineEdit * fieldValue = new QUnitLineEdit(UnitFormatter::getUnitSymbol(valueType));
+        fieldValue->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
         fieldValue->setAlignment(Qt::AlignTrailing);
+        fieldValue->setValidator(validator);
 
-        QHBoxLayout *fieldLayout = new QHBoxLayout();
-        fieldLayout->setObjectName("fieldLayout2");
-        fieldLayout->addWidget(fieldLabel);
-        fieldLayout->addWidget(fieldValue);
-        fieldLayout->addStretch(0);
-        verticalLayout->addLayout(fieldLayout);
+        ui->formLayout->insertRow(row++,fieldLabel, fieldValue);
     }
-    ui->frame1->setLayout(verticalLayout);
 }
 
 
