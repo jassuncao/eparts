@@ -21,7 +21,8 @@ SOURCES += main.cpp\
     partstablemodel.cpp \
     database.cpp \
     unitformatter.cpp \
-    test1.cpp
+    test1.cpp \
+    partmodel.cpp
 
 HEADERS  += mainwindow.h \
     connection.h \
@@ -38,13 +39,16 @@ HEADERS  += mainwindow.h \
     mockdata.h \
     unitformatter.h \
     AutoTest.h \
-    test1.h
+    test1.h \
+    partmodel.h
 
 FORMS    += mainwindow.ui \
     partsmainwidget.ui
 
 RESOURCES += \
     resources.qrc
+
+
 
 
 
