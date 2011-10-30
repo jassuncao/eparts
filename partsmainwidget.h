@@ -3,6 +3,8 @@
 
 #include <QWidget>
 #include "partmodel.h"
+#include "partstablemodel.h"
+#include "partdetailswidget.h"
 
 class QModelIndex;
 
@@ -19,10 +21,12 @@ public:
     ~PartsMainWidget();
 
 private:
+    PartDetailsWidget * _detailsWidget;
     PartModel _partModel;
+    PartsTableModel * _tableModel;
     Ui::PartsMainWidget *ui;
     void buildPartsModel();
-    void initDetailsViewWidget();
+//    void initDetailsViewWidget();
 private slots:
     void currentRowChanged ( const QModelIndex & current, const QModelIndex & previous );
 };

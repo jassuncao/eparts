@@ -77,9 +77,12 @@ int PartsTableModel::rowCount(const QModelIndex &parent) const
      if(!index.isValid())
          return NULL;
      int row = index.row();
-     if(row<_rows.count())
+     if (row >= _rows.size() || row < 0)
          return NULL;
-     return _rows.at(row);
+     PartRow * rowData = _rows.at(row);
+     if(!rowData->loaded)
+         loadRowData(rowData);
+     return rowData;
  }
 
  QVariant PartsTableModel::data(const QModelIndex &index, int role) const

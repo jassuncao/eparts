@@ -73,15 +73,18 @@ void PartsMainWidget::buildPartsModel()
 
     ui->treeView->setModel(model);
     _partModel.load(1);
-    PartsTableModel * tableModel = new PartsTableModel(&_partModel, ui->tableView);
-    tableModel->load();
-    ui->tableView->setModel(tableModel);
+    _tableModel = new PartsTableModel(&_partModel, ui->tableView);
+    _tableModel->load();
+    ui->tableView->setModel(_tableModel);
     connect(ui->tableView->selectionModel(),
             SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
             SLOT(currentRowChanged(QModelIndex,QModelIndex)));
-    initDetailsViewWidget();
-}
+    _detailsWidget = new PartDetailsWidget(&_partModel, ui->frame);
 
+    ui->verticalLayout->insertWidget(0,_detailsWidget);
+    //initDetailsViewWidget();
+}
+/*
 void PartsMainWidget::initDetailsViewWidget()
 {
     QRegExp rx("\\b[0-9]+(\\.[0-9]+)?[k,M,G,T,P,E,Z,Y,m,u,n,p,f,a,z,y]?\\b");
@@ -111,12 +114,14 @@ void PartsMainWidget::initDetailsViewWidget()
         ui->formLayout->insertRow(row++,fieldLabel, fieldValue);
     }
 }
-
+*/
 
 void PartsMainWidget::currentRowChanged ( const QModelIndex & current, const QModelIndex & previous ){
     QAbstractItemModel * model = ui->tableView->model();
     if(model!=NULL){
-
+        PartRow * rowData = _tableModel->rowData(current);
+        qDebug()<<"Setting data in details view";
+        _detailsWidget->setData(rowData);
     }
     qDebug()<<"Row changed"<<current.row();
 }
