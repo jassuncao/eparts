@@ -21,26 +21,26 @@ public:
     const static QChar power;
     const static QChar percentage;
 
-
-    static QString formatUnit(double value, QChar unit);
+    static QString format(double value);
+    static QString format(double value, QChar unit);
 
     inline static QString formatResistance(double value)
     {
-        return formatUnit(value, QChar(ohmSymbol));
+        return format(value, QChar(ohmSymbol));
     }
 
     inline static QString formatCapacitance(double value)
     {
-        return formatUnit(value, QChar('F'));
+        return format(value, QChar('F'));
     }
     inline static QString formatInductance(double value)
     {
-        return formatUnit(value, QChar('H'));
+        return format(value, QChar('H'));
     }
 
     inline static QString formatPower(double value)
     {
-        return formatUnit(value, QChar('W'));
+        return format(value, QChar('W'));
     }
 
     static QString formatPercentage(double value);

@@ -72,10 +72,16 @@ static void removeTrailingZeros(QString & str)
     str.resize(i+1);
 }
 
-QString UnitFormatter::formatUnit(const double value, QChar unit)
-{    
+QString UnitFormatter::format(double value)
+{
+    return format(value, 0);
+}
 
-
+QString UnitFormatter::format(const double value, QChar unit)
+{
+    QString result;
+    ushort prefix;
+    QTextStream out(&result);
     if(value>0.999999999){
         double aux = value;
         int multiplier = 0;
@@ -83,20 +89,11 @@ QString UnitFormatter::formatUnit(const double value, QChar unit)
             ++multiplier;
             aux=aux/1000;
         }
-        ushort prefix = BIG_PREFIXES[multiplier];
-
-        QString result;
-        QTextStream out(&result);
+        prefix = BIG_PREFIXES[multiplier];
         out.setRealNumberPrecision(2);
         out.setNumberFlags(out.numberFlags() & ~QTextStream::ForcePoint);
         out.setRealNumberNotation(QTextStream::FixedNotation);
-        out<<aux;
-        removeTrailingZeros(result);
-        if(prefix){
-            out<<QChar(prefix);
-        }        
-        out<<unit;
-        return result;
+        out<<aux;        
     }
     else{
         double aux = value;
@@ -105,19 +102,19 @@ QString UnitFormatter::formatUnit(const double value, QChar unit)
             ++divider;
             aux=aux*1000;
         }
-        ushort prefix = SMALL_PREFIXES[divider];
-        QString result;
-        QTextStream out(&result);
+        prefix = SMALL_PREFIXES[divider];
         out.setRealNumberPrecision(2);        
         out.setRealNumberNotation(QTextStream::FixedNotation);
-        out<<aux;
-        removeTrailingZeros(result);
-        if(prefix){
-            out<<QChar(prefix);
-        }
-        out<<unit;
-        return result;
+        out<<aux;              
     }
+    removeTrailingZeros(result);
+    if(prefix){
+        out<<QChar(prefix);
+    }
+    if(unit!=0){
+        out<<unit;
+    }
+    return result;
 }
 
 QString UnitFormatter::formatPercentage(double value){

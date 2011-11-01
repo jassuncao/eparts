@@ -9,6 +9,10 @@ QUnitLineEdit::QUnitLineEdit(QChar unit, QWidget *parent) :
     QFontMetrics fm(font());
     int padding = fm.width(_unit);
     setStyleSheet(QString("QLineEdit { padding-right: %1px; } ").arg(padding));
+    QRegExp rx("\\b[0-9]+(\\.[0-9]+)?[k,M,G,T,P,E,Z,Y,m,u,n,p,f,a,z,y]?\\b");
+    QValidator *validator = new QRegExpValidator(rx, this);
+    setAlignment(Qt::AlignTrailing);
+    setValidator(validator);
 }
 
 void QUnitLineEdit::paintEvent ( QPaintEvent * ev)
