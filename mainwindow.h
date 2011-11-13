@@ -21,6 +21,7 @@ public:
 private slots:
     void selectedPartsView();
     void selectedOtherView();
+    void showOptions();
 
 private:
     Ui::MainWindow *ui;

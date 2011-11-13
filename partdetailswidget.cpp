@@ -75,12 +75,12 @@ void PartDetailsWidget::setData(PartRow * data)
        minimumQuantitySpinBox->setValue(data->part.minimumQuantity);
        PartParameter::ParameterType type = _partModel->valueType();
        QString valueText;
-          if(type==PartParameter::Text){
-              valueText = data->part.textValue;
-          }
-          else{
-              valueText = UnitFormatter::format(type, data->part.numericValue);
-          }
+       if(type==PartParameter::Text){
+           valueText = data->part.textValue;
+       }
+       else{
+           valueText = UnitFormatter::format(type, data->part.numericValue);
+       }
        valueField->setText(valueText);
 
     }

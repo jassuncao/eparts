@@ -24,7 +24,11 @@ SOURCES += main.cpp\
     test1.cpp \
     partmodel.cpp \
     qunitlineedit.cpp \
-    partdetailswidget.cpp
+    partdetailswidget.cpp \
+    settingsdialog.cpp \
+    categoriesform.cpp \
+    categorydialog.cpp \
+    categorieslistmodel.cpp
 
 HEADERS  += mainwindow.h \
     connection.h \
@@ -44,13 +48,31 @@ HEADERS  += mainwindow.h \
     test1.h \
     partmodel.h \
     qunitlineedit.h \
-    partdetailswidget.h
+    partdetailswidget.h \
+    settingsdialog.h \
+    categoriesform.h \
+    categorydialog.h \
+    categorieslistmodel.h
 
 FORMS    += mainwindow.ui \
-    partsmainwidget.ui
+    partsmainwidget.ui \
+    settingsdialog.ui \
+    categoriesform.ui \
+    categorydialog.ui
 
 RESOURCES += \
     resources.qrc
+
+
+
+
+
+
+
+
+
+
+
 
 
 
