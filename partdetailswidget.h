@@ -32,7 +32,7 @@ public:
     void setData(PartRow * data);
 private:
     PartModel * _partModel;
-    QUnitLineEdit * valueField;
+    QLineEdit * valueField;
     QLabel * quantityLabel;
     QLabel * minimumQuantityLabel;
     QLabel * notesLabel;
@@ -41,7 +41,7 @@ private:
     QSpinBox * quantitySpinBox;
     QSpinBox * minimumQuantitySpinBox;
     QTextEdit * notesTextEdit;
-    QHash<int,QUnitLineEdit*> _params;
+    QHash<int,QLineEdit*> _params;
 
 signals:
 

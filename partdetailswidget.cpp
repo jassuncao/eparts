@@ -2,18 +2,25 @@
 #include "partmodel.h"
 #include "unitformatter.h"
 
+static QLineEdit * createLineEdit(PartParameter::ParameterType paramType, QWidget *parent)
+{
+    if(paramType==PartParameter::Text)
+    {
+        return new QLineEdit(parent);
+    }
+    else{
+        return new QUnitLineEdit(UnitFormatter::getUnitSymbol(paramType), parent);
+    }
+}
+
 PartDetailsWidget::PartDetailsWidget(PartModel *partModel, QWidget *parent ) :
     _partModel(partModel), QWidget(parent)
-{
-    QRegExp rx("\\b[0-9]+(\\.[0-9]+)?[k,M,G,T,P,E,Z,Y,m,u,n,p,f,a,z,y]?\\b");
-    QValidator *validator = new QRegExpValidator(rx, this);
+{    
     formLayout = new QFormLayout(this);
 
     valueLabel = new QLabel(this);
-    valueField = new QUnitLineEdit(UnitFormatter::getUnitSymbol(_partModel->valueType()));
+    valueField = createLineEdit(_partModel->valueType(), this);
     valueField->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-    valueField->setAlignment(Qt::AlignTrailing);
-    valueField->setValidator(validator);
     formLayout->addRow(valueLabel, valueField);
 
 
@@ -24,10 +31,7 @@ PartDetailsWidget::PartDetailsWidget(PartModel *partModel, QWidget *parent ) :
         PartParameter::ParameterType valueType = (PartParameter::ParameterType)param.type.get().toUInt();
 
         QLabel * fieldLabel = new QLabel(param.name+":");
-        QUnitLineEdit * fieldValue = new QUnitLineEdit(UnitFormatter::getUnitSymbol(valueType));
-        fieldValue->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-        fieldValue->setAlignment(Qt::AlignTrailing);
-        fieldValue->setValidator(validator);
+        QLineEdit * fieldValue = createLineEdit(valueType, this);
         formLayout->addRow(fieldLabel, fieldValue);
         _params[param.id.get().toInt()]=fieldValue;
     }
@@ -75,13 +79,28 @@ void PartDetailsWidget::setData(PartRow * data)
        minimumQuantitySpinBox->setValue(data->part.minimumQuantity);
        PartParameter::ParameterType type = _partModel->valueType();
        QString valueText;
-       if(type==PartParameter::Text){
-           valueText = data->part.textValue;
-       }
-       else{
-           valueText = UnitFormatter::format(type, data->part.numericValue);
-       }
+          if(type==PartParameter::Text){
+              valueText = data->part.textValue;
+          }
+          else{
+              valueText = UnitFormatter::format(data->part.numericValue);
+          }
        valueField->setText(valueText);
-
+       const QList<PartParameter>  * parameters = _partModel->parameters();
+       QList<PartParameter>::const_iterator it;
+       for(it = parameters->constBegin();it!=parameters->constEnd();++it)
+       {
+           int id = it->id.get().toInt();
+           ParameterValue paramValue = data->paramValues[id];
+           QLineEdit * paramEditor = _params[id];
+           PartParameter::ParameterType valueType = (PartParameter::ParameterType)it->type.get().toUInt();
+           if(valueType==PartParameter::Text)
+           {
+               paramEditor->setText(paramValue.textValue);
+           }
+           else{
+               paramEditor->setText(UnitFormatter::format(paramValue.numericValue));
+           }
+       }
     }
 }
