@@ -13,6 +13,9 @@ public:
     DQForeignKey<PartType> partType;
     DQField<qreal> numericValue;
     DQField<QString> textValue;
+    DQField<QString> dataSheet;
+    DQField<QString> url;
+
 };
 
 /// Declare the model and the field clause
@@ -23,7 +26,9 @@ DQ_DECLARE_MODEL(Part,
                  DQ_FIELD(notes),
                  DQ_FIELD(partType , DQNotNull),
                  DQ_FIELD(numericValue),
-                 DQ_FIELD(textValue)
+                 DQ_FIELD(textValue),
+                 DQ_FIELD(dataSheet),
+                 DQ_FIELD(url)
                  )
 
 #endif // PART_H

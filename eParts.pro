@@ -28,7 +28,10 @@ SOURCES += main.cpp\
     settingsdialog.cpp \
     categoriesform.cpp \
     categorydialog.cpp \
-    categorieslistmodel.cpp
+    categorieslistmodel.cpp \
+    parttypesform.cpp \
+    parttypetablemodel.cpp \
+    parttypedialog.cpp
 
 HEADERS  += mainwindow.h \
     connection.h \
@@ -52,16 +55,33 @@ HEADERS  += mainwindow.h \
     settingsdialog.h \
     categoriesform.h \
     categorydialog.h \
-    categorieslistmodel.h
+    categorieslistmodel.h \
+    parttypesform.h \
+    parttypetablemodel.h \
+    modelrow.h \
+    parttypedialog.h
 
 FORMS    += mainwindow.ui \
     partsmainwidget.ui \
     settingsdialog.ui \
     categoriesform.ui \
-    categorydialog.ui
+    categorydialog.ui \
+    parttypesform.ui \
+    parttypedialog.ui
 
 RESOURCES += \
     resources.qrc
+
+
+
+
+
+
+
+
+
+
+
 
 
 

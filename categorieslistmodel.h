@@ -5,8 +5,9 @@
 #include <QList>
 #include "category.h"
 #include <QSortFilterProxyModel>
+#include "modelrow.h"
 
-class CategoryRow;
+//class ModelRow<Category>;
 
 class CategoriesListModel : public QAbstractListModel
 {
@@ -18,25 +19,18 @@ public:
     void load();
     bool removeRows(int row, int count, const QModelIndex & parent);
     void add(Category * category);
+    Category getCategory(int row) const;
+    void updateCategory(int row, const Category & category);
     void saveChanges();
 signals:
 
 public slots:
 
 private:
-    QList<CategoryRow> _rows;
-    QList<CategoryRow> _removedRows;
+    QList< ModelRow<Category> > _rows;
+    QList< ModelRow<Category> > _removedRows;
 
 };
 
-
-
-class CategoryRow {
-public:
-    enum RowState {New,Modified,Default};
-    CategoryRow(Category category) : category(category), state(Default) {}
-    Category category;
-    RowState state;
-};
 
 #endif // CATEGORIESLISTMODEL_H

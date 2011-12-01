@@ -23,6 +23,7 @@ CategoriesForm::CategoriesForm(QWidget *parent) :
 CategoriesForm::~CategoriesForm()
 {
     delete ui;
+    delete _model;
 }
 
 void CategoriesForm::currentRowChanged ( const QModelIndex & current, const QModelIndex & previous )
@@ -30,13 +31,14 @@ void CategoriesForm::currentRowChanged ( const QModelIndex & current, const QMod
     bool validRow = current.isValid();
     ui->removeButton->setEnabled(validRow);
     ui->editButton->setEnabled(validRow);
+    qDebug()<<"Row Changed:"<<current.row();
 }
 
 void CategoriesForm::addButtonClicked()
 {
-    CategoryDialog dlg;
+    CategoryDialog dlg(parentWidget());
     if(dlg.exec()==QDialog::Accepted){
-        qDebug()<<"AADDIINNGG";
+        qDebug()<<"Adding";
         if(dlg.model())
             _model->add(dlg.model());
     }
@@ -45,12 +47,26 @@ void CategoriesForm::addButtonClicked()
 void CategoriesForm::editButtonClicked()
 {
 
+    QModelIndex index = ui->listView->selectionModel()->currentIndex();
+    if(!index.isValid())
+        return;
+    int row = index.row();
+    Category cat = _model->getCategory(row);
+    CategoryDialog dlg(parentWidget());
+    dlg.setModel(&cat);
+    if(dlg.exec()==QDialog::Accepted){
+        qDebug()<<"Editing";
+        if(dlg.model())
+            _model->updateCategory(row, *dlg.model());
+    }
 }
 
 void CategoriesForm::removeButtonClicked()
 {
-    QModelIndexList selectedRows = ui->listView->selectionModel()->selectedRows();
-    int row = selectedRows.at(0).row();
+    QModelIndex index = ui->listView->selectionModel()->currentIndex();
+    if(!index.isValid())
+        return;
+    int row = index.row();
     _model->removeRow(row);
 
 }

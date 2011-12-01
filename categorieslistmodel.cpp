@@ -21,12 +21,12 @@ QVariant CategoriesListModel::data(const QModelIndex &index, int role) const
         return QVariant();
 
     if (role == Qt::DisplayRole) {
-        CategoryRow row = _rows.at(index.row());
-        return row.category.name;
+        ModelRow<Category> row = _rows.at(index.row());
+        return row.item.name;
     }
     else if(role == Qt::ToolTipRole){
-        CategoryRow row = _rows.at(index.row());
-        return row.category.description;
+        ModelRow<Category> row = _rows.at(index.row());
+        return row.item.description;
     }
     return QVariant();
 }
@@ -38,7 +38,7 @@ void CategoriesListModel::load(){
         while(query.next()){
             Category cat;
             query.recordTo(cat);
-            CategoryRow row(cat);
+            ModelRow<Category> row(cat);
             _rows.append(row);
         }
     }
@@ -67,19 +67,34 @@ void CategoriesListModel::add(Category * category)
     beginInsertRows( QModelIndex(),rowPos, rowPos);
     Category cat;
     cat = *category;
-    CategoryRow row(cat);
-    row.state = CategoryRow::New;
+    ModelRow<Category> row(cat);
+
+    row.state = ModelRow<Category>::New;
     _rows.append(row);
     endInsertRows();
 }
 
+Category CategoriesListModel::getCategory(int row) const
+{
+    return _rows.at(row).item;
+}
+
+void CategoriesListModel::updateCategory(int row, const Category & category)
+{
+    QModelIndex topLeft = QAbstractListModel::createIndex(row,0);
+    ModelRow<Category> catRow(category);
+    catRow.state = ModelRow<Category>::Modified;
+    _rows.replace(row, catRow);
+    emit dataChanged(topLeft,topLeft);
+}
+
 void CategoriesListModel::saveChanges()
 {
-    QListIterator<CategoryRow> it(_rows);
+    QListIterator< ModelRow<Category> > it(_rows);
     while(it.hasNext()){
-        CategoryRow row = it.next();
-        if(row.state==CategoryRow::New || row.state==CategoryRow::Modified){
-            row.category.save();
+        ModelRow<Category> row = it.next();
+        if(row.state==ModelRow<Category>::New || row.state==ModelRow<Category>::Modified){
+            row.item.save();
         }
     }
 }

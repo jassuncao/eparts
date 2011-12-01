@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include "categoriesform.h"
+#include "parttypesform.h"
 
 namespace Ui {
     class SettingsDialog;
@@ -21,6 +22,7 @@ public slots:
 private:
     Ui::SettingsDialog *ui;
     CategoriesForm * _categoriesForm;
+    PartTypesForm * _partForm;
 };
 
 #endif // SETTINGSDIALOG_H

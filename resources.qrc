@@ -1,5 +1,5 @@
 <RCC>
-    <qresource>
+    <qresource prefix="/">
         <file>images/single-drawer_16x16.png</file>
         <file>images/delete_22x22.png</file>
         <file>images/drawer-close_16x16.png</file>
@@ -11,5 +11,9 @@
         <file>images/filenew_22x22.png</file>
         <file>images/find_16x16.png</file>
         <file>images/search_16x16.png</file>
+        <file>images/arrow-down_16x16.png</file>
+        <file>images/arrow-up_16x16.png</file>
+        <file>images/list-add_16x16.png</file>
+        <file>images/list-remove_16x16.png</file>
     </qresource>
 </RCC>

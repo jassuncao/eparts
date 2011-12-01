@@ -7,7 +7,9 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
 {
     ui->setupUi(this);
     _categoriesForm = new CategoriesForm();
+    _partForm = new PartTypesForm();
     ui->tabWidget->addTab(_categoriesForm,"Categories");
+    ui->tabWidget->addTab(_partForm,"Parts");
 }
 
 SettingsDialog::~SettingsDialog()
@@ -18,11 +20,13 @@ SettingsDialog::~SettingsDialog()
 void SettingsDialog::accept()
 {
     _categoriesForm->accept();
+    _partForm->accept();
     QDialog::accept();
 }
 
 void SettingsDialog::reject()
 {
     _categoriesForm->reject();
+    _partForm->reject();
     QDialog::reject();
 }

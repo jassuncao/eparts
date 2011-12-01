@@ -6,6 +6,7 @@ CategoryDialog::CategoryDialog(QWidget *parent) :
     ui(new Ui::CategoryDialog), _model(0)
 {
     ui->setupUi(this);
+    setWindowTitle("Edit category");
 }
 
 CategoryDialog::~CategoryDialog()

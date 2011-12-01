@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "partsmainwidget.h"
 #include "settingsdialog.h"
+#include "parttypedialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -29,7 +30,9 @@ MainWindow::~MainWindow()
 
 void MainWindow::selectedPartsView()
 {
-    ui->stackedWidget->setCurrentIndex(0);
+    //ui->stackedWidget->setCurrentIndex(0);
+    PartTypeDialog dlg(this);
+    dlg.exec();
 }
 
 void MainWindow::selectedOtherView()
