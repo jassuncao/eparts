@@ -26,6 +26,7 @@ private slots:
     void addButtonClicked();
     void editButtonClicked();
     void removeButtonClicked();
+    void doubleClicked(const QModelIndex & index);
 private:
     Ui::CategoriesForm *ui;
     CategoriesListModel * _model;
