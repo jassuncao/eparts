@@ -2,6 +2,7 @@
 #define PARTTYPEDIALOG_H
 
 #include <QDialog>
+#include "parttype.h"
 
 namespace Ui {
     class PartTypeDialog;
@@ -17,8 +18,10 @@ public:
 
 private:
     Ui::PartTypeDialog *ui;
+    PartType * _model;
     void initCategoriesCombo();
     void initFieldTypeCombos();
+    void setFieldsValues();
 };
 
 #endif // PARTTYPEDIALOG_H

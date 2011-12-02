@@ -10,6 +10,15 @@ PartTypeDialog::PartTypeDialog(QWidget *parent) :
     ui->setupUi(this);
     initCategoriesCombo();
     initFieldTypeCombos();
+
+    DQQuery<PartType> query;
+    query = query.orderBy("name");
+    if(query.exec()){
+        _model = new PartType();
+        if(query.next())
+            query.recordTo(*_model);
+    }
+    setFieldsValues();
 }
 
 PartTypeDialog::~PartTypeDialog()
@@ -44,4 +53,15 @@ void PartTypeDialog::initFieldTypeCombos()
         QVariant userData = ui->fieldCombo->itemData(i);
         ui->partMainFieldCombo->addItem(text, userData);
     }
+}
+
+void PartTypeDialog::setFieldsValues()
+{
+    ui->partNameEdit->setText(_model->name);
+    ui->partDescriptionEdit->setText(_model->description);
+    int index = ui->partCategoryCombo->findData(_model->category);
+    ui->partCategoryCombo->setCurrentIndex(index);
+    index = ui->partMainFieldCombo->findData(_model->valueType);
+    ui->partMainFieldCombo->setCurrentIndex(index);
+
 }
