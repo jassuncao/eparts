@@ -97,4 +97,10 @@ void CategoriesListModel::saveChanges()
             row.item.save();
         }
     }
+    QListIterator< ModelRow<Category> >it2(_removedRows);
+    while(it2.hasNext()){
+        ModelRow<Category> row = it2.next();
+        row.item.remove();
+    }
+
 }

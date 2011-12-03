@@ -31,7 +31,8 @@ SOURCES += main.cpp\
     categorieslistmodel.cpp \
     parttypesform.cpp \
     parttypetablemodel.cpp \
-    parttypedialog.cpp
+    parttypedialog.cpp \
+    models/partparameterslistmodel.cpp
 
 HEADERS  += mainwindow.h \
     connection.h \
@@ -59,7 +60,8 @@ HEADERS  += mainwindow.h \
     parttypesform.h \
     parttypetablemodel.h \
     modelrow.h \
-    parttypedialog.h
+    parttypedialog.h \
+    models/partparameterslistmodel.h
 
 FORMS    += mainwindow.ui \
     partsmainwidget.ui \

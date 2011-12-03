@@ -86,12 +86,16 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
-          <widget class="QListView" name="listView"/>
+          <widget class="QListView" name="fieldListView">
+           <property name="selectionBehavior">
+            <enum>QAbstractItemView::SelectRows</enum>
+           </property>
+          </widget>
          </item>
          <item>
           <layout class="QGridLayout" name="gridLayout">
            <item row="0" column="0">
-            <widget class="QPushButton" name="pushButton">
+            <widget class="QPushButton" name="addFieldButton">
              <property name="text">
               <string>Add</string>
              </property>
@@ -102,7 +106,7 @@
             </widget>
            </item>
            <item row="0" column="1">
-            <widget class="QPushButton" name="pushButton_2">
+            <widget class="QPushButton" name="removeFieldButton">
              <property name="text">
               <string>Remove</string>
              </property>
@@ -113,7 +117,7 @@
             </widget>
            </item>
            <item row="1" column="0">
-            <widget class="QPushButton" name="upButton">
+            <widget class="QPushButton" name="fieldUpButton">
              <property name="toolTip">
               <string>Move item up</string>
              </property>
@@ -127,7 +131,7 @@
             </widget>
            </item>
            <item row="1" column="1">
-            <widget class="QPushButton" name="downButton">
+            <widget class="QPushButton" name="fieldDownButton">
              <property name="toolTip">
               <string>Move item down</string>
              </property>
@@ -192,7 +196,7 @@
           </widget>
          </item>
          <item row="6" column="1">
-          <widget class="QCheckBox" name="checkBox">
+          <widget class="QCheckBox" name="fixedValuesCheckBox">
            <property name="enabled">
             <bool>false</bool>
            </property>
@@ -205,9 +209,12 @@
           <widget class="QWidget" name="widget_3" native="true">
            <layout class="QVBoxLayout" name="verticalLayout_3">
             <item>
-             <widget class="QListView" name="listView_2">
+             <widget class="QListView" name="fixedValuesListview">
               <property name="enabled">
                <bool>false</bool>
+              </property>
+              <property name="selectionBehavior">
+               <enum>QAbstractItemView::SelectRows</enum>
               </property>
              </widget>
             </item>

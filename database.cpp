@@ -115,12 +115,21 @@ bool Database::initTables(DQConnection &connection)
 */
      PartParameter power;
      power.name = "Power";
-     power.description = "Maximum  power dissipation value";
+     power.description = "Maximum power dissipation value";
      power.type = PartParameter::Power;
      power.partType = fixedResistors.id;
      power.fixedValues = false;
      power.orderIndex = 1;
      power.save();
+
+     PartParameter tolerance;
+     tolerance.name = "Tolerance";
+     tolerance.description = "Resistor tolerance";
+     tolerance.type = PartParameter::Percentage;
+     tolerance.partType = fixedResistors.id;
+     tolerance.fixedValues = false;
+     tolerance.orderIndex = 2;
+     tolerance.save();
 
 
      for(int i=0; i<1000; ++i){
