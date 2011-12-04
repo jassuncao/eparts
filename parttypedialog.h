@@ -2,12 +2,18 @@
 #define PARTTYPEDIALOG_H
 
 #include <QDialog>
+#include <QStandardItemModel>
+#include <QDataWidgetMapper>
+#include <QItemDelegate>
 #include "parttype.h"
 #include "models/partparameterslistmodel.h"
+#include "models/partparameterstablemodel.h"
 
 namespace Ui {
     class PartTypeDialog;
 }
+
+class ParamTypeDelegate;
 
 class PartTypeDialog : public QDialog
 {
@@ -22,17 +28,35 @@ private slots:
     void slotMoveFieldUp();
     void slotMoveFieldDown();
     void slotAddNewField();
+    void slotRemoveField();
     void slotFieldNameEditingFinished();
+
+public slots:
+    void accept();
 private:
     Ui::PartTypeDialog *ui;
     PartType * _model;
-    PartParametersListModel * _paramsModel;
+    //PartParametersListModel * _paramsModel;
+    PartParametersTableModel _paramsModel;
+    //QStandardItemModel _paramsModel;
+    QDataWidgetMapper _fieldsMapper;
+    QStringList _typeModel;
+    QList<int> _removedParams;
     void initCategoriesCombo();
     void initFieldTypeCombos();
     void setFieldsValues();
     void updateButtonsState(int selectedRow);
-    void displayParamDetails(int selectedRow);
+    void displayParamDetails(const QModelIndex &index);
 
+};
+
+class ParamTypeDelegate : public QItemDelegate
+{
+    Q_OBJECT
+public:
+    ParamTypeDelegate(QObject *parent = 0);
+    void setEditorData(QWidget *editor, const QModelIndex &index) const;
+    void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;
 };
 
 #endif // PARTTYPEDIALOG_H
