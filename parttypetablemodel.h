@@ -2,6 +2,7 @@
 #define PARTTYPETABLEMODEL_H
 
 #include <QAbstractTableModel>
+#include <QHash>
 #include "modelrow.h"
 #include "parttype.h"
 
@@ -20,6 +21,8 @@ signals:
 public slots:
 
 private:
+    QList<QString> _columnNames;
+    QHash<int,QString> _categoriesMap;
     QList< ModelRow<PartType> > _rows;
     QList< ModelRow<PartType> > _removedRows;
 };

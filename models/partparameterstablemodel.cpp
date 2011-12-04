@@ -102,12 +102,7 @@ bool PartParametersTableModel::setData(const QModelIndex &index, const QVariant 
             return false;
         }
         if(res){
-            rowData.state = ModelRow<PartParameter>::Modified;
-            /*
-            ModelRow<PartParameter> modelRow(rowData.item);            
-            _rows[row].state = ModelRow<PartParameter>::Modified;
-            _rows.replace(row, modelRow);
-            */
+            rowData.state = ModelRow<PartParameter>::Modified;           
             emit dataChanged(index,index);
         }
     }
