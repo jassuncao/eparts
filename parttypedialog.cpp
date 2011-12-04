@@ -6,16 +6,18 @@
 
 PartTypeDialog::PartTypeDialog(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::PartTypeDialog)//,
-    //_paramsModel(0,4)
+    ui(new Ui::PartTypeDialog)
 {
     ui->setupUi(this);
     ui->addFieldButton->setEnabled(true);
     ui->removeFieldButton->setEnabled(false);
     ui->fieldUpButton->setEnabled(false);
     ui->fieldDownButton->setEnabled(false);
+    ui->fieldNameEdit->setEnabled(false);
+    ui->fieldDescriptionEdit->setEnabled(false);
+    ui->fieldCombo->setEnabled(false);
 
-    //_paramsModel = new PartParametersListModel();
+
     QListView * fieldListView = ui->fieldListView;
     fieldListView->setModel(&_paramsModel);
     _fieldsMapper.setModel(&_paramsModel);
@@ -41,45 +43,12 @@ PartTypeDialog::PartTypeDialog(QWidget *parent) :
         if(query.next())
             query.recordTo(*_model);
     }
-    /*
-    QStringList columnNames;
-    columnNames<<tr("Name")<<tr("Type")<<tr("Description")<<tr("Fixed values");
-    _paramsModel.setHorizontalHeaderLabels(columnNames);
-    */
-    //_paramsModel->load(_model->id.get());
-
-    /*
-    DQQuery<PartParameter> query2;
-    query2 = query2.filter(DQWhere("partType")==_model->id.get()).orderBy("orderIndex");
-    if(query2.exec()){
-        PartParameter param;
-        QList<QStandardItem*> items;
-        while(query2.next()){
-            query2.recordTo(param);
-
-            QStandardItem * item = new QStandardItem(param.name);
-            item->setData(param.id);
-            items<<item;
-
-            item = new QStandardItem();
-            item->setData(param.type);
-            items<<item;
-
-            items<<new QStandardItem(param.description);
-            items<<new QStandardItem(param.fixedValues);
-
-            _paramsModel.appendRow(items);
-            items.clear();
-        }
-    }
-    */
     _paramsModel.load(_model->id.get());
     setFieldsValues();
 }
 
 PartTypeDialog::~PartTypeDialog()
 {
-    //delete _paramsModel;
     delete _model;
     delete ui;
 }
@@ -101,7 +70,7 @@ void PartTypeDialog::paramsViewCurrentRowChanged ( const QModelIndex & current, 
 {
     updateButtonsState(current.row());
     if(current.isValid())
-        displayParamDetails(current);
+        _fieldsMapper.setCurrentModelIndex(current);
 }
 
 void PartTypeDialog::updateButtonsState(int selectedRow)
@@ -116,19 +85,6 @@ void PartTypeDialog::updateButtonsState(int selectedRow)
     ui->fieldCombo->setEnabled(validRow);
 }
 
-void PartTypeDialog::displayParamDetails(const QModelIndex &index)
-{
-    _fieldsMapper.setCurrentModelIndex(index);
-    /*
-    PartParameter param = _paramsModel->getParameter(selectedRow);
-    ui->fieldNameEdit->setText(param.name);
-    ui->fieldDescriptionEdit->setText(param.description);
-    int index = ui->fieldCombo->findData(param.type);
-    ui->fieldCombo->setCurrentIndex(index);
-    ui->fixedValuesCheckBox->setChecked(param.fixedValues);
-    */
-}
-
 void PartTypeDialog::slotMoveFieldUp()
 {
     QModelIndex index = ui->fieldListView->selectionModel()->currentIndex();
@@ -137,15 +93,10 @@ void PartTypeDialog::slotMoveFieldUp()
     int row = index.row();
     if(row==0) return;
     _paramsModel.moveUp(row);
-
-    //QList<QStandardItem *> rowItems = _paramsModel.takeRow(row);
-    //_paramsModel.insertRow(row-1,rowItems);
-    index = _paramsModel.index(row-1,0);
-    //ui->fieldListView->selectionModel()->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect);
-    ui->fieldListView->setCurrentIndex( index);
-
-    //_paramsModel->moveUp(row);
-    updateButtonsState(ui->fieldListView->selectionModel()->currentIndex().row());
+    row = row - 1;
+    index = _paramsModel.index(row,0);
+    ui->fieldListView->setCurrentIndex(index);
+    updateButtonsState(row);
 }
 
 void PartTypeDialog::slotMoveFieldDown()
@@ -156,14 +107,11 @@ void PartTypeDialog::slotMoveFieldDown()
     int row = index.row();
     if(row>=_paramsModel.rowCount()-1) return;
     _paramsModel.moveDown(row);
-    //QList<QStandardItem *> rowItems = _paramsModel.takeRow(row);
-    //_paramsModel.insertRow(row+1,rowItems);
-    index = _paramsModel.index(row+1,0);
-    //ui->fieldListView->selectionModel()->setCurrentIndex(index, QItemSelectionModel::SelectCurrent);
-    ui->fieldListView->setCurrentIndex( index);
-    updateButtonsState(ui->fieldListView->selectionModel()->currentIndex().row());
+    row = row + 1;
+    index = _paramsModel.index(row,0);
+    ui->fieldListView->setCurrentIndex(index);
+    updateButtonsState(row);
 }
-
 
 void PartTypeDialog::initFieldTypeCombos()
 {
@@ -195,34 +143,16 @@ void PartTypeDialog::setFieldsValues()
 
 void PartTypeDialog::slotAddNewField()
 {
-    /*
-    PartParameter newParam;
-    newParam.name="New Field";
-    //QModelIndex index = _paramsModel->add(newParam);
-    //ui->fieldListView->setCurrentIndex(index);
-    /*
-    ui->fieldNameEdit->setText(newParam.name);
-    ui->fieldDescriptionEdit->setText("");
-    ui->fieldCombo->setCurrentIndex(-1);
-    ui->fixedValuesCheckBox->setChecked(false);
-    */
-
-    //QStandardItem * newItem = new QStandardItem("New Field");
-    //newItem->setData(-1);//Set id as undefined
-    //_paramsModel.appendRow(newItem);
-    //QModelIndex index = _paramsModel.indexFromItem(newItem);
     PartParameter newParam;
     newParam.name ="New Field";
     newParam.type = -1;
-    newParam.id = -1;
+    newParam.fixedValues = false;
     QModelIndex index = _paramsModel.appendRow(newParam);
-
 
     ui->fieldListView->setCurrentIndex(index);
     _fieldsMapper.setCurrentModelIndex(index);
     ui->fieldNameEdit->setFocus();
     ui->fieldNameEdit->selectAll();
-
 }
 
 void PartTypeDialog::slotRemoveField()
@@ -231,27 +161,10 @@ void PartTypeDialog::slotRemoveField()
     if(!index.isValid())
         return;
     _paramsModel.removeRow(index.row());
-    /*
-    QList<QStandardItem *> rowItems = _paramsModel.takeRow(index.row());
-    QStandardItem * item;
-    int paramId = rowItems[0]->data().toInt();
-    if(paramId>=0)
-        _removedParams.append(paramId);
-    foreach(item, rowItems){
-        delete item;
-    }
-    rowItems.clear();
-    */
     index = ui->fieldListView->currentIndex();
     updateButtonsState(index.row());
     _fieldsMapper.setCurrentModelIndex(index);
     _fieldsMapper.revert();
-}
-
-void PartTypeDialog::slotFieldNameEditingFinished()
-{
-    QModelIndex index = ui->fieldListView->currentIndex();
-    //_paramsModel->setData(index,ui->fieldNameEdit->text());
 }
 
 void PartTypeDialog::accept()
@@ -260,33 +173,20 @@ void PartTypeDialog::accept()
     _model->name = ui->partNameEdit->text();
     _model->description = ui->partDescriptionEdit->text();
     int index = ui->partCategoryCombo->currentIndex();
-    if(index>0)
+    if(index>=0)
         _model->category = ui->partCategoryCombo->itemData(index);
     index = ui->partMainFieldCombo->currentIndex();
-    if(index>0)
+    if(index>=0)
         _model->valueType = ui->partMainFieldCombo->itemData(index);
+    _model->save();
     _paramsModel.saveChanges();
-    /*
-    int removedParamId;
-    DQQuery<PartParameter> query;
-    foreach(removedParamId, _removedParams){
-        query = query.filter(DQWhere("id")==removedParamId);
-        query.remove();
-    }
-    int rows = _paramsModel.rowCount();
-    while(rows>0){
-        _paramsModel.takeRow(0);
-    }
-    */
     QDialog::accept();
 }
 
 
 ParamTypeDelegate::ParamTypeDelegate(QObject *parent)
     : QItemDelegate(parent)
-{
-
-}
+{}
 
 void ParamTypeDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {

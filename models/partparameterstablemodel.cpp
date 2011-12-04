@@ -144,13 +144,14 @@ void PartParametersTableModel::saveChanges()
     }
 
     QListIterator< ModelRow<PartParameter> > it(_rows);
+    int orderIndex = 1;
     while(it.hasNext()){
         ModelRow<PartParameter> row = it.next();
-        if(row.state==ModelRow<PartParameter>::New || row.state==ModelRow<PartParameter>::Modified){
-            row.item.save();
-            qDebug()<<"Saving"<<row.item.name;
-        }
+        row.item.orderIndex = orderIndex++;
+        row.item.save();
+        qDebug()<<"Saving"<<row.item;
     }
+
 }
 
 

@@ -28,25 +28,20 @@ private slots:
     void slotMoveFieldUp();
     void slotMoveFieldDown();
     void slotAddNewField();
-    void slotRemoveField();
-    void slotFieldNameEditingFinished();
+    void slotRemoveField();    
 
 public slots:
     void accept();
 private:
     Ui::PartTypeDialog *ui;
     PartType * _model;
-    //PartParametersListModel * _paramsModel;
-    PartParametersTableModel _paramsModel;
-    //QStandardItemModel _paramsModel;
+    PartParametersTableModel _paramsModel;    
     QDataWidgetMapper _fieldsMapper;
     QStringList _typeModel;
-    QList<int> _removedParams;
     void initCategoriesCombo();
     void initFieldTypeCombos();
     void setFieldsValues();
-    void updateButtonsState(int selectedRow);
-    void displayParamDetails(const QModelIndex &index);
+    void updateButtonsState(int selectedRow);    
 
 };
 
