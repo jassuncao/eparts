@@ -15,6 +15,9 @@ public:
     int columnCount(const QModelIndex &parent) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
     QVariant data(const QModelIndex &index, int role) const;
+    PartType rowData(int row) const;
+    void setRowData(int row, const PartType & data);
+    QModelIndex add(PartType & partType);
     void load();
 signals:
 

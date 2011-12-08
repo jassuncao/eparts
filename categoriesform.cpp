@@ -45,8 +45,10 @@ void CategoriesForm::doubleClicked(const QModelIndex & index)
     dlg.setModel(&cat);
     if(dlg.exec()==QDialog::Accepted){
         qDebug()<<"Editing";
-        if(dlg.model())
+        if(dlg.model()){
             _model->updateCategory(row, *dlg.model());
+            _model->saveChanges();
+        }
     }
 }
 
@@ -55,8 +57,10 @@ void CategoriesForm::addButtonClicked()
     CategoryDialog dlg(parentWidget());
     if(dlg.exec()==QDialog::Accepted){
         qDebug()<<"Adding";
-        if(dlg.model())
+        if(dlg.model()){
             _model->add(dlg.model());
+            _model->saveChanges();
+        }
     }
 }
 
@@ -74,6 +78,7 @@ void CategoriesForm::removeButtonClicked()
         return;
     int row = index.row();
     _model->removeRow(row);
+    _model->saveChanges();
 
 }
 

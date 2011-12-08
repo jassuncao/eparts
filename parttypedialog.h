@@ -8,6 +8,7 @@
 #include "parttype.h"
 #include "models/partparameterslistmodel.h"
 #include "models/partparameterstablemodel.h"
+#include "categorieslistmodel.h"
 
 namespace Ui {
     class PartTypeDialog;
@@ -22,7 +23,8 @@ class PartTypeDialog : public QDialog
 public:
     explicit PartTypeDialog(QWidget *parent = 0);
     ~PartTypeDialog();
-
+    void setModel(PartType * partType);
+    PartType * model() const;
 private slots:
     void paramsViewCurrentRowChanged ( const QModelIndex & current, const QModelIndex & previous );
     void slotMoveFieldUp();
@@ -37,7 +39,7 @@ private:
     PartType * _model;
     PartParametersTableModel _paramsModel;    
     QDataWidgetMapper _fieldsMapper;
-    QStringList _typeModel;
+    QStringList _typeModel;    
     void initCategoriesCombo();
     void initFieldTypeCombos();
     void setFieldsValues();

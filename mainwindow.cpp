@@ -31,7 +31,16 @@ MainWindow::~MainWindow()
 void MainWindow::selectedPartsView()
 {
     //ui->stackedWidget->setCurrentIndex(0);
+    DQQuery<PartType> query;
+    query = query.filter(DQWhere("name")=="Fixed Resistors").orderBy("name");
+    PartType model;
+    if(query.exec()){
+        if(query.next()){
+            query.recordTo(model);
+        }
+    }
     PartTypeDialog dlg(this);
+    dlg.setModel(&model);
     dlg.exec();
 }
 

@@ -82,3 +82,31 @@ void PartTypeTableModel::load()
         //TODO: Show some error
     }
 }
+
+PartType PartTypeTableModel::rowData(int row) const
+{
+    const ModelRow<PartType> & rowData = _rows.at(row);
+    return rowData.item;
+}
+
+void PartTypeTableModel::setRowData(int row, const PartType & data)
+{
+    QModelIndex topLeft = QAbstractTableModel::createIndex(row,0);
+    ModelRow<PartType> & modelRow = _rows[row];
+    modelRow.state = ModelRow<PartType>::Modified;
+    modelRow.item = data;
+    emit dataChanged(topLeft,topLeft);
+}
+
+QModelIndex PartTypeTableModel::add(PartType & partType)
+{
+    int rowPos = _rows.count();
+    QModelIndex index = createIndex(rowPos,0);
+    beginInsertRows(index ,rowPos, rowPos);
+    PartType copy(partType);
+    ModelRow<PartType> row(copy);
+    row.state = ModelRow<PartType>::New;
+    _rows.append(row);
+    endInsertRows();
+    return index;
+}

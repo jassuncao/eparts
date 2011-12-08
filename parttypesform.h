@@ -18,6 +18,12 @@ public:
 public slots:
     void accept();
     void reject();
+private slots:
+    void currentRowChanged ( const QModelIndex & current, const QModelIndex & previous );
+    void addButtonClicked();
+    void editButtonClicked();
+    void removeButtonClicked();
+    void doubleClicked(const QModelIndex & index);
 private:
     Ui::PartTypesForm *ui;
     PartTypeTableModel * _model;

@@ -34,27 +34,28 @@ PartTypeDialog::PartTypeDialog(QWidget *parent) :
     connect(ui->removeFieldButton, SIGNAL(clicked()), this, SLOT(slotRemoveField()));
 
     initCategoriesCombo();
-    initFieldTypeCombos();
-
-    DQQuery<PartType> query;
-    query = query.filter(DQWhere("name")=="Fixed Resistors").orderBy("name");
-    if(query.exec()){
-        _model = new PartType();
-        if(query.next())
-            query.recordTo(*_model);
-    }
-    _paramsModel.load(_model->id.get());
-    setFieldsValues();
+    initFieldTypeCombos();    
 }
 
 PartTypeDialog::~PartTypeDialog()
 {
-    delete _model;
     delete ui;
 }
 
-void PartTypeDialog::initCategoriesCombo()
+void PartTypeDialog::setModel(PartType * model)
 {
+    _model = model;
+    _paramsModel.load(_model->id.get());
+    setFieldsValues();
+}
+
+PartType * PartTypeDialog::model() const
+{
+    return _model;
+}
+
+void PartTypeDialog::initCategoriesCombo()
+{   
     DQQuery<Category> query;
     query = query.orderBy("name");
     if(query.exec()){

@@ -26,7 +26,7 @@
     <enum>Qt::Horizontal</enum>
    </property>
    <property name="standardButtons">
-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+    <set>QDialogButtonBox::Close</set>
    </property>
   </widget>
   <widget class="QTabWidget" name="tabWidget">
@@ -39,7 +39,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>-1</number>
    </property>
    <property name="documentMode">
     <bool>false</bool>
@@ -47,11 +47,6 @@
    <property name="tabsClosable">
     <bool>false</bool>
    </property>
-   <widget class="QWidget" name="tab_2">
-    <attribute name="title">
-     <string>Part Types</string>
-    </attribute>
-   </widget>
   </widget>
  </widget>
  <resources/>
