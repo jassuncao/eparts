@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include "partmodel.h"
-#include "partstablemodel.h"
+#include "models/partstablemodel.h"
 #include "partdetailswidget.h"
 
 class QModelIndex;

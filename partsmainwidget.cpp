@@ -1,7 +1,6 @@
 #include "partsmainwidget.h"
 #include "ui_partsmainwidget.h"
-#include "partstablemodel.h"
-//#include <QtSql>
+#include "models/partstablemodel.h"
 #include <QStandardItem>
 #include <dquest.h>
 #include "category.h"
@@ -10,7 +9,7 @@
 #include <QLineEdit>
 #include <QLabel>
 #include "unitformatter.h"
-#include "qunitlineedit.h"
+#include "widgets/qunitlineedit.h"
 
 
 PartsMainWidget::PartsMainWidget(QWidget *parent) :

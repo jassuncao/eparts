@@ -2,7 +2,7 @@
 #define PARTTYPESFORM_H
 
 #include <QWidget>
-#include "parttypetablemodel.h"
+#include "models/parttypetablemodel.h"
 
 namespace Ui {
     class PartTypesForm;

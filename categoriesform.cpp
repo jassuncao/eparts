@@ -1,6 +1,6 @@
 #include "categoriesform.h"
 #include "ui_categoriesform.h"
-#include "categorieslistmodel.h"
+#include "models/categorieslistmodel.h"
 #include "categorydialog.h"
 
 CategoriesForm::CategoriesForm(QWidget *parent) :

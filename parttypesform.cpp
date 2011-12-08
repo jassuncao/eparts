@@ -56,8 +56,9 @@ void PartTypesForm::doubleClicked(const QModelIndex & index)
     dlg.setModel(&part);
     if(dlg.exec()==QDialog::Accepted){
         qDebug()<<"Editing";
-        if(dlg.model())
-            _model->setRowData(row, *dlg.model());
+        if(dlg.model()){
+            _model->setRowData(row, *dlg.model());            
+        }
     }
 }
 

@@ -8,7 +8,7 @@
 #include "parttype.h"
 #include "models/partparameterslistmodel.h"
 #include "models/partparameterstablemodel.h"
-#include "categorieslistmodel.h"
+#include "models/categorieslistmodel.h"
 
 namespace Ui {
     class PartTypeDialog;

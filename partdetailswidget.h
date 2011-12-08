@@ -18,8 +18,8 @@
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QWidget>
 #include <QHash>
-#include "qunitlineedit.h"
-#include "partstablemodel.h"
+#include "widgets/qunitlineedit.h"
+#include "models/partstablemodel.h"
 
 class PartModel;
 

@@ -18,19 +18,19 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     partsmainwidget.cpp \
     types.cpp \
-    partstablemodel.cpp \
+    models/partstablemodel.cpp \
     database.cpp \
     unitformatter.cpp \
     test1.cpp \
     partmodel.cpp \
-    qunitlineedit.cpp \
+    widgets/qunitlineedit.cpp \
     partdetailswidget.cpp \
     settingsdialog.cpp \
     categoriesform.cpp \
     categorydialog.cpp \
-    categorieslistmodel.cpp \
+    models/categorieslistmodel.cpp \
     parttypesform.cpp \
-    parttypetablemodel.cpp \
+    models/parttypetablemodel.cpp \
     parttypedialog.cpp \
     models/partparameterslistmodel.cpp \
     models/partparameterstablemodel.cpp
@@ -40,7 +40,7 @@ HEADERS  += mainwindow.h \
     partsmainwidget.h \
     constants.h \
     types.h \
-    partstablemodel.h \
+    models/partstablemodel.h \
     database.h \
     category.h \
     parttype.h \
@@ -48,18 +48,18 @@ HEADERS  += mainwindow.h \
     part.h \
     parametervalue.h \
     mockdata.h \
-    unitformatter.h \
+    widgets/unitformatter.h \
     AutoTest.h \
     test1.h \
     partmodel.h \
-    qunitlineedit.h \
+    widgets/qunitlineedit.h \
     partdetailswidget.h \
     settingsdialog.h \
     categoriesform.h \
     categorydialog.h \
-    categorieslistmodel.h \
+    models/categorieslistmodel.h \
     parttypesform.h \
-    parttypetablemodel.h \
+    models/parttypetablemodel.h \
     modelrow.h \
     parttypedialog.h \
     models/partparameterslistmodel.h \
