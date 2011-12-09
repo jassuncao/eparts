@@ -54,7 +54,7 @@ void PartsTableModel::load()
     DQQuery<Part> partsQuery;
     if(partsQuery.exec()){        
         while(partsQuery.next()){
-            Part part = partsQuery.record();
+            Part part = partsQuery.record();            
             PartRow * row = new PartRow(part);
             _rows.append(row);
         }
@@ -142,14 +142,108 @@ int PartsTableModel::rowCount(const QModelIndex &parent) const
      return QVariant();
  }
 
-/*
- PartRow::PartRow(int id, const QString * items) : _id(id), _items(items), isLoaded(false)
+ PartsTableRow::PartsTableRow(Part part) :
+     _part(part), _loaded(false)
+ {}
+
+ void PartsTableRow::load()
  {
+     qDebug()<<"Loading row data "<<_part.id;
+     DQQuery<ParameterValue> valuesQuery;
+     valuesQuery = valuesQuery.filter(DQWhere("part")==_part.id);
+     if(valuesQuery.exec()){
+         while(valuesQuery.next()){
+             ParameterValue paramValue = valuesQuery.record();
+             int paramId = paramValue.partParameter.get().toInt();
+             _paramValues[paramId] = paramValue;
+         }
+     }
+     _loaded = true;
  }
 
- PartRow::~PartRow()
+ void PartsTableRow::save()
  {
-     if(_items)
-         delete[] _items;
+
  }
- */
+
+ PartsTableModel2::PartsTableModel2(QObject *parent) :
+     QAbstractTableModel(parent)
+ {
+
+ }
+
+ PartsTableModel2::~PartsTableModel2()
+ {
+     PartsTableRow* row;
+     foreach(row,_rows){
+         delete row;
+     }
+     _rows.clear();
+ }
+
+ int  PartsTableModel2::rowCount(const QModelIndex &parent) const
+ {
+     return _rows.count();
+ }
+
+ int  PartsTableModel2::columnCount(const QModelIndex &parent) const
+ {
+     return _partTypeModel.fields().count();
+ }
+
+ QVariant  PartsTableModel2::data(const QModelIndex &index, int role) const
+ {
+     if (!index.isValid())
+         return QVariant();
+     int row = index.row();
+     int column = index.column();
+     if(row<0 || row>=_rows.count())
+         return QVariant();
+     _partTypeModel.fieldType()
+
+     if(role!=Qt::DisplayRole)
+         return QVariant();
+     const PartsTableRow * tableRow = _rows.at(row);
+     if(!tableRow->isLoaded())
+         tableRow->load();
+
+ }
+
+ bool  PartsTableModel2::setData(const QModelIndex &index, const QVariant &value, int role)
+ {
+
+ }
+
+ QVariant  PartsTableModel2::headerData(int section, Qt::Orientation orientation, int role) const
+ {
+     if (role != Qt::DisplayRole || orientation!=Qt::Horizontal)
+         return QVariant();
+     QStringList & fields = _partTypeModel.fields();
+     if(section<fields.count())
+         return fields.at(section);
+     return QVariant();
+ }
+
+ PartRow * PartsTableModel2::rowData(const QModelIndex &index) const
+ {
+
+ }
+
+ void PartsTableModel2::load(int partType)
+ {
+     beginResetModel();
+     _partTypeModel->load(partType);
+     _rows.clear();
+
+     DQQuery<Part> partsQuery;
+     partsQuery = partsQuery.filter(DQWhere("partType")==partType);
+     if(partsQuery.exec()){
+         while(partsQuery.next()){
+             Part part = partsQuery.record();
+             PartRow * row = new PartRow(part);
+             _rows.append(row);
+         }
+     }
+     endResetModel();
+ }
+

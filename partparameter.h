@@ -9,7 +9,7 @@ class PartParameter : public DQModel {
 public:
     enum ParameterType
     {
-        Text, GenericNumber, Resistance, Capacitance, Inductance, Power, Percentage
+        Text, LongText, GenericNumber, Resistance, Capacitance, Inductance, Power, Percentage
     };    
 
     DQField<QString> name;

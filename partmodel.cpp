@@ -5,7 +5,7 @@ PartModel::PartModel()
 }
 
 bool PartModel::load(const int partId)
-{
+{    
     _partType.load(DQWhere("id")==partId);
     _parameters.clear();
 

@@ -117,6 +117,7 @@ void PartTypeDialog::slotMoveFieldDown()
 void PartTypeDialog::initFieldTypeCombos()
 {
     ui->fieldCombo->addItem(tr("Text"),PartParameter::Text);
+    ui->fieldCombo->addItem(tr("Long Text"),PartParameter::LongText);
     ui->fieldCombo->addItem(tr("Generic Number"),PartParameter::GenericNumber);
     ui->fieldCombo->addItem(tr("Resistance"),PartParameter::Resistance);
     ui->fieldCombo->addItem(tr("Capacitance"),PartParameter::Capacitance);

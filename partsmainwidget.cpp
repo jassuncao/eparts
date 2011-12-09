@@ -11,6 +11,11 @@
 #include "unitformatter.h"
 #include "widgets/qunitlineedit.h"
 
+static const int TREE_NODE_TYPE = Qt::UserRole+1;
+static const int TREE_NODE_ID = Qt::UserRole+2;
+enum NodeType{
+    CategoryNode, PartTypeNode
+};
 
 PartsMainWidget::PartsMainWidget(QWidget *parent) :
     QWidget(parent),
@@ -29,7 +34,8 @@ static QStandardItem* createCategoryItem(const QVariant &id, const QString &name
 {
     QStandardItem * item = new QStandardItem(QIcon(":/images/drawer-close_16x16.png"),name);
     item->setToolTip(description);
-    item->setData(id);
+    item->setData(CategoryNode,TREE_NODE_TYPE);
+    item->setData(id,TREE_NODE_ID);
     item->setEditable(false);
     return item;
 }
@@ -38,7 +44,8 @@ static QStandardItem* createPartsItem(const QVariant &id, const QString &name, c
 {
     QStandardItem * item = new QStandardItem(QIcon(":/images/single-drawer_16x16.png"),name);
     item->setToolTip(description);
-    item->setData(id);
+    item->setData(PartTypeNode,TREE_NODE_TYPE);
+    item->setData(id,TREE_NODE_ID);
     item->setEditable(false);
     return item;
 }
@@ -46,8 +53,8 @@ static QStandardItem* createPartsItem(const QVariant &id, const QString &name, c
 void PartsMainWidget::buildPartsModel()
 {
     qDebug("Building parts tree model");
-    QStandardItemModel * model = new QStandardItemModel(ui->treeView);
-    QStandardItem *rootItem = model->invisibleRootItem();
+    _treeModel = new QStandardItemModel(ui->treeView);
+    QStandardItem *rootItem = _treeModel->invisibleRootItem();
     DQQuery<Category> query;
     Category cat;
     PartType partHolder;
@@ -70,7 +77,7 @@ void PartsMainWidget::buildPartsModel()
         //TODO: Show some info
     }
 
-    ui->treeView->setModel(model);
+    ui->treeView->setModel(_treeModel);
     _partModel.load(1);
     _tableModel = new PartsTableModel(&_partModel, ui->tableView);
     _tableModel->load();
@@ -80,6 +87,16 @@ void PartsMainWidget::buildPartsModel()
             SLOT(currentRowChanged(QModelIndex,QModelIndex)));
     _detailsWidget = new PartDetailsWidget(&_partModel, ui->frame);
 
+    QItemSelectionModel *selectionModel= ui->treeView->selectionModel();
+    connect(selectionModel,
+            SIGNAL(selectionChanged (const QItemSelection &, const QItemSelection &)),
+            this,
+            SLOT(treeSelectionChanged(const QItemSelection &, const QItemSelection &)));
+    /*
+    connect(ui->treeView->selectionModel(),
+            SIGNAL(currentChanged(QModelIndex,QModelIndex)),
+            SLOT(treeViewCurrentChanged(QModelIndex,QModelIndex)));
+*/
     ui->verticalLayout->insertWidget(0,_detailsWidget);
     //initDetailsViewWidget();
 }
@@ -124,3 +141,29 @@ void PartsMainWidget::currentRowChanged ( const QModelIndex & current, const QMo
     }
     qDebug()<<"Row changed"<<current.row();
 }
+
+
+void PartsMainWidget::treeSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
+{
+    const QModelIndex index = ui->treeView->selectionModel()->currentIndex();
+    if(index.isValid()){
+        QVariant nodeType = index.data(TREE_NODE_TYPE);
+        if(nodeType==PartTypeNode){
+            QVariant partTypeId = index.data(TREE_NODE_ID);
+            qDebug()<<"Selected part type"<<partTypeId;
+            _partModel.load(partTypeId.toInt());
+            delete _tableModel;
+            _tableModel = new PartsTableModel(&_partModel, ui->tableView);
+            _tableModel->load();
+            ui->tableView->setModel(_tableModel);
+        }
+    }
+}
+
+/*
+void PartsMainWidget::treeCurrentChanged(const QModelIndex &current, const QModelIndex &previous)
+{
+    qDebug()<<"Node changed"<<current;
+    //_treeModel->data()
+}
+*/
