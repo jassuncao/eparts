@@ -142,30 +142,6 @@ int PartsTableModel::rowCount(const QModelIndex &parent) const
      return QVariant();
  }
 
- PartsTableRow::PartsTableRow(Part part) :
-     _part(part), _loaded(false)
- {}
-
- void PartsTableRow::load()
- {
-     qDebug()<<"Loading row data "<<_part.id;
-     DQQuery<ParameterValue> valuesQuery;
-     valuesQuery = valuesQuery.filter(DQWhere("part")==_part.id);
-     if(valuesQuery.exec()){
-         while(valuesQuery.next()){
-             ParameterValue paramValue = valuesQuery.record();
-             int paramId = paramValue.partParameter.get().toInt();
-             _paramValues[paramId] = paramValue;
-         }
-     }
-     _loaded = true;
- }
-
- void PartsTableRow::save()
- {
-
- }
-
  PartsTableModel2::PartsTableModel2(QObject *parent) :
      QAbstractTableModel(parent)
  {
@@ -181,12 +157,12 @@ int PartsTableModel::rowCount(const QModelIndex &parent) const
      _rows.clear();
  }
 
- int  PartsTableModel2::rowCount(const QModelIndex &parent) const
+ int PartsTableModel2::rowCount(const QModelIndex &parent) const
  {
      return _rows.count();
  }
 
- int  PartsTableModel2::columnCount(const QModelIndex &parent) const
+ int PartsTableModel2::columnCount(const QModelIndex &parent) const
  {
      return _partTypeModel.fields().count();
  }
@@ -198,18 +174,20 @@ int PartsTableModel::rowCount(const QModelIndex &parent) const
      int row = index.row();
      int column = index.column();
      if(row<0 || row>=_rows.count())
-         return QVariant();
-     _partTypeModel.fieldType()
-
+         return QVariant();     
      if(role!=Qt::DisplayRole)
-         return QVariant();
-     const PartsTableRow * tableRow = _rows.at(row);
+         return QVariant();     
+     PartsTableRow * tableRow = _rows.at(row);
      if(!tableRow->isLoaded())
          tableRow->load();
-
+     QVariant fieldValue = _partTypeModel.fieldValue(column,tableRow);
+     PartParameter::ParameterType paramType = _partTypeModel.fieldType(column);
+     if(PartParameter::isText(paramType))
+         return fieldValue;
+     return UnitFormatter::format(paramType,fieldValue.toDouble());
  }
 
- bool  PartsTableModel2::setData(const QModelIndex &index, const QVariant &value, int role)
+ bool PartsTableModel2::setData(const QModelIndex &index, const QVariant &value, int role)
  {
 
  }
@@ -218,7 +196,7 @@ int PartsTableModel::rowCount(const QModelIndex &parent) const
  {
      if (role != Qt::DisplayRole || orientation!=Qt::Horizontal)
          return QVariant();
-     QStringList & fields = _partTypeModel.fields();
+     const QStringList & fields = _partTypeModel.fields();
      if(section<fields.count())
          return fields.at(section);
      return QVariant();
@@ -232,7 +210,7 @@ int PartsTableModel::rowCount(const QModelIndex &parent) const
  void PartsTableModel2::load(int partType)
  {
      beginResetModel();
-     _partTypeModel->load(partType);
+     _partTypeModel.load(partType);
      _rows.clear();
 
      DQQuery<Part> partsQuery;
@@ -240,7 +218,7 @@ int PartsTableModel::rowCount(const QModelIndex &parent) const
      if(partsQuery.exec()){
          while(partsQuery.next()){
              Part part = partsQuery.record();
-             PartRow * row = new PartRow(part);
+             PartsTableRow * row = new PartsTableRow(part);
              _rows.append(row);
          }
      }

@@ -19,21 +19,6 @@ public:
     QHash<int,ParameterValue> paramValues;
 };
 
-class PartsTableRow {
-
-public:
-    PartsTableRow(Part part);
-    inline bool isLoaded(){ return _loaded;}
-    inline const Part & part() const { return _part;}
-    inline const ParameterValue paramValue(int paramId) const { return _paramValues[paramId];}
-    void load();
-    void save();
-private:
-    Part _part;
-    QHash<int,ParameterValue> _paramValues;
-    bool _loaded;
-};
-
 class PartsTableModel : public QAbstractTableModel 
 {
     Q_OBJECT

@@ -34,7 +34,8 @@ SOURCES += main.cpp\
     parttypedialog.cpp \
     models/partparameterslistmodel.cpp \
     models/partparameterstablemodel.cpp \
-    models/parttypemodel.cpp
+    models/parttypemodel.cpp \
+    models/partstablerow.cpp
 
 HEADERS  += mainwindow.h \
     connection.h \
@@ -65,7 +66,8 @@ HEADERS  += mainwindow.h \
     parttypedialog.h \
     models/partparameterslistmodel.h \
     models/partparameterstablemodel.h \
-    models/parttypemodel.h s
+    models/parttypemodel.h s \
+    models/partstablerow.h
 
 FORMS    += mainwindow.ui \
     partsmainwidget.ui \
@@ -77,6 +79,8 @@ FORMS    += mainwindow.ui \
 
 RESOURCES += \
     resources.qrc
+
+
 
 
 

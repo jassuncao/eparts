@@ -24,7 +24,8 @@ public:
 private:
     PartDetailsWidget * _detailsWidget;
     PartModel _partModel;
-    PartsTableModel * _tableModel;
+    PartsTableModel2 _tableModel;
+    //PartsTableModel * _tableModel;
     QStandardItemModel * _treeModel;
     Ui::PartsMainWidget *ui;    
     void buildPartsModel();

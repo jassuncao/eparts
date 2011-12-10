@@ -17,6 +17,7 @@
 #include <QtGui/QTreeView>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QWidget>
+#include <QtGui/QPlainTextEdit>
 #include <QHash>
 #include "widgets/qunitlineedit.h"
 #include "models/partstablemodel.h"
@@ -32,7 +33,7 @@ public:
     void setData(PartRow * data);
 private:
     PartModel * _partModel;
-    QLineEdit * valueField;
+    QWidget * valueField;
     QLabel * quantityLabel;
     QLabel * minimumQuantityLabel;
     QLabel * notesLabel;
@@ -41,7 +42,7 @@ private:
     QSpinBox * quantitySpinBox;
     QSpinBox * minimumQuantitySpinBox;
     QTextEdit * notesTextEdit;
-    QHash<int,QLineEdit*> _params;
+    QHash<int,QWidget*> _params;
 
 signals:
 

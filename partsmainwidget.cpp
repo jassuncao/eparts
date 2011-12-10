@@ -21,8 +21,12 @@ PartsMainWidget::PartsMainWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::PartsMainWidget)
 {
-    ui->setupUi(this);
+    ui->setupUi(this);    
     buildPartsModel();
+    ui->tableView->setColumnHidden(1,true);
+    ui->tableView->setColumnHidden(2,true);
+    ui->tableView->setColumnHidden(3,true);
+    ui->tableView->setColumnHidden(4,true);
 }
 
 PartsMainWidget::~PartsMainWidget()
@@ -78,10 +82,15 @@ void PartsMainWidget::buildPartsModel()
     }
 
     ui->treeView->setModel(_treeModel);
+
     _partModel.load(1);
+    /*
     _tableModel = new PartsTableModel(&_partModel, ui->tableView);
     _tableModel->load();
     ui->tableView->setModel(_tableModel);
+    */
+    _tableModel.load(1);
+    ui->tableView->setModel(&_tableModel);
     connect(ui->tableView->selectionModel(),
             SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
             SLOT(currentRowChanged(QModelIndex,QModelIndex)));
@@ -135,9 +144,11 @@ void PartsMainWidget::initDetailsViewWidget()
 void PartsMainWidget::currentRowChanged ( const QModelIndex & current, const QModelIndex & previous ){
     QAbstractItemModel * model = ui->tableView->model();
     if(model!=NULL){
+        /*
         PartRow * rowData = _tableModel->rowData(current);
         qDebug()<<"Setting data in details view";
         _detailsWidget->setData(rowData);
+        */
     }
     qDebug()<<"Row changed"<<current.row();
 }
@@ -152,10 +163,13 @@ void PartsMainWidget::treeSelectionChanged(const QItemSelection &selected, const
             QVariant partTypeId = index.data(TREE_NODE_ID);
             qDebug()<<"Selected part type"<<partTypeId;
             _partModel.load(partTypeId.toInt());
+            /*
             delete _tableModel;
             _tableModel = new PartsTableModel(&_partModel, ui->tableView);
             _tableModel->load();
             ui->tableView->setModel(_tableModel);
+            */
+            _tableModel.load(partTypeId.toInt());
         }
     }
 }

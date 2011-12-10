@@ -2,14 +2,28 @@
 #include "partmodel.h"
 #include "unitformatter.h"
 
-static QLineEdit * createLineEdit(PartParameter::ParameterType paramType, QWidget *parent)
-{
+
+static QWidget * createLineEdit(PartParameter::ParameterType paramType, QWidget *parent)
+{    
     if(paramType==PartParameter::Text)
     {
         return new QLineEdit(parent);
     }
+    else if(paramType==PartParameter::LongText)
+    {
+        QPlainTextEdit * editor = new QPlainTextEdit(parent);
+        QFontMetrics m(editor->font());
+        int rowHeight = m.lineSpacing();
+        const int nRows = 4;
+        editor->setFixedHeight(nRows * rowHeight+2);
+        editor->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        return new QPlainTextEdit(parent);
+
+    }
     else{
-        return new QUnitLineEdit(UnitFormatter::getUnitSymbol(paramType), parent);
+        QUnitLineEdit * editor = new QUnitLineEdit(UnitFormatter::getUnitSymbol(paramType), parent);
+        editor->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+        return editor;
     }
 }
 
@@ -31,7 +45,7 @@ PartDetailsWidget::PartDetailsWidget(PartModel *partModel, QWidget *parent ) :
         PartParameter::ParameterType valueType = (PartParameter::ParameterType)param.type.get().toUInt();
 
         QLabel * fieldLabel = new QLabel(param.name+":");
-        QLineEdit * fieldValue = createLineEdit(valueType, this);
+        QWidget * fieldValue = createLineEdit(valueType, this);
         formLayout->addRow(fieldLabel, fieldValue);
         _params[param.id.get().toInt()]=fieldValue;
     }
@@ -68,6 +82,19 @@ void PartDetailsWidget::retranslateUi(QWidget *widget)
     notesLabel->setText(QApplication::translate("PartDetailsWidget", "Notes:", 0, QApplication::UnicodeUTF8));
 }
 
+static void setFieldValue(QWidget * editor, QString value){
+    QLineEdit* lineEdit = qobject_cast<QLineEdit*>(editor);
+    if(lineEdit){
+        lineEdit->setText(value);
+    }
+    else {
+        QPlainTextEdit * textEdit = qobject_cast<QPlainTextEdit*>(editor);
+        if(textEdit){
+            textEdit->setPlainText(value);
+        }
+    }
+}
+
 void PartDetailsWidget::setData(PartRow * data)
 {
     if(data==NULL){
@@ -85,22 +112,26 @@ void PartDetailsWidget::setData(PartRow * data)
           else{
               valueText = UnitFormatter::format(data->part.numericValue);
           }
-       valueField->setText(valueText);
+          setFieldValue(valueField,valueText);
+
        const QList<PartParameter>  * parameters = _partModel->parameters();
        QList<PartParameter>::const_iterator it;
        for(it = parameters->constBegin();it!=parameters->constEnd();++it)
        {
            int id = it->id.get().toInt();
            ParameterValue paramValue = data->paramValues[id];
-           QLineEdit * paramEditor = _params[id];
+           QWidget * paramEditor = _params[id];
            PartParameter::ParameterType valueType = (PartParameter::ParameterType)it->type.get().toUInt();
+           QString text;
            if(valueType==PartParameter::Text)
            {
-               paramEditor->setText(paramValue.textValue);
+               text = paramValue.textValue;
+
            }
            else{
-               paramEditor->setText(UnitFormatter::format(paramValue.numericValue));
+               text = UnitFormatter::format(paramValue.numericValue);
            }
+           setFieldValue(paramEditor,valueText);
        }
     }
 }

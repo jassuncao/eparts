@@ -18,6 +18,15 @@ public:
     DQForeignKey<PartType> partType;
     DQField<bool> fixedValues;
     DQField<int> orderIndex;
+
+    inline bool isText(){
+        uint value = type.get().toUInt();
+        return value == Text || value == LongText;
+    }
+
+    inline static bool isText(ParameterType paramType){
+        return paramType == Text || paramType == LongText;
+    }
 };
 
 /// Declare the model and the field clause
