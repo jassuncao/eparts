@@ -103,7 +103,6 @@ bool Database::initTables(DQConnection &connection)
      logicICs.valueType = PartParameter::Text;
      analogICs.save();
 
-     /*
      PartParameter resistance;
      resistance.name = "Resistance";
      resistance.description = "Ohmic value";
@@ -112,14 +111,14 @@ bool Database::initTables(DQConnection &connection)
      resistance.fixedValues = false;
      resistance.orderIndex = 1;
      resistance.save();
-*/
+
      PartParameter power;
      power.name = "Power";
      power.description = "Maximum power dissipation value";
      power.type = PartParameter::Power;
      power.partType = fixedResistors.id;
      power.fixedValues = false;
-     power.orderIndex = 1;
+     power.orderIndex = 2;
      power.save();
 
      PartParameter tolerance;
@@ -128,23 +127,46 @@ bool Database::initTables(DQConnection &connection)
      tolerance.type = PartParameter::Percentage;
      tolerance.partType = fixedResistors.id;
      tolerance.fixedValues = false;
-     tolerance.orderIndex = 2;
+     tolerance.orderIndex = 3;
      tolerance.save();
 
+     PartParameter resistorNotes;
+     resistorNotes.name = "Notes";
+     resistorNotes.description = "Resistor notes";
+     resistorNotes.type = PartParameter::LongText;
+     resistorNotes.partType = fixedResistors.id;
+     resistorNotes.fixedValues = false;
+     resistorNotes.orderIndex = 4;
+     resistorNotes.save();
 
+
+     double value=500;
      for(int i=0; i<1000; ++i){
          Part part;
          part.partType = fixedResistors.id;
          part.quantity = 2*i;
          part.minimumQuantity = 0;
-         part.numericValue = 4700;
          part.save();         
+
+         ParameterValue resistanceValue;
+         resistanceValue.numericValue = value;
+         resistanceValue.part = part.id;
+         resistanceValue.partParameter = resistance.id;
+         resistanceValue.save();
 
          ParameterValue resistorPower;
          resistorPower.numericValue = 0.25;
          resistorPower.part = part.id;
          resistorPower.partParameter = power.id;
          resistorPower.save();
+
+         ParameterValue resistorNote;
+         resistorNote.textValue = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur rutrum laoreet tincidunt. Curabitur elit enim, laoreet sed interdum nec, sodales gravida turpis. Pellentesque consectetur pulvinar purus.";
+         resistorNote.part = part.id;
+         resistorNote.partParameter = resistorNotes.id;
+         resistorNote.save();
+
+         value+=500;
      }
      return true;
 }

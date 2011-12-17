@@ -91,16 +91,22 @@ void PartsMainWidget::buildPartsModel()
     */
     _tableModel.load(1);
     ui->tableView->setModel(&_tableModel);
+    /*
     connect(ui->tableView->selectionModel(),
             SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
             SLOT(currentRowChanged(QModelIndex,QModelIndex)));
-    _detailsWidget = new PartDetailsWidget(&_partModel, ui->frame);
+    */
+    _detailsWidget = new PartDetailsWidget(ui->frame);
+    connect(ui->tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
+            _detailsWidget, SLOT(setCurrentModelIndex(QModelIndex)));
+
 
     QItemSelectionModel *selectionModel= ui->treeView->selectionModel();
     connect(selectionModel,
             SIGNAL(selectionChanged (const QItemSelection &, const QItemSelection &)),
             this,
             SLOT(treeSelectionChanged(const QItemSelection &, const QItemSelection &)));
+
     /*
     connect(ui->treeView->selectionModel(),
             SIGNAL(currentChanged(QModelIndex,QModelIndex)),
@@ -170,6 +176,7 @@ void PartsMainWidget::treeSelectionChanged(const QItemSelection &selected, const
             ui->tableView->setModel(_tableModel);
             */
             _tableModel.load(partTypeId.toInt());
+            _detailsWidget->setModel(_tableModel.partTypeModel(), &_tableModel);
         }
     }
 }

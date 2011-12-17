@@ -9,13 +9,7 @@ class Part : public DQModel {
 public:
     DQField<int> quantity;
     DQField<int> minimumQuantity;
-    DQField<QString> notes;
     DQForeignKey<PartType> partType;
-    DQField<qreal> numericValue;
-    DQField<QString> textValue;
-    DQField<QString> dataSheet;
-    DQField<QString> url;
-
 };
 
 /// Declare the model and the field clause
@@ -23,12 +17,7 @@ DQ_DECLARE_MODEL(Part,
                  "part", // the table name.
                  DQ_FIELD(quantity, DQNotNull),
                  DQ_FIELD(minimumQuantity, DQNotNull),
-                 DQ_FIELD(notes),
-                 DQ_FIELD(partType , DQNotNull),
-                 DQ_FIELD(numericValue),
-                 DQ_FIELD(textValue),
-                 DQ_FIELD(dataSheet),
-                 DQ_FIELD(url)
+                 DQ_FIELD(partType , DQNotNull)
                  )
 
 #endif // PART_H

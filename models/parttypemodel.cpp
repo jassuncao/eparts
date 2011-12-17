@@ -1,6 +1,6 @@
 #include "parttypemodel.h"
 
-enum FIXED_FIELDS {Quantity, MinimumQuantity,Notes,Datasheet,URL};
+enum FIXED_FIELDS {Quantity=0, MinimumQuantity,FIXED_FIELDS_LEN};
 
 PartTypeModel::PartTypeModel(QObject * parent) : QObject(parent)
 {
@@ -12,10 +12,7 @@ bool PartTypeModel::load(const int partTypeId)
     _fieldNames.clear();
     _parameters.clear();
     _fieldNames<<tr("Quantity");
-    _fieldNames<<tr("Minimum Quantity");
-    _fieldNames<<tr("Notes");
-    _fieldNames<<tr("Datasheet");
-    _fieldNames<<tr("URL");
+    _fieldNames<<tr("Minimum Quantity");    
 
     DQQuery<PartParameter> parametersQuery;
     parametersQuery = parametersQuery.filter(DQWhere("partType") == partTypeId).orderBy("orderIndex");
@@ -35,15 +32,9 @@ PartParameter::ParameterType PartTypeModel::fieldType(int fieldIndex) const
         case Quantity:
             return PartParameter::GenericNumber;
         case MinimumQuantity:
-            return PartParameter::GenericNumber;
-        case Notes:
-            return PartParameter::LongText;
-        case Datasheet:
-            return PartParameter::Text;
-        case URL:
-            return PartParameter::Text;
+            return PartParameter::GenericNumber;       
     }
-    fieldIndex = fieldIndex-5;
+    fieldIndex = fieldIndex-FIXED_FIELDS_LEN;
     return (PartParameter::ParameterType)_parameters[fieldIndex].type.get().toUInt();
 }
 
@@ -53,15 +44,9 @@ QVariant PartTypeModel::fieldValue(int fieldIndex, const PartsTableRow * tableRo
         case Quantity:
             return tableRow->constPart().quantity.get();
         case MinimumQuantity:
-            return tableRow->constPart().minimumQuantity.get();
-        case Notes:
-            return tableRow->constPart().notes.get();
-        case Datasheet:
-            return tableRow->constPart().dataSheet.get();
-        case URL:
-            return tableRow->constPart().url.get();
+            return tableRow->constPart().minimumQuantity.get();       
     }
-    fieldIndex = fieldIndex-5;
+    fieldIndex = fieldIndex-FIXED_FIELDS_LEN;
     PartParameter partParam = _parameters[fieldIndex];
     int paramId = partParam.id.get().toInt();
     const ParameterValue paramValue = tableRow->constParamValue(paramId);

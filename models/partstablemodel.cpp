@@ -10,138 +10,6 @@
 
 //using namespace EParts;
 
-PartsTableModel::PartsTableModel(const PartModel * partModel, QObject *parent) :
-    QAbstractTableModel (parent), _partModel(partModel)
-{
-}
-
-PartsTableModel::~PartsTableModel()
-{
-}
-
-
-void PartsTableModel::loadRowData(PartRow * row) const
-{
-    qDebug()<<"Loading row data "<<row->part.id;
-    DQQuery<ParameterValue> valuesQuery;
-    int partId = row->part.id;
-    valuesQuery = valuesQuery.filter(DQWhere("part")==partId);
-    if(valuesQuery.exec()){
-        while(valuesQuery.next()){
-            ParameterValue paramValue = valuesQuery.record();
-            int paramId = paramValue.partParameter.get().toInt();
-            qDebug()<<"ParamId="<<paramId;
-            row->paramValues[paramId] = paramValue;
-        }
-        row->loaded=true;
-    }
-}
-
-
-void PartsTableModel::load()
-{
-    _columnNames.clear();
-    _rows.clear();
-    _columnNames.append("Quantity");
-    _columnNames.append("Value");
-
-    const QList<PartParameter>  * parameters = _partModel->parameters();
-    for (int i = 0; i < parameters->size(); ++i) {
-        PartParameter param = parameters->at(i);
-        _columnNames.append(param.name);
-    }
-
-    DQQuery<Part> partsQuery;
-    if(partsQuery.exec()){        
-        while(partsQuery.next()){
-            Part part = partsQuery.record();            
-            PartRow * row = new PartRow(part);
-            _rows.append(row);
-        }
-    }
-}
-
-int PartsTableModel::rowCount(const QModelIndex &parent) const
-{
-     Q_UNUSED(parent);
-     return _rows.size();
-}
-
- int PartsTableModel::columnCount(const QModelIndex &parent) const
- {
-     Q_UNUSED(parent);     
-     return _columnNames.size();
- }
-
- PartRow * PartsTableModel::rowData(const QModelIndex &index) const{
-     if(!index.isValid())
-         return NULL;
-     int row = index.row();
-     if (row >= _rows.size() || row < 0)
-         return NULL;
-     PartRow * rowData = _rows.at(row);
-     if(!rowData->loaded)
-         loadRowData(rowData);
-     return rowData;
- }
-
- QVariant PartsTableModel::data(const QModelIndex &index, int role) const
- {
-     if (!index.isValid())
-         return QVariant();
-
-     if (index.row() >= _rows.size() || index.row() < 0)
-         return QVariant();
-
-     if (role == Qt::DisplayRole) {
-         PartRow * row = _rows.at(index.row());
-         if(!row->loaded)
-             loadRowData(row);
-         int column = index.column();
-         if(column==0){
-             return row->part.quantity;
-         }
-         else if(column==1){
-             PartParameter::ParameterType type = _partModel->valueType();
-            if(type==PartParameter::Text){
-                return row->part.textValue;
-            }
-            else{               
-                return UnitFormatter::format(type, row->part.numericValue);
-            }
-         }
-         else{
-             PartParameter param = _partModel->parameters()->at(column-2);
-             ParameterValue value = row->paramValues.value(param.id);
-             if(param.type==PartParameter::Text){
-                 return value.textValue;
-             }             
-             else{
-                 PartParameter::ParameterType type = (PartParameter::ParameterType)param.type.get().toUInt();
-                 return UnitFormatter::format(type, value.numericValue);
-             }
-         }
-     }
-     return QVariant();
- }
-
- QVariant PartsTableModel::headerData(int section, Qt::Orientation orientation, int role) const
- {
-     if (role != Qt::DisplayRole)
-         return QVariant();
-
-     if (orientation == Qt::Horizontal) {
-         if(section>=0 && section < _columnNames.size())
-         {             
-            return _columnNames.at(section);
-         }
-         else{
-             return QVariant();
-         }
-     }
-     return QVariant();
- }
-
  PartsTableModel2::PartsTableModel2(QObject *parent) :
      QAbstractTableModel(parent)
  {
@@ -174,8 +42,8 @@ int PartsTableModel::rowCount(const QModelIndex &parent) const
      int row = index.row();
      int column = index.column();
      if(row<0 || row>=_rows.count())
-         return QVariant();     
-     if(role!=Qt::DisplayRole)
+         return QVariant();
+     if(role!=Qt::DisplayRole && role!=Qt::EditRole)
          return QVariant();     
      PartsTableRow * tableRow = _rows.at(row);
      if(!tableRow->isLoaded())

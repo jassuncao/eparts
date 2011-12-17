@@ -18,36 +18,37 @@
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QWidget>
 #include <QtGui/QPlainTextEdit>
+#include <QtGui/QDataWidgetMapper>
 #include <QHash>
 #include "widgets/qunitlineedit.h"
 #include "models/partstablemodel.h"
-
+#include "models/parttypemodel.h"
 class PartModel;
+class QAbstractItemModel;
 
 class PartDetailsWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit PartDetailsWidget(PartModel *partModel, QWidget *parent = 0);
+    explicit PartDetailsWidget(QWidget *parent = 0);
     void retranslateUi(QWidget *widget);
-    void setData(PartRow * data);
+    //void setData(PartRow * data);
+    void setModel(const PartTypeModel * partType, QAbstractItemModel * model);
 private:
-    PartModel * _partModel;
-    QWidget * valueField;
-    QLabel * quantityLabel;
-    QLabel * minimumQuantityLabel;
-    QLabel * notesLabel;
-    QLabel * valueLabel;
-    QFormLayout *formLayout;
-    QSpinBox * quantitySpinBox;
-    QSpinBox * minimumQuantitySpinBox;
-    QTextEdit * notesTextEdit;
-    QHash<int,QWidget*> _params;
 
+    const PartTypeModel * _partTypeModel;
+    QLabel * quantityLabel;
+    QLabel * minimumQuantityLabel;     
+    QSpinBox * quantitySpinBox;
+    QSpinBox * minimumQuantitySpinBox;    
+    QFormLayout *_formLayout;
+    QHash<int,QWidget*> _params;
+    QDataWidgetMapper * _dataMapper;
+    void createWidgets();
 signals:
 
 public slots:
-
+    void setCurrentModelIndex(const QModelIndex & index);
 };
 
 #endif // PARTDETAILSWIDGET_H
