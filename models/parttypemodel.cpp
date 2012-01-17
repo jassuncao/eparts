@@ -60,5 +60,24 @@ QVariant PartTypeModel::fieldValue(int fieldIndex, const PartsTableRow * tableRo
 
 void PartTypeModel::setFieldValue(int fieldIndex, PartsTableRow * tableRow, QVariant value)
 {
+    switch(fieldIndex)   {
+        case Quantity:
+            tableRow->part().quantity.set(value);
+            break;
+        case MinimumQuantity:
+            tableRow->part().minimumQuantity.set(value);
+            break;
+        default:
+            fieldIndex = fieldIndex-FIXED_FIELDS_LEN;
+            PartParameter partParam = _parameters[fieldIndex];
+            int paramId = partParam.id.get().toInt();
+            ParameterValue & paramValue = tableRow->paramValue(paramId);
+            if(partParam.isText()){
+                paramValue.textValue.set(value);
+            }
+            else{
+                paramValue.numericValue.set(value);
+            }
+    }
 
 }

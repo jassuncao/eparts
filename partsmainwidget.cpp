@@ -10,6 +10,7 @@
 #include <QLabel>
 #include "unitformatter.h"
 #include "widgets/qunitlineedit.h"
+#include <QAbstractButton>
 
 static const int TREE_NODE_TYPE = Qt::UserRole+1;
 static const int TREE_NODE_ID = Qt::UserRole+2;
@@ -21,7 +22,7 @@ PartsMainWidget::PartsMainWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::PartsMainWidget)
 {
-    ui->setupUi(this);    
+    ui->setupUi(this);
     buildPartsModel();
     ui->tableView->setColumnHidden(1,true);
     ui->tableView->setColumnHidden(2,true);
@@ -107,14 +108,20 @@ void PartsMainWidget::buildPartsModel()
             this,
             SLOT(treeSelectionChanged(const QItemSelection &, const QItemSelection &)));
 
-    /*
-    connect(ui->treeView->selectionModel(),
-            SIGNAL(currentChanged(QModelIndex,QModelIndex)),
-            SLOT(treeViewCurrentChanged(QModelIndex,QModelIndex)));
-*/
+    connect(ui->buttonBox,SIGNAL(rejected()),_detailsWidget,SLOT(revert()));
+    connect(ui->buttonBox,SIGNAL(clicked(QAbstractButton*)),this,SLOT(buttonBoxClicked(QAbstractButton*)));
+
     ui->verticalLayout->insertWidget(0,_detailsWidget);
     //initDetailsViewWidget();
 }
+
+void PartsMainWidget::buttonBoxClicked(QAbstractButton* button)
+{
+    QDialogButtonBox::StandardButton standardButton = ui->buttonBox->standardButton(button);
+    if(standardButton & QDialogButtonBox::Apply)
+        _detailsWidget->submit();
+}
+
 /*
 void PartsMainWidget::initDetailsViewWidget()
 {

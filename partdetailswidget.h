@@ -32,7 +32,6 @@ class PartDetailsWidget : public QWidget
 public:
     explicit PartDetailsWidget(QWidget *parent = 0);
     void retranslateUi(QWidget *widget);
-    //void setData(PartRow * data);
     void setModel(const PartTypeModel * partType, QAbstractItemModel * model);
 private:
 
@@ -49,6 +48,8 @@ signals:
 
 public slots:
     void setCurrentModelIndex(const QModelIndex & index);
+    void submit();
+    void revert();
 };
 
 #endif // PARTDETAILSWIDGET_H

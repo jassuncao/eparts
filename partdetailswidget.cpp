@@ -26,7 +26,7 @@ static QWidget * createFieldEditor(PartParameter::ParameterType paramType, QWidg
     case PartParameter::GenericNumber:
     {
         QDoubleSpinBox * spinBox = new QDoubleSpinBox(parent);
-        spinBox->setRange(GENERIC_NUMBER_MIN, GENERIC_NUMBER_MAX);
+        spinBox->setRange(GENERIC_NUMBER_MIN, GENERIC_NUMBER_MAX);        
         return spinBox;
     }
     case PartParameter::Resistance:
@@ -51,6 +51,7 @@ static void clearLayout(QLayout *l) {
         if (child->layout()) {
                 clearLayout((QLayout *)child->layout());
         }
+        delete child->widget();
         delete child;
     }
 }
@@ -65,9 +66,18 @@ PartDetailsWidget::PartDetailsWidget(QWidget *parent ) :
     sizePolicy3.setHeightForWidth(notesTextEdit->sizePolicy().hasHeightForWidth());
     notesTextEdit->setSizePolicy(sizePolicy3);
     formLayout->addRow(notesLabel, notesTextEdit);
-    */
+    */    
     _dataMapper = new QDataWidgetMapper(this);
+    _dataMapper->setSubmitPolicy(QDataWidgetMapper::AutoSubmit);
+}
 
+void PartDetailsWidget::submit()
+{
+
+}
+
+void PartDetailsWidget::revert()
+{
 }
 
 void PartDetailsWidget::retranslateUi(QWidget *widget)
@@ -136,7 +146,7 @@ void PartDetailsWidget::createWidgets(){
     quantitySpinBox->setMaximum(65535);
     quantitySpinBox->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
     _formLayout->addRow(quantityLabel, quantitySpinBox);
-    _dataMapper->addMapping(quantitySpinBox,fieldIndex++);
+    _dataMapper->addMapping(quantitySpinBox,fieldIndex++);    
 
     minimumQuantityLabel = new QLabel(this);
     minimumQuantitySpinBox = new QSpinBox(this);

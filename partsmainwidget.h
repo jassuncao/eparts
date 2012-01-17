@@ -33,6 +33,7 @@ private:
 private slots:
     void currentRowChanged ( const QModelIndex & current, const QModelIndex & previous );
     void treeSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+    void buttonBoxClicked(QAbstractButton*);
 
 };
 
