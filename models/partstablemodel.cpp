@@ -52,12 +52,28 @@
      PartParameter::ParameterType paramType = _partTypeModel.fieldType(column);
      if(PartParameter::isText(paramType))
          return fieldValue;
-     return UnitFormatter::format(paramType,fieldValue.toDouble());
+     if(role==Qt::DisplayRole)
+        return UnitFormatter::format(paramType,fieldValue.toDouble());
+     else
+         return fieldValue;
  }
 
  bool PartsTableModel2::setData(const QModelIndex &index, const QVariant &value, int role)
  {
-
+     if (!index.isValid())
+         return false;
+     int row = index.row();
+     int column = index.column();
+     if(row<0 || row>=_rows.count())
+         return false;
+     if(role!=Qt::EditRole)
+         return false;
+     PartsTableRow * tableRow = _rows.at(row);
+     if(!tableRow->isLoaded())
+         tableRow->load();
+     qDebug()<<"Setting field "<<column<<" with value "<<value;
+     _partTypeModel.setFieldValue(column,tableRow, value);
+     return true;
  }
 
  QVariant  PartsTableModel2::headerData(int section, Qt::Orientation orientation, int role) const
