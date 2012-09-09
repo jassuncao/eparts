@@ -15,5 +15,12 @@
         <file>images/arrow-up_16x16.png</file>
         <file>images/list-add_16x16.png</file>
         <file>images/list-remove_16x16.png</file>
+        <file>images/add_part_24x24.png</file>
+        <file>images/remove_part_24x24.png</file>
+        <file>images/edit_clear_16x16.png</file>
+        <file>images/cart_48x48.png</file>
+        <file>images/list_48x48.png</file>
+        <file>images/folder_48x48.png</file>
+        <file>images/chip_48x48.png</file>
     </qresource>
 </RCC>

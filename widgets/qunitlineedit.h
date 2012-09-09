@@ -7,6 +7,8 @@
 class QLabel;
 class QChar;
 
+namespace Widgets {
+
 class QUnitLineEdit : public QLineEdit
 {
     Q_OBJECT
@@ -24,5 +26,7 @@ signals:
 public slots:
 
 };
+
+}
 
 #endif // QUNITLINEEDIT_H

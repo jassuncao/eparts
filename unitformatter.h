@@ -24,28 +24,29 @@ public:
     static QString format(double value);
     static QString format(double value, QChar unit);
 
+    /*
     inline static QString formatResistance(double value)
     {
-        return format(value, QChar(ohmSymbol));
+        return formatParameter(value, QChar(ohmSymbol));
     }
 
     inline static QString formatCapacitance(double value)
     {
-        return format(value, QChar('F'));
+        return formatParameter(value, QChar('F'));
     }
     inline static QString formatInductance(double value)
     {
-        return format(value, QChar('H'));
+        return formatParameter(value, QChar('H'));
     }
 
     inline static QString formatPower(double value)
     {
-        return format(value, QChar('W'));
+        return formatParameter(value, QChar('W'));
     }
+    */
+    static QString formatPercentage(double value, QChar unit);
 
-    static QString formatPercentage(double value);
-
-    static QString format(PartParameter::ParameterType paramType, double value);
+    static QString formatParameter(PartParameter::ParameterType paramType, double value, bool includeUnit=true);
 
     static QChar getUnitSymbol(PartParameter::ParameterType paramType);
 

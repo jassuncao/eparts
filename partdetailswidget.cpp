@@ -3,6 +3,9 @@
 #include "unitformatter.h"
 #include "float.h"
 #include <QtGui/QLayoutIterator>
+
+using namespace Widgets;
+
 const double GENERIC_NUMBER_MIN= -DBL_MAX;
 const double GENERIC_NUMBER_MAX = DBL_MAX;
 

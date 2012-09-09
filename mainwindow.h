@@ -3,11 +3,17 @@
 
 #include <QMainWindow>
 
+
 class QActionGroup;
 class PartsMainWidget;
+class QMenuBar;
 
 namespace Ui {
     class MainWindow;
+}
+
+namespace Widgets {
+    class FancyTabWidget;
 }
 
 class MainWindow : public QMainWindow
@@ -24,7 +30,10 @@ private slots:
     void showOptions();
 
 private:
-    Ui::MainWindow *ui;
+    //Ui::MainWindow *ui;
+    Widgets::FancyTabWidget *_tabWidget;
+    QMenuBar *_menuBar;
+    QMenu *_menuEdit;
     QActionGroup *toolsGroup;
     PartsMainWidget * partsMainWidget;
 };

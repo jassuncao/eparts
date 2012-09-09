@@ -35,7 +35,14 @@ SOURCES += main.cpp\
     models/partparameterslistmodel.cpp \
     models/partparameterstablemodel.cpp \
     models/parttypemodel.cpp \
-    models/partstablerow.cpp
+    models/partstablerow.cpp \
+    spinboxdelegate.cpp \
+    widgets/qsearchlineedit.cpp \
+    widgets/fancytabwidget.cpp \
+    widgets/styledbar.cpp \
+    widgets/stylehelper.cpp \
+    unitparser.cpp
+
 
 HEADERS  += mainwindow.h \
     connection.h \
@@ -66,8 +73,14 @@ HEADERS  += mainwindow.h \
     parttypedialog.h \
     models/partparameterslistmodel.h \
     models/partparameterstablemodel.h \
-    models/parttypemodel.h s \
-    models/partstablerow.h
+    models/parttypemodel.h \
+    models/partstablerow.h \
+    spinboxdelegate.h \
+    widgets/qsearchlineedit.h \
+    widgets/fancytabwidget.h \
+    widgets/styledbar.h \
+    widgets/stylehelper.h \
+    unitparser.h
 
 FORMS    += mainwindow.ui \
     partsmainwidget.ui \
@@ -75,10 +88,14 @@ FORMS    += mainwindow.ui \
     categoriesform.ui \
     categorydialog.ui \
     parttypesform.ui \
-    parttypedialog.ui
+    parttypedialog.ui \
+    testwindow.ui
 
 RESOURCES += \
     resources.qrc
+
+OTHER_FILES += \
+    Todo.txt
 
 
 

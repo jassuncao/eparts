@@ -3,6 +3,8 @@
 #include <QStyle>
 #include <QtGui>
 
+using namespace Widgets;
+
 QUnitLineEdit::QUnitLineEdit(QChar unit, QWidget *parent) :
     QLineEdit(parent), _unit(unit)
 {

@@ -10,7 +10,11 @@
 #include <QLabel>
 #include "unitformatter.h"
 #include "widgets/qunitlineedit.h"
-#include <QAbstractButton>
+#include <QtGui>
+#include "spinboxdelegate.h"
+#include "widgets/qsearchlineedit.h"
+
+using namespace Widgets;
 
 static const int TREE_NODE_TYPE = Qt::UserRole+1;
 static const int TREE_NODE_ID = Qt::UserRole+2;
@@ -23,16 +27,43 @@ PartsMainWidget::PartsMainWidget(QWidget *parent) :
     ui(new Ui::PartsMainWidget)
 {
     ui->setupUi(this);
+    _spinBoxDelegate = new SpinBoxDelegate(this);
+    ui->tableView->setItemDelegateForColumn(0,_spinBoxDelegate);
     buildPartsModel();
     ui->tableView->setColumnHidden(1,true);
     ui->tableView->setColumnHidden(2,true);
     ui->tableView->setColumnHidden(3,true);
     ui->tableView->setColumnHidden(4,true);
+
+    QToolBar * toolbar = new QToolBar(ui->frame_2);
+    toolbar->setIconSize(QSize(24,24));
+    toolbar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    QAction * action1 = toolbar->addAction(QIcon(":/images/add_part_24x24.png"),"Add Part",this,SLOT(addPart()));
+    QAction * action2 = toolbar->addAction(QIcon(":/images/remove_part_24x24.png"),"Remove Part",this,SLOT(removePart()));
+    QWidget *spacerWidget = new QWidget(this);
+    spacerWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    spacerWidget->setVisible(true);
+    toolbar->addWidget(spacerWidget);
+    QSearchLineEdit * searchLineEdit = new QSearchLineEdit(this);
+    searchLineEdit->setPlaceholderText("Search...");
+    toolbar->addWidget(searchLineEdit);
+    ui->verticalLayout_3->insertWidget(1,toolbar);
 }
 
 PartsMainWidget::~PartsMainWidget()
 {
     delete ui;
+    delete _spinBoxDelegate;
+}
+
+void PartsMainWidget::addPart()
+{
+
+}
+
+void PartsMainWidget::removePart()
+{
+
 }
 
 static QStandardItem* createCategoryItem(const QVariant &id, const QString &name, const QString &description)
@@ -80,8 +111,7 @@ void PartsMainWidget::buildPartsModel()
     }
     else{
         //TODO: Show some info
-    }
-
+    }    
     ui->treeView->setModel(_treeModel);
 
     _partModel.load(1);
@@ -91,16 +121,24 @@ void PartsMainWidget::buildPartsModel()
     ui->tableView->setModel(_tableModel);
     */
     _tableModel.load(1);
+    /*
+    _proxyModel= new QSortFilterProxyModel(this);
+    _proxyModel->setDynamicSortFilter(true);
+    _proxyModel->setSortRole(Qt::EditRole);
+    _proxyModel->setSourceModel(&_tableModel);
+    */
     ui->tableView->setModel(&_tableModel);
+    ui->tableView->setSortingEnabled(true);
     /*
     connect(ui->tableView->selectionModel(),
             SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
             SLOT(currentRowChanged(QModelIndex,QModelIndex)));
     */
+    /*
     _detailsWidget = new PartDetailsWidget(ui->frame);
     connect(ui->tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
             _detailsWidget, SLOT(setCurrentModelIndex(QModelIndex)));
-
+    */
 
     QItemSelectionModel *selectionModel= ui->treeView->selectionModel();
     connect(selectionModel,
@@ -108,18 +146,29 @@ void PartsMainWidget::buildPartsModel()
             this,
             SLOT(treeSelectionChanged(const QItemSelection &, const QItemSelection &)));
 
+    //QModelIndex index = _tableModel.index(1,0);
+    //qDebug()<<"Valid:"<<index.isValid();
+    //selectionModel->setCurrentIndex(index,QItemSelectionModel::Select);
+    //ui->tableView->setCurrentIndex(index);
+
+    //ui->tableView->edit(index);
+
+    /*
     connect(ui->buttonBox,SIGNAL(rejected()),_detailsWidget,SLOT(revert()));
     connect(ui->buttonBox,SIGNAL(clicked(QAbstractButton*)),this,SLOT(buttonBoxClicked(QAbstractButton*)));
 
     ui->verticalLayout->insertWidget(0,_detailsWidget);
+    */
     //initDetailsViewWidget();
 }
 
 void PartsMainWidget::buttonBoxClicked(QAbstractButton* button)
 {
+    /*
     QDialogButtonBox::StandardButton standardButton = ui->buttonBox->standardButton(button);
     if(standardButton & QDialogButtonBox::Apply)
         _detailsWidget->submit();
+        */
 }
 
 /*
@@ -183,7 +232,7 @@ void PartsMainWidget::treeSelectionChanged(const QItemSelection &selected, const
             ui->tableView->setModel(_tableModel);
             */
             _tableModel.load(partTypeId.toInt());
-            _detailsWidget->setModel(_tableModel.partTypeModel(), &_tableModel);
+            //_detailsWidget->setModel(_tableModel.partTypeModel(), &_tableModel);
         }
     }
 }

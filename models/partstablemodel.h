@@ -32,7 +32,9 @@ public:
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
     PartRow * rowData(const QModelIndex &index) const;
+    Qt::ItemFlags flags ( const QModelIndex & index ) const;
     void load(int partType);
+    void sort(int column, Qt::SortOrder order = Qt::AscendingOrder);
 
 private:
     PartTypeModel _partTypeModel;

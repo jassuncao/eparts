@@ -58,49 +58,42 @@ bool Database::initTables(DQConnection &connection)
      fixedResistors.name = "Fixed Resistors";
      fixedResistors.description = "Fixed value resistors";
      fixedResistors.category = resistorsCat;
-     fixedResistors.valueType = PartParameter::Resistance;
      fixedResistors.save();
 
      PartType adjustableResistors;
      adjustableResistors.name = "Adjustable Resistors";
      adjustableResistors.description = "Adjustable value resistors";
      adjustableResistors.category = resistorsCat;
-     adjustableResistors.valueType = PartParameter::Resistance;
      adjustableResistors.save();
 
      PartType variableResistors;
      variableResistors.name = "Variable Resistors";
      variableResistors.description = "Variable value resistors";
      variableResistors.category = resistorsCat;
-     variableResistors.valueType = PartParameter::Resistance;
      variableResistors.save();
 
      PartType fixedCapacitors;
      fixedCapacitors.name = "Fixed Capacitors";
      fixedCapacitors.description = "Fixed value capacitors";
      fixedCapacitors.category = capacitorsCat;
-     fixedCapacitors.valueType = PartParameter::Resistance;
      fixedCapacitors.save();
 
      PartType adjustableCapacitors;
      adjustableCapacitors.name = "Adjustable Capacitors";
      adjustableCapacitors.description = "Adjustable value capacitors";
      adjustableCapacitors.category = capacitorsCat;
-     adjustableResistors.valueType = PartParameter::Resistance;
      adjustableCapacitors.save();
 
      PartType logicICs;
      logicICs.name = "Digital";
      logicICs.description = "Digital ICs";
      logicICs.category = icCat;
-     logicICs.valueType = PartParameter::Text;
      logicICs.save();
 
      PartType analogICs;
      analogICs.name = "Analog";
      analogICs.description = "Analog ICs";
      analogICs.category = icCat;
-     logicICs.valueType = PartParameter::Text;
      analogICs.save();
 
      PartParameter resistance;

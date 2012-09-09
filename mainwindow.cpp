@@ -3,15 +3,22 @@
 #include "partsmainwidget.h"
 #include "settingsdialog.h"
 #include "parttypedialog.h"
+#include "widgets/fancytabwidget.h"
+#include "widgets/stylehelper.h"
+
+//using namespace Widgets;
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    QMainWindow(parent)
+//    ,ui(new Ui::MainWindow)
 {
-    ui->setupUi(this);
+    resize(800, 600);
+    //ui->setupUi(this);
+
+    /*
     partsMainWidget = new PartsMainWidget(ui->stackedWidget);
     ui->stackedWidget->insertWidget(0,partsMainWidget);
-    toolsGroup = new QActionGroup(this);
+    toolsGroup = new QActionGroup(this);    
     QAction * action1 = ui->mainToolBar->addAction(QIcon(":/images/edit_add_22x22.png"),"Add",this,SLOT(selectedPartsView()));
     action1->setCheckable(true);
     QAction * action2 = ui->mainToolBar->addAction(QIcon(":/images/edit_remove_22x22.png"),"Remove",this,SLOT(selectedOtherView()));    
@@ -21,11 +28,31 @@ MainWindow::MainWindow(QWidget *parent) :
     action1->setChecked(true);
     connect(ui->actionOptions,SIGNAL(triggered()),this,SLOT(showOptions()));
     ui->stackedWidget->setCurrentIndex(0);
+    */
+    Widgets::StyleHelper::setBaseColor(Qt::darkGray);
+    _tabWidget= new Widgets::FancyTabWidget(this);
+
+    partsMainWidget = new PartsMainWidget();
+
+    _tabWidget->insertTab(0, partsMainWidget,QIcon(":/images/folder_48x48.png"),"Parts" );
+    _tabWidget->insertTab(1, new QWidget(this),QIcon(":/images/list_48x48.png"),"Shopping List" );
+    _tabWidget->setTabEnabled(0, true);
+    _tabWidget->setTabEnabled(1, true);
+    _tabWidget->setCurrentIndex(0);
+    _menuBar = new QMenuBar(this);
+    _menuBar->setGeometry(QRect(0, 0, 734, 22));
+    _menuEdit = new QMenu("Edit",_menuBar);
+    _menuBar->addAction(_menuEdit->menuAction());
+    _menuEdit->addAction("Settings...",this, SLOT(showOptions()));
+
+    setCentralWidget(_tabWidget);
+    setMenuBar(_menuBar);
+
 }
 
 MainWindow::~MainWindow()
 {
-    delete ui;
+    //delete ui;
 }
 
 void MainWindow::selectedPartsView()
@@ -46,7 +73,7 @@ void MainWindow::selectedPartsView()
 
 void MainWindow::selectedOtherView()
 {
-    ui->stackedWidget->setCurrentIndex(1);
+   // ui->stackedWidget->setCurrentIndex(1);
 }
 
 void MainWindow::showOptions()

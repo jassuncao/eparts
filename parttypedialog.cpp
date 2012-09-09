@@ -123,13 +123,7 @@ void PartTypeDialog::initFieldTypeCombos()
     ui->fieldCombo->addItem(tr("Capacitance"),PartParameter::Capacitance);
     ui->fieldCombo->addItem(tr("Inductance"),PartParameter::Inductance);
     ui->fieldCombo->addItem(tr("Power"),PartParameter::Power);
-    ui->fieldCombo->addItem(tr("Percentage"),PartParameter::Percentage);
-    for(int i =0; i<ui->fieldCombo->count();++i)
-    {
-        QString text = ui->fieldCombo->itemText(i);
-        QVariant userData = ui->fieldCombo->itemData(i);
-        ui->partMainFieldCombo->addItem(text, userData);
-    }
+    ui->fieldCombo->addItem(tr("Percentage"),PartParameter::Percentage);    
     ui->fieldCombo->setCurrentIndex(-1);
 }
 
@@ -138,9 +132,7 @@ void PartTypeDialog::setFieldsValues()
     ui->partNameEdit->setText(_model->name);
     ui->partDescriptionEdit->setText(_model->description);
     int index = ui->partCategoryCombo->findData(_model->category);
-    ui->partCategoryCombo->setCurrentIndex(index);
-    index = ui->partMainFieldCombo->findData(_model->valueType);
-    ui->partMainFieldCombo->setCurrentIndex(index);
+    ui->partCategoryCombo->setCurrentIndex(index);    
 }
 
 void PartTypeDialog::slotAddNewField()
@@ -176,10 +168,7 @@ void PartTypeDialog::accept()
     _model->description = ui->partDescriptionEdit->text();
     int index = ui->partCategoryCombo->currentIndex();
     if(index>=0)
-        _model->category = ui->partCategoryCombo->itemData(index);
-    index = ui->partMainFieldCombo->currentIndex();
-    if(index>=0)
-        _model->valueType = ui->partMainFieldCombo->itemData(index);
+        _model->category = ui->partCategoryCombo->itemData(index);    
     _model->save();
     _paramsModel.saveChanges();
     QDialog::accept();

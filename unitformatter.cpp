@@ -14,19 +14,35 @@ const QChar UnitFormatter::capacitance('F');
 const QChar UnitFormatter::inductance('H');
 const QChar UnitFormatter::power('W');
 const QChar UnitFormatter::percentage('%');
+const QLocale currentLocale;
 
-QString UnitFormatter::format(PartParameter::ParameterType paramType, double value){
+QString UnitFormatter::formatParameter(PartParameter::ParameterType paramType, double value, bool includeUnit){
     switch(paramType){
         case PartParameter::Resistance:
-            return formatResistance(value);
+            if(includeUnit)
+                return format(value, resistance);
+            else
+                return format(value,0);
         case PartParameter::Capacitance:
-            return formatCapacitance(value);
+            if(includeUnit)
+                return format(value, capacitance);
+            else
+                return format(value,0);
         case PartParameter::Inductance:
-            return formatInductance(value);
+            if(includeUnit)
+                return format(value, inductance);
+            else
+                return format(value,0);
         case PartParameter::Power:
-            return formatPower(value);
+            if(includeUnit)
+                return format(value, power);
+            else
+                return format(value,0);
         case PartParameter::Percentage:
-            return formatPercentage(value);
+        if(includeUnit)
+            return formatPercentage(value,percentage);
+        else
+            return formatPercentage(value,0);
         default:
             return QString::number(value);
     }
@@ -52,7 +68,7 @@ QChar UnitFormatter::getUnitSymbol(PartParameter::ParameterType paramType)
 
 static void removeTrailingZeros(QString & str)
 {
-    QChar decimalPoint = '.';
+    QChar decimalPoint = currentLocale.decimalPoint();
     int idx = str.indexOf(decimalPoint);
     if(idx<0) return;
     int i=str.length()-1;
@@ -82,6 +98,7 @@ QString UnitFormatter::format(const double value, QChar unit)
     QString result;
     ushort prefix;
     QTextStream out(&result);
+    out.setLocale(currentLocale);
     if(value>0.999999999){
         double aux = value;
         int multiplier = 0;
@@ -117,12 +134,15 @@ QString UnitFormatter::format(const double value, QChar unit)
     return result;
 }
 
-QString UnitFormatter::formatPercentage(double value){
+QString UnitFormatter::formatPercentage(double value, QChar unit){
     QString result;
     QTextStream out(&result);
     out.setRealNumberPrecision(4);
-    out.setRealNumberNotation(QTextStream::FixedNotation);
-    out<<value<<'%';
+    out.setRealNumberNotation(QTextStream::SmartNotation);
+    out<<value;
+    if(unit!=0){
+        out<<unit;
+    }
     return result;
 }
 

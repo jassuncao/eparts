@@ -8,8 +8,7 @@ class PartModel
 {    
 public:
     PartModel();
-    bool load(const int partId);
-    inline PartParameter::ParameterType valueType() const {return (PartParameter::ParameterType)_partType.valueType.get().toUInt();}
+    bool load(const int partId);    
     inline const QList<PartParameter> * parameters() const { return &_parameters;}
 private:
     PartType _partType;

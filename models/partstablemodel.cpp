@@ -6,6 +6,7 @@
 #include <QtSql>
 #include <dquest.h>
 #include "unitformatter.h"
+#include "unitparser.h"
 
 
 //using namespace EParts;
@@ -52,10 +53,8 @@
      PartParameter::ParameterType paramType = _partTypeModel.fieldType(column);
      if(PartParameter::isText(paramType))
          return fieldValue;
-     if(role==Qt::DisplayRole)
-        return UnitFormatter::format(paramType,fieldValue.toDouble());
-     else
-         return fieldValue;
+     //Don't include the unit for  edit purposes
+     return UnitFormatter::formatParameter(paramType,fieldValue.toDouble(), role==Qt::DisplayRole);
  }
 
  bool PartsTableModel2::setData(const QModelIndex &index, const QVariant &value, int role)
@@ -72,8 +71,24 @@
      if(!tableRow->isLoaded())
          tableRow->load();
      qDebug()<<"Setting field "<<column<<" with value "<<value;
-     _partTypeModel.setFieldValue(column,tableRow, value);
-     return true;
+     PartParameter::ParameterType paramType = _partTypeModel.fieldType(column);
+     bool result = false;
+     if(PartParameter::isText(paramType)) {
+        _partTypeModel.setFieldValue(column,tableRow, value);
+        result = true;
+     }
+     else{
+         bool ok;
+         double numericValue = UnitParser::parseUnit(value.toString(),&ok);
+         if(ok){
+            _partTypeModel.setFieldValue(column,tableRow, numericValue);
+            result = true;
+         }
+
+     }
+     if(result)
+         emit dataChanged(index, index);
+     return result;
  }
 
  QVariant  PartsTableModel2::headerData(int section, Qt::Orientation orientation, int role) const
@@ -89,6 +104,14 @@
  PartRow * PartsTableModel2::rowData(const QModelIndex &index) const
  {
 
+ }
+
+ Qt::ItemFlags PartsTableModel2::flags ( const QModelIndex & index ) const
+ {
+     if(index.isValid()){
+         return Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable;
+     }
+     return Qt::NoItemFlags;
  }
 
  void PartsTableModel2::load(int partType)
@@ -107,5 +130,10 @@
          }
      }
      endResetModel();
+ }
+
+ void sort(int column, Qt::SortOrder order)
+ {
+
  }
 

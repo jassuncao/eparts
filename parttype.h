@@ -10,7 +10,6 @@ public:
     DQField<QString> name;
     DQField<QString> description;
     DQForeignKey<Category> category;
-    DQField<int> valueType;
 };
 
 /// Declare the model and the field clause
@@ -18,8 +17,7 @@ DQ_DECLARE_MODEL(PartType,
                  "part_type", // the table name.
                  DQ_FIELD(name, DQNotNull),
                  DQ_FIELD(description),
-                 DQ_FIELD(category , DQNotNull),
-                 DQ_FIELD(valueType , DQNotNull)
+                 DQ_FIELD(category , DQNotNull)
                  )
 
 
