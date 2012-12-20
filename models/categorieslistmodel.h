@@ -3,7 +3,7 @@
 
 #include <QAbstractListModel>
 #include <QList>
-#include "category.h"
+#include "database/category.h"
 #include <QSortFilterProxyModel>
 #include "modelrow.h"
 

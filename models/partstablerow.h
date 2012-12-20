@@ -2,9 +2,9 @@
 #define PARTSTABLEROW_H
 
 #include <QHash>
-#include "part.h"
-#include "partparameter.h"
-#include "parametervalue.h"
+#include "database/part.h"
+#include "database/partparameter.h"
+#include "database/parametervalue.h"
 
 
 class PartsTableRow {

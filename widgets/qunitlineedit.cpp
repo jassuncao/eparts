@@ -8,10 +8,13 @@ using namespace Widgets;
 QUnitLineEdit::QUnitLineEdit(QChar unit, QWidget *parent) :
     QLineEdit(parent), _unit(unit)
 {
+    QLocale locale;
+    QChar decimalPoint = locale.decimalPoint();
+    QString rgex("\\b[0-9]+(\\%1[0-9]+)?[k,M,G,T,P,E,Z,Y,m,u,n,p,f,a,z,y]?\\b");
     QFontMetrics fm(font());
-    int padding = fm.width(_unit);
+    int padding = fm.width(_unit);    
     setStyleSheet(QString("QLineEdit { padding-right: %1px; } ").arg(padding));
-    QRegExp rx("\\b[0-9]+(\\.[0-9]+)?[k,M,G,T,P,E,Z,Y,m,u,n,p,f,a,z,y]?\\b");
+    QRegExp rx(rgex.arg(decimalPoint));
     QValidator *validator = new QRegExpValidator(rx, this);
     setAlignment(Qt::AlignTrailing);
     setValidator(validator);
@@ -28,5 +31,5 @@ void QUnitLineEdit::paintEvent ( QPaintEvent * ev)
     cr.setLeft(cr.left()+2);
     cr.setRight((cr.right() + padding)-2);
     cr.setBottom(cr.bottom()+1);
-    p.drawText(cr, Qt::AlignRight|Qt::AlignVCenter, _unit);
+    p.drawText(cr, Qt::AlignTrailing|Qt::AlignVCenter, _unit);
 }

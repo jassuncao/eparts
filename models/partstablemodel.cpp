@@ -1,7 +1,7 @@
 #include "partstablemodel.h"
-#include "partparameter.h"
-#include "parametervalue.h"
-#include "part.h"
+#include "database/partparameter.h"
+#include "database/parametervalue.h"
+#include "database/part.h"
 #include <QList>
 #include <QtSql>
 #include <dquest.h>
@@ -45,7 +45,7 @@
      if(row<0 || row>=_rows.count())
          return QVariant();
      if(role!=Qt::DisplayRole && role!=Qt::EditRole)
-         return QVariant();     
+         return QVariant();
      PartsTableRow * tableRow = _rows.at(row);
      if(!tableRow->isLoaded())
          tableRow->load();
@@ -101,11 +101,12 @@
      return QVariant();
  }
 
+ /*
  PartRow * PartsTableModel2::rowData(const QModelIndex &index) const
  {
 
  }
-
+*/
  Qt::ItemFlags PartsTableModel2::flags ( const QModelIndex & index ) const
  {
      if(index.isValid()){

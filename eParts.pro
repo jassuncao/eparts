@@ -19,7 +19,7 @@ SOURCES += main.cpp\
     partsmainwidget.cpp \
     types.cpp \
     models/partstablemodel.cpp \
-    database.cpp \
+    database/database.cpp \
     unitformatter.cpp \
     test1.cpp \
     partmodel.cpp \
@@ -41,7 +41,8 @@ SOURCES += main.cpp\
     widgets/fancytabwidget.cpp \
     widgets/styledbar.cpp \
     widgets/stylehelper.cpp \
-    unitparser.cpp
+    unitparser.cpp \
+    unitcolumndelegate.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -50,11 +51,11 @@ HEADERS  += mainwindow.h \
     constants.h \
     types.h \
     models/partstablemodel.h \
-    database.h \
-    category.h \
-    parttype.h \
-    partparameter.h \
-    part.h \
+    database/database.h \
+    database/category.h \
+    database/parttype.h \
+    database/partparameter.h \
+    database/part.h \
     parametervalue.h \
     mockdata.h \
     widgets/unitformatter.h \
@@ -80,7 +81,8 @@ HEADERS  += mainwindow.h \
     widgets/fancytabwidget.h \
     widgets/styledbar.h \
     widgets/stylehelper.h \
-    unitparser.h
+    unitparser.h \
+    unitcolumndelegate.h
 
 FORMS    += mainwindow.ui \
     partsmainwidget.ui \

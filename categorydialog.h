@@ -2,7 +2,7 @@
 #define CATEGORYDIALOG_H
 
 #include <QDialog>
-#include "category.h"
+#include "database/category.h"
 
 namespace Ui {
     class CategoryDialog;

@@ -2,7 +2,7 @@
 #define PARTPARAMETERSLISTMODEL_H
 
 #include <QAbstractListModel>
-#include "partparameter.h"
+#include "database/partparameter.h"
 #include "modelrow.h"
 
 class PartParametersListModel : public QAbstractListModel

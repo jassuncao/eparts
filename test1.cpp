@@ -1,6 +1,8 @@
 #include "test1.h"
 #include "unitformatter.h"
 #include "unitparser.h"
+#include "database/database.h"
+#include "partmodel.h"
 
 void Test1::initTestCase()
 {
@@ -9,15 +11,15 @@ void Test1::initTestCase()
 void Test1::test1()
 {
     QString res = UnitFormatter::formatParameter(PartParameter::Capacitance, 4700);
-    QString expected("4.7kF");
+    QString expected("4,7kF");
     QCOMPARE(res, expected);    
 
     res = UnitFormatter::formatParameter(PartParameter::Capacitance, 4780000);
-    expected = QString("4.78MF");
+    expected = QString("4,78MF");
     QCOMPARE(res, expected);
 
     res = UnitFormatter::formatParameter(PartParameter::Capacitance, 4780000000.0);
-    expected = QString("4.78GF");
+    expected = QString("4,78GF");
     QCOMPARE(res, expected);
 
     res = UnitFormatter::formatParameter(PartParameter::Capacitance, 47000);
@@ -63,6 +65,19 @@ void Test1::test2()
     value = UnitParser::parseUnit("100n", &ok);
     QVERIFY2(assertDouble(value, 100*1E9,100*1E10),"100n Failed");
 }
+
+void Test1::test3()
+{    
+    DQConnection connection;
+    EParts::Database::initTables(connection);
+    PartModel partModel;
+    partModel.load(1);
+    QString sql = partModel.tableSchemaSql();
+    QString expected("CREATE TABLE IF NOT EXISTS fixed_resistors (\nid INTEGER PRIMARY KEY,\nquantity INT,\nminimum_quantity INT,\nresistance DOUBLE,\npower DOUBLE,\ntolerance DOUBLE,\nnotes TEXT\n);");
+    QCOMPARE(sql,expected);
+}
+
+
 
 
 

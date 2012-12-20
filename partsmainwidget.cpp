@@ -2,10 +2,11 @@
 #include "ui_partsmainwidget.h"
 #include "models/partstablemodel.h"
 #include <QStandardItem>
+#include <QtSql>
 #include <dquest.h>
-#include "category.h"
-#include "parttype.h"
-#include "partparameter.h"
+#include "database/category.h"
+#include "database/parttype.h"
+#include "database/partparameter.h"
 #include <QLineEdit>
 #include <QLabel>
 #include "unitformatter.h"
@@ -13,6 +14,7 @@
 #include <QtGui>
 #include "spinboxdelegate.h"
 #include "widgets/qsearchlineedit.h"
+#include "unitcolumndelegate.h"
 
 using namespace Widgets;
 
@@ -26,14 +28,15 @@ PartsMainWidget::PartsMainWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::PartsMainWidget)
 {
-    ui->setupUi(this);
-    _spinBoxDelegate = new SpinBoxDelegate(this);
-    ui->tableView->setItemDelegateForColumn(0,_spinBoxDelegate);
-    buildPartsModel();
+
+    ui->setupUi(this);    
+    _spinBoxDelegate = new SpinBoxDelegate(this);           
+    /*
     ui->tableView->setColumnHidden(1,true);
     ui->tableView->setColumnHidden(2,true);
     ui->tableView->setColumnHidden(3,true);
     ui->tableView->setColumnHidden(4,true);
+    */
 
     QToolBar * toolbar = new QToolBar(ui->frame_2);
     toolbar->setIconSize(QSize(24,24));
@@ -48,12 +51,22 @@ PartsMainWidget::PartsMainWidget(QWidget *parent) :
     searchLineEdit->setPlaceholderText("Search...");
     toolbar->addWidget(searchLineEdit);
     ui->verticalLayout_3->insertWidget(1,toolbar);
+
+    buildPartsModel();
+    ui->tableView->setModel(&_tableModel);
+    ui->tableView->setSortingEnabled(true);
+    ui->tableView->setItemDelegateForColumn(1,_spinBoxDelegate);
+    ui->tableView->setItemDelegateForColumn(2,_spinBoxDelegate);
+    _tableModel.setEditStrategy(QSqlTableModel::OnManualSubmit);
+    setupTableModel();
 }
 
 PartsMainWidget::~PartsMainWidget()
-{
+{    
     delete ui;
     delete _spinBoxDelegate;
+    qDeleteAll(_temporaryDelegates);
+    _temporaryDelegates.clear();
 }
 
 void PartsMainWidget::addPart()
@@ -113,22 +126,25 @@ void PartsMainWidget::buildPartsModel()
         //TODO: Show some info
     }    
     ui->treeView->setModel(_treeModel);
-
-    _partModel.load(1);
+    _partModel.load(1);    
     /*
     _tableModel = new PartsTableModel(&_partModel, ui->tableView);
     _tableModel->load();
     ui->tableView->setModel(_tableModel);
     */
-    _tableModel.load(1);
+/*
+    _tableModel.setTable(_partModel.tableName());
+    _tableModel.setEditStrategy(QSqlTableModel::OnManualSubmit);
+    if(!_tableModel.select())
+        qDebug("Failed to select");
+    //_tableModel.load(1);
     /*
     _proxyModel= new QSortFilterProxyModel(this);
     _proxyModel->setDynamicSortFilter(true);
     _proxyModel->setSortRole(Qt::EditRole);
     _proxyModel->setSourceModel(&_tableModel);
     */
-    ui->tableView->setModel(&_tableModel);
-    ui->tableView->setSortingEnabled(true);
+
     /*
     connect(ui->tableView->selectionModel(),
             SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
@@ -160,6 +176,65 @@ void PartsMainWidget::buildPartsModel()
     ui->verticalLayout->insertWidget(0,_detailsWidget);
     */
     //initDetailsViewWidget();
+}
+
+void PartsMainWidget::setupTableModel()
+{
+    qDeleteAll(_temporaryDelegates);
+    _temporaryDelegates.clear();
+    _tableModel.setTable(_partModel.tableName());
+    ui->tableView->setColumnHidden(0,true);
+    //Setup quantity column
+    _tableModel.setColumnAlignment(1, Qt::AlignRight|Qt::AlignVCenter);
+    _tableModel.setHeaderData(1, Qt::Horizontal, tr("Quantity"));
+    //Setup minimum quantity column
+    _tableModel.setColumnAlignment(2, Qt::AlignRight|Qt::AlignVCenter);
+    _tableModel.setHeaderData(2, Qt::Horizontal, tr("Minimum Quantity"));
+
+
+    QAbstractItemDelegate * delegate;
+    const QList<PartParameter> * params = _partModel.parameters();
+    QList<PartParameter>::const_iterator it;
+    int column = 3;
+    for(it=params->constBegin(); it!=params->constEnd();++it){
+        const PartParameter & param = (*it);
+        _tableModel.setHeaderData(column, Qt::Horizontal, param.name.get().toString());
+        PartParameter::ParameterType paramType = (PartParameter::ParameterType)param.type.get().toUInt();
+        Qt::Alignment alignment = Qt::AlignRight|Qt::AlignVCenter;
+
+        switch(paramType){
+            case PartParameter::Text:
+            case PartParameter::LongText:
+                alignment = Qt::AlignLeft|Qt::AlignVCenter;
+                delegate = ui->tableView->itemDelegate();
+                break;
+            case PartParameter::Resistance:
+            case PartParameter::Capacitance:
+            case PartParameter::Inductance:
+                delegate = new UnitColumnDelegate(paramType);                
+                _temporaryDelegates.append(delegate);
+                break;
+        case PartParameter::GenericNumber:
+            delegate=_spinBoxDelegate;
+                break;
+        case PartParameter::Power:
+            delegate = new DoubleSpinBoxDelegate(UnitFormatter::getUnitSymbol(paramType),1.0/8);           
+            _temporaryDelegates.append(delegate);
+            break;
+        case PartParameter::Percentage:
+            delegate = new DoubleSpinBoxDelegate(UnitFormatter::getUnitSymbol(paramType),5.0);
+            _temporaryDelegates.append(delegate);
+            break;
+        }
+        _tableModel.setColumnAlignment(column, alignment);
+        ui->tableView->setItemDelegateForColumn(column, delegate);
+        ++column;
+    }
+
+    if(!_tableModel.select())
+        qDebug("Failed to select");
+    else
+        qDebug()<<"Row count is"<<_tableModel.rowCount();
 }
 
 void PartsMainWidget::buttonBoxClicked(QAbstractButton* button)
@@ -225,17 +300,19 @@ void PartsMainWidget::treeSelectionChanged(const QItemSelection &selected, const
             QVariant partTypeId = index.data(TREE_NODE_ID);
             qDebug()<<"Selected part type"<<partTypeId;
             _partModel.load(partTypeId.toInt());
+            setupTableModel();
             /*
             delete _tableModel;
             _tableModel = new PartsTableModel(&_partModel, ui->tableView);
             _tableModel->load();
             ui->tableView->setModel(_tableModel);
             */
-            _tableModel.load(partTypeId.toInt());
+            //_tableModel.load(partTypeId.toInt());
             //_detailsWidget->setModel(_tableModel.partTypeModel(), &_tableModel);
         }
     }
 }
+
 
 /*
 void PartsMainWidget::treeCurrentChanged(const QModelIndex &current, const QModelIndex &previous)
@@ -244,3 +321,35 @@ void PartsMainWidget::treeCurrentChanged(const QModelIndex &current, const QMode
     //_treeModel->data()
 }
 */
+
+QSqlTableModelWithAlignment::QSqlTableModelWithAlignment(QObject *parent, QSqlDatabase db)
+    : QSqlTableModel(parent, db)
+{
+}
+
+QVariant QSqlTableModelWithAlignment::data(const QModelIndex &idx, int role) const
+{
+    if(role==Qt::TextAlignmentRole && idx.isValid()){
+        int column = idx.column();
+        if(column<_alignments.size()){
+            int value = _alignments.at(column);
+            if(value!=0)
+                return QVariant(value);
+        }
+    }
+    return QSqlTableModel::data(idx, role);
+}
+
+void QSqlTableModelWithAlignment::setColumnAlignment(int column, Qt::Alignment alignment)
+{
+    if(column>=_alignments.size())
+        _alignments.resize(column*2);
+    _alignments.replace(column, alignment);
+}
+
+void QSqlTableModelWithAlignment::setTable(const QString &tableName)
+{
+    _alignments.clear();
+    QSqlTableModel::setTable(tableName);
+}
+

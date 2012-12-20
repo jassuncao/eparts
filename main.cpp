@@ -6,12 +6,12 @@
 #include <dquest.h>
 #include <QSqlDatabase>
 
-#include "category.h"
-#include "parttype.h"
-#include "partparameter.h"
-#include "part.h"
-#include "parametervalue.h"
-#include "database.h"
+#include "database/category.h"
+#include "database/parttype.h"
+#include "database/partparameter.h"
+#include "database/part.h"
+#include "database/parametervalue.h"
+#include "database/database.h"
 #include "AutoTest.h"
 
 #if 0
@@ -21,8 +21,7 @@ TEST_MAIN
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    DQConnection connection;
-    EParts::Database::initTables(connection);
+    DQConnection connection;    
     if (!EParts::Database::initTables(connection))
             return 1;
     MainWindow w;

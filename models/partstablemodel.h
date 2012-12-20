@@ -4,10 +4,10 @@
 #include <QAbstractTableModel>
 #include <QString>
 #include <QList>
-#include "parttype.h"
+#include "database/parttype.h"
 #include "partmodel.h"
-#include "part.h"
-#include "parametervalue.h"
+#include "database/part.h"
+#include "database/parametervalue.h"
 #include "parttypemodel.h"
 
 
@@ -31,10 +31,10 @@ public:
     QVariant data(const QModelIndex &index, int role) const;
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-    PartRow * rowData(const QModelIndex &index) const;
+    //PartRow * rowData(const QModelIndex &index) const;
     Qt::ItemFlags flags ( const QModelIndex & index ) const;
     void load(int partType);
-    void sort(int column, Qt::SortOrder order = Qt::AscendingOrder);
+    //void sort(int column, Qt::SortOrder order = Qt::AscendingOrder);
 
 private:
     PartTypeModel _partTypeModel;

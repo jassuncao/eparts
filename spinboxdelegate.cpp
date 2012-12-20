@@ -12,6 +12,7 @@
      const QModelIndex &/* index */) const
  {
      QSpinBox *editor = new QSpinBox(parent);
+     editor->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
      editor->setMinimum(0);
      editor->setMaximum(65535);
      return editor;

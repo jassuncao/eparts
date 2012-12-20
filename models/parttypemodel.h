@@ -5,8 +5,8 @@
 #include <QList>
 #include <QString>
 #include <QStringList>
-#include "parttype.h"
-#include "partparameter.h"
+#include "database/parttype.h"
+#include "database/partparameter.h"
 #include "partstablerow.h"
 
 class PartTypeModel : QObject

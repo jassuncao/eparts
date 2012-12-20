@@ -3,7 +3,7 @@
 
 #include <qchar.h>
 #include <qstring.h>
-#include "partparameter.h"
+#include "database/partparameter.h"
 
 class UnitFormatter
 {

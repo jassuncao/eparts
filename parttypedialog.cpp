@@ -1,7 +1,7 @@
 #include "parttypedialog.h"
 #include "ui_parttypedialog.h"
-#include "category.h"
-#include "partparameter.h"
+#include "database/category.h"
+#include "database/partparameter.h"
 #include "models/partparameterslistmodel.h"
 
 PartTypeDialog::PartTypeDialog(QWidget *parent) :

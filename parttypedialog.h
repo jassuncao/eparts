@@ -5,7 +5,7 @@
 #include <QStandardItemModel>
 #include <QDataWidgetMapper>
 #include <QItemDelegate>
-#include "parttype.h"
+#include "database/parttype.h"
 #include "models/partparameterslistmodel.h"
 #include "models/partparameterstablemodel.h"
 #include "models/categorieslistmodel.h"

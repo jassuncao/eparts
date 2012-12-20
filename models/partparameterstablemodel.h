@@ -3,7 +3,7 @@
 
 #include <QAbstractTableModel>
 #include "modelrow.h"
-#include "partparameter.h"
+#include "database/partparameter.h"
 
 class PartParametersTableModel : public QAbstractTableModel
 {

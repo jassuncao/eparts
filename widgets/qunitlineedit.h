@@ -20,7 +20,6 @@ protected:
     void paintEvent ( QPaintEvent * );
 private:
     QChar _unit;
-    //QLabel * _unitLabel;
 signals:
 
 public slots:

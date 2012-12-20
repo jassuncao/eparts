@@ -4,7 +4,7 @@
 #include <QAbstractTableModel>
 #include <QHash>
 #include "modelrow.h"
-#include "parttype.h"
+#include "database/parttype.h"
 
 class PartTypeTableModel : public QAbstractTableModel
 {

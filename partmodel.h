@@ -1,18 +1,26 @@
 #ifndef PARTMODEL_H
 #define PARTMODEL_H
+#include <QObject>
 #include <QList>
-#include "partparameter.h"
-#include "parttype.h"
+#include "database/partparameter.h"
+#include "database/parttype.h"
 
-class PartModel
-{    
+class PartModel : QObject
+{
+    Q_OBJECT
 public:
-    PartModel();
+    explicit PartModel(QObject * parent=0);
     bool load(const int partId);    
     inline const QList<PartParameter> * parameters() const { return &_parameters;}
+    //inline const QStringList * fieldNames() const { return &_fieldNames;}
+    inline QString tableName() const { return _tableName;}
+    QString tableSchemaSql() const;
+    QString selectAllSql(int offset, int limit, int orderColumn, Qt::SortOrder order) const;
 private:
     PartType _partType;
+    QString _tableName;
     QList<PartParameter> _parameters;
+    //QStringList _fieldNames;
 
 };
 
