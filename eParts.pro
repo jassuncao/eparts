@@ -82,7 +82,8 @@ HEADERS  += mainwindow.h \
     widgets/styledbar.h \
     widgets/stylehelper.h \
     unitparser.h \
-    unitcolumndelegate.h
+    unitcolumndelegate.h \
+    database/parametervalue.h
 
 FORMS    += mainwindow.ui \
     partsmainwidget.ui \
