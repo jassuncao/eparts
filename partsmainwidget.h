@@ -10,6 +10,7 @@
 #include <QtSql>
 #include <QVector>
 #include <QSqlTableModel>
+#include "models/parttablemodel.h"
 
 
 class QModelIndex;
@@ -20,6 +21,8 @@ class QStyledItemDelegate;
 namespace Ui {
     class PartsMainWidget;
 }
+
+using namespace Models;
 
 class QSqlTableModelWithAlignment : public QSqlTableModel
 {
@@ -53,11 +56,13 @@ private:
     QStandardItemModel * _treeModel;
     Ui::PartsMainWidget *ui;
     SpinBoxDelegate * _spinBoxDelegate;
+    PartTableModel _partTableModel;
 
     void buildPartsModel();
 //    void initDetailsViewWidget();
     void setupTableModel();
 private slots:
+    void initCategoriesTree();
     void currentRowChanged ( const QModelIndex & current, const QModelIndex & previous );
     void treeSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
     void buttonBoxClicked(QAbstractButton*);

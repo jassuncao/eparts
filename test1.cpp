@@ -68,6 +68,7 @@ void Test1::test2()
 
 void Test1::test3()
 {    
+    /*
     DQConnection connection;
     EParts::Database::initTables(connection);
     PartModel partModel;
@@ -75,6 +76,7 @@ void Test1::test3()
     QString sql = partModel.tableSchemaSql();
     QString expected("CREATE TABLE IF NOT EXISTS fixed_resistors (\nid INTEGER PRIMARY KEY,\nquantity INT,\nminimum_quantity INT,\nresistance DOUBLE,\npower DOUBLE,\ntolerance DOUBLE,\nnotes TEXT\n);");
     QCOMPARE(sql,expected);
+    */
 }
 
 

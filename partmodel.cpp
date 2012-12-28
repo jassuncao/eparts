@@ -12,7 +12,7 @@ enum FIXED_FIELDS {Quantity=0, MinimumQuantity,FIXED_FIELDS_LEN};
 bool PartModel::load(const int partId)
 {    
     _partType.load(DQWhere("id")==partId);
-    _tableName = EParts::Database::makeTableName(_partType.partTableName);
+    //_tableName = EParts::Database::makeTableName(_partType.partTableName);
     _parameters.clear();
     /*
     _fieldNames.clear();

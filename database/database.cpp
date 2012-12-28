@@ -3,23 +3,18 @@
 #include <QtSql>
 #include <QtGui>
 #include <dquest.h>
-#include "category.h"
-#include "parttype.h"
-#include "partparameter.h"
-#include "part.h"
-#include "parametervalue.h"
-#include "partmodel.h"
+#include "entities.h"
+#include <models/partattribute.h>
 
-using namespace EParts;
+//using namespace Database;
+
+namespace Database {
 
 Database::Database()
 {   
 }
 
-QString Database::makeTableName(const QString& partName)
-{
-    return partName.trimmed().replace(' ',"_").toLower();
-}
+
 
 bool Database::initTables(DQConnection &connection)
 {
@@ -36,138 +31,127 @@ bool Database::initTables(DQConnection &connection)
      }
      connection.open(db); // Establish the connection to database. It will become the "default connection" shared by all DQModel
 
-     connection.addModel<Category>(); // Register a model to the connection
-     connection.addModel<PartType>();
-     connection.addModel<PartParameter>();
-     connection.addModel<Part>();
-     connection.addModel<ParameterValue>();
+     connection.addModel<DQCategory>();
+     connection.addModel<DQPart>();
+     connection.addModel<DQAttribute>();
+     connection.addModel<DQFloatValue>();
+     connection.addModel<DQTextValue>();
+     connection.addModel<DQCategoryActiveAttributes>();
 
-     connection.createTables(); // Create table for all added model
+     return connection.createTables();
+}
 
-     DQList<Category> initialCategories;
-     DQListWriter categoryWriter(&initialCategories);
-     categoryWriter << "Resistors" << "Fixed value, variable, adjustable and other kind of resistors"
-            << "Capacitors" << "All kinds of capacitors"
-            << "ICs" << "Integrated Circuits";
-     initialCategories.save();
+void Database::generateMockData()
+{
+    DQCategory resistorsCat;
+    resistorsCat.name="Resistors";
+    resistorsCat.description="Fixed value, variable, adjustable and other kind of resistors";
+    resistorsCat.save();
 
-     Category resistorsCat;
-     resistorsCat.load(DQWhere("name") == "Resistors");
+    DQCategory capacitorsCat;
+    capacitorsCat.name="Capacitors";
+    capacitorsCat.description="All kinds of capacitors";
+    capacitorsCat.save();
 
-     Category capacitorsCat;
-     capacitorsCat.load(DQWhere("name") == "Capacitors");
+    DQCategory fixedResistorsCat;
+    fixedResistorsCat.name="Fixed Resistors";
+    fixedResistorsCat.description="Fixed value resistors";
+    fixedResistorsCat.parent = resistorsCat.id;
+    fixedResistorsCat.save();
 
-     Category icCat;
-     icCat.load(DQWhere("name") == "ICs");
+    DQCategory variableResistorsCat;
+    variableResistorsCat.name="Variable Resistors";
+    variableResistorsCat.description="Variable resistors";
+    variableResistorsCat.parent = resistorsCat.id;
+    variableResistorsCat.save();
 
-     PartType fixedResistors;
-     fixedResistors.name = "Fixed Resistors";
-     fixedResistors.partTableName = makeTableName("Fixed Resistors");
-     fixedResistors.description = "Fixed value resistors";
-     fixedResistors.category = resistorsCat;
-     fixedResistors.save();
+    DQCategory fixedCapsCat;
+    fixedCapsCat.name="Fixed Capacitors";
+    fixedCapsCat.description="Fixed value capacitors";
+    fixedCapsCat.parent = capacitorsCat.id;
+    fixedCapsCat.save();
 
-     PartType adjustableResistors;
-     adjustableResistors.name = "Adjustable Resistors";
-     adjustableResistors.partTableName = makeTableName("Adjustable Resistors");
-     adjustableResistors.description = "Adjustable value resistors";
-     adjustableResistors.category = resistorsCat;
-     adjustableResistors.save();
+    //Some attributes
 
-     PartType variableResistors;
-     variableResistors.name = "Variable Resistors";
-     variableResistors.partTableName = makeTableName("Variable Resistors");
-     variableResistors.description = "Variable value resistors";
-     variableResistors.category = resistorsCat;
-     variableResistors.save();
+    DQAttribute resistanceAttr;
+    resistanceAttr.type = Models::ATTRIBUTE_RESISTANCE;
+    resistanceAttr.name = "Resistance";
+    resistanceAttr.description = "Ohmic value";
+    resistanceAttr.save();
 
-     PartType fixedCapacitors;
-     fixedCapacitors.name = "Fixed Capacitors";
-     fixedCapacitors.partTableName = makeTableName("Fixed Capacitors");
-     fixedCapacitors.description = "Fixed value capacitors";
-     fixedCapacitors.category = capacitorsCat;
-     fixedCapacitors.save();
+    DQAttribute powerAttr;
+    powerAttr.type = Models::ATTRIBUTE_POWER;
+    powerAttr.name = "Power";
+    powerAttr.description = "Maximum power dissipation value";
+    powerAttr.save();
 
-     PartType adjustableCapacitors;
-     adjustableCapacitors.name = "Adjustable Capacitors";
-     adjustableCapacitors.partTableName = makeTableName("Adjustable Capacitors");
-     adjustableCapacitors.description = "Adjustable value capacitors";
-     adjustableCapacitors.category = capacitorsCat;
-     adjustableCapacitors.save();
+    DQAttribute toleranceAttr;
+    toleranceAttr.type = Models::ATTRIBUTE_PERCENTAGE;
+    toleranceAttr.name = "Tolerance";
+    toleranceAttr.description = "Resistor tolerance";
+    toleranceAttr.save();
 
-     PartType logicICs;
-     logicICs.name = "Digital";
-     logicICs.partTableName = makeTableName("Digital");
-     logicICs.description = "Digital ICs";
-     logicICs.category = icCat;
-     logicICs.save();
+    DQPart resistor1;
+    resistor1.category = fixedResistorsCat;
+    resistor1.quantity = 10;
+    resistor1.minimumQuantity = 5;
+    resistor1.partNumber = "R303";
+    resistor1.description = "Some resistor";
+    resistor1.save();
 
-     PartType analogICs;
-     analogICs.name = "Analog";
-     analogICs.partTableName = makeTableName("Analog");
-     analogICs.description = "Analog ICs";
-     analogICs.category = icCat;
-     analogICs.save();
+    DQFloatValue resistor1Resistance;
+    resistor1Resistance.attribute = resistanceAttr.id;
+    resistor1Resistance.part = resistor1.id;
+    resistor1Resistance.value = 3300;
+    resistor1Resistance.save();
 
-     PartParameter resistance;
-     resistance.name = "Resistance";
-     resistance.columnName = makeTableName("Resistance");
-     resistance.description = "Ohmic value";
-     resistance.type = PartParameter::Resistance;
-     resistance.partType = fixedResistors.id;
-     resistance.fixedValues = false;
-     resistance.orderIndex = 1;
-     resistance.save();
+    DQFloatValue resistor1Power;
+    resistor1Power.attribute = powerAttr.id;
+    resistor1Power.part = resistor1.id;
+    resistor1Power.value = 0.25f;
+    resistor1Power.save();
 
-     PartParameter power;
-     power.name = "Power";
-     power.columnName = makeTableName("Power");
-     power.description = "Maximum power dissipation value";
-     power.type = PartParameter::Power;
-     power.partType = fixedResistors.id;
-     power.fixedValues = false;
-     power.orderIndex = 2;
-     power.save();
 
-     PartParameter tolerance;
-     tolerance.name = "Tolerance";
-     tolerance.columnName = makeTableName("Tolerance");
-     tolerance.description = "Resistor tolerance";
-     tolerance.type = PartParameter::Percentage;
-     tolerance.partType = fixedResistors.id;
-     tolerance.fixedValues = false;
-     tolerance.orderIndex = 3;
-     tolerance.save();
 
-     PartParameter resistorNotes;
-     resistorNotes.name = "Notes";
-     resistorNotes.columnName = makeTableName("Notes");
-     resistorNotes.description = "Resistor notes";
-     resistorNotes.type = PartParameter::LongText;
-     resistorNotes.partType = fixedResistors.id;
-     resistorNotes.fixedValues = false;
-     resistorNotes.orderIndex = 4;
-     resistorNotes.save();
+    for(int i=100;i<5000;++i)
+    {
+        DQPart resistor2;
+        resistor2.category = fixedResistorsCat;
+        resistor2.quantity = i/100;
+        resistor2.minimumQuantity = 0;
+        resistor2.partNumber = QString("R%0").arg(i);
+        resistor2.description = "Some resistor";
+        resistor2.save();
 
-     PartParameter logicICDesignation;
-     logicICDesignation.name="Designation";
-     logicICDesignation.columnName = makeTableName("Designation");
-     logicICDesignation.description = "Resistor notes";
-     logicICDesignation.type = PartParameter::Text;
-     logicICDesignation.partType = logicICs.id;
-     logicICDesignation.fixedValues = false;
-     logicICDesignation.orderIndex = 1;
-     logicICDesignation.save();
+        DQFloatValue resistor2Resistance;
+        resistor2Resistance.attribute = resistanceAttr.id;
+        resistor2Resistance.part = resistor2.id;
+        resistor2Resistance.value = i;
+        resistor2Resistance.save();
 
-     PartParameter logicICNotes;
-     logicICNotes.name = "Notes";
-     logicICNotes.columnName = makeTableName("Notes");
-     logicICNotes.description = "Resistor notes";
-     logicICNotes.type = PartParameter::LongText;
-     logicICNotes.partType = logicICs.id;
-     logicICNotes.fixedValues = false;
-     logicICNotes.orderIndex = 2;
-     logicICNotes.save();
+        DQFloatValue resistor2Power;
+        resistor2Power.attribute = powerAttr.id;
+        resistor2Power.part = resistor2.id;
+        resistor2Power.value = 0.25f;
+        resistor2Power.save();
+    }
+
+    DQCategoryActiveAttributes catAttr;
+    catAttr.attribute = resistanceAttr.id;
+    catAttr.category = fixedResistorsCat;
+    catAttr.idx = 0;
+    catAttr.save();
+
+    DQCategoryActiveAttributes catAttr1;
+    catAttr1.attribute = powerAttr.id;
+    catAttr1.category = fixedResistorsCat;
+    catAttr1.idx = 1;
+    catAttr1.save();
+}
+
+}//namespace
+
+#ifdef IGNORE
 
      PartModel model;
      model.load(fixedResistors.id.get().toInt());
@@ -289,7 +273,7 @@ bool Database::initTables(DQConnection &connection)
      return true;
 }
 
-#ifdef IGNORE
+
 
 QList<Parameter> * Database::fetchPartTypeParameters(const int partTypeId){
     QSqlQuery query;

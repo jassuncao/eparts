@@ -15,8 +15,19 @@
 #include "spinboxdelegate.h"
 #include "widgets/qsearchlineedit.h"
 #include "unitcolumndelegate.h"
+#include "database/entities.h"
+#include "database/database.h"
 
 using namespace Widgets;
+
+struct Node {
+    int * _parentId;
+    QStandardItem * _item;
+
+    Node(QStandardItem * item, int * parent=0) :
+        _parentId(parent), _item(item)
+    {}
+};
 
 static const int TREE_NODE_TYPE = Qt::UserRole+1;
 static const int TREE_NODE_ID = Qt::UserRole+2;
@@ -50,8 +61,9 @@ PartsMainWidget::PartsMainWidget(QWidget *parent) :
     QSearchLineEdit * searchLineEdit = new QSearchLineEdit(this);
     searchLineEdit->setPlaceholderText("Search...");
     toolbar->addWidget(searchLineEdit);
-    ui->verticalLayout_3->insertWidget(1,toolbar);
+    ui->verticalLayout_3->insertWidget(1,toolbar);   
 
+    /*
     buildPartsModel();
     ui->tableView->setModel(&_tableModel);
     ui->tableView->setSortingEnabled(true);
@@ -59,6 +71,12 @@ PartsMainWidget::PartsMainWidget(QWidget *parent) :
     ui->tableView->setItemDelegateForColumn(2,_spinBoxDelegate);
     _tableModel.setEditStrategy(QSqlTableModel::OnManualSubmit);
     setupTableModel();
+    */
+    initCategoriesTree();
+    ui->tableView->setSortingEnabled(true);
+    ui->tableView->setModel(&_partTableModel);
+    //_partTableModel.setCategory(Database::Database::resistorsCat);
+    //_partTableModel.set
 }
 
 PartsMainWidget::~PartsMainWidget()
@@ -97,6 +115,50 @@ static QStandardItem* createPartsItem(const QVariant &id, const QString &name, c
     item->setData(id,TREE_NODE_ID);
     item->setEditable(false);
     return item;
+}
+
+void PartsMainWidget::initCategoriesTree()
+{
+    QMap<int,struct Node*> lookup;
+    QStandardItem * item;
+    struct Node * node;
+    DQQuery<DQCategory> query;
+    QStandardItem *rootItem;
+    DQCategory cat;
+
+    qDebug("Building categories tree model");
+    _treeModel = new QStandardItemModel(ui->treeView);
+    rootItem = _treeModel->invisibleRootItem();
+    if(query.exec()){
+        while(query.next()){
+            query.recordTo(cat);
+            item = createCategoryItem(cat.id,cat.name,cat.description);
+            int * parent = 0;
+            if(!cat.parent.get().isNull()){
+                parent = new int(cat.parent.get().toInt());
+            }
+            lookup[cat.id.get().toInt()]= new Node(item,parent);
+        }
+        QList<Node*> nodes = lookup.values();
+        foreach(node,nodes){
+            if(node->_parentId){
+                lookup[*node->_parentId]->_item->appendRow(node->_item);
+            }
+            else{
+                rootItem->appendRow(node->_item);
+            }
+        }
+        qDeleteAll(lookup);
+    }
+    else{
+        //TODO: Show some error msg
+    }
+    ui->treeView->setModel(_treeModel);
+    QItemSelectionModel *selectionModel= ui->treeView->selectionModel();
+    connect(selectionModel,
+            SIGNAL(selectionChanged (const QItemSelection &, const QItemSelection &)),
+            this,
+            SLOT(treeSelectionChanged(const QItemSelection &, const QItemSelection &)));
 }
 
 void PartsMainWidget::buildPartsModel()
@@ -295,21 +357,19 @@ void PartsMainWidget::treeSelectionChanged(const QItemSelection &selected, const
 {
     const QModelIndex index = ui->treeView->selectionModel()->currentIndex();
     if(index.isValid()){
+        QVariant nodeId = index.data(TREE_NODE_ID);
+        qDebug()<<"Selected category type"<<nodeId;
+        _partTableModel.setCategory(nodeId.toInt());
+
+        /*
         QVariant nodeType = index.data(TREE_NODE_TYPE);
         if(nodeType==PartTypeNode){
             QVariant partTypeId = index.data(TREE_NODE_ID);
             qDebug()<<"Selected part type"<<partTypeId;
             _partModel.load(partTypeId.toInt());
-            setupTableModel();
-            /*
-            delete _tableModel;
-            _tableModel = new PartsTableModel(&_partModel, ui->tableView);
-            _tableModel->load();
-            ui->tableView->setModel(_tableModel);
-            */
-            //_tableModel.load(partTypeId.toInt());
-            //_detailsWidget->setModel(_tableModel.partTypeModel(), &_tableModel);
+            setupTableModel();          
         }
+        */
     }
 }
 

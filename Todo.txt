@@ -1,3 +1,7 @@
+* Idea: Use an "attributes cloud" to select attributes for a part. Show the 5 most used attributes for that part category
+* When a category with children categories is selected show all the parts that included in that set.
+  See this for hints: http://www.ferdychristant.com/blog//articles/DOMM-7QJPM7
+
 * Change the main parts interface. Don't use master detail. Show only a table with the parts and use a dialog to edit the part.
 * For each line of the table include a way to easily edit the quantity of a part. A user probably won't spend a lot of time editing parts.
 * When adding a part check if there is a similar part already. If so, ask the user if he wants to increase the quantity instead

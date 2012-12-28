@@ -42,7 +42,13 @@ SOURCES += main.cpp\
     widgets/styledbar.cpp \
     widgets/stylehelper.cpp \
     unitparser.cpp \
-    unitcolumndelegate.cpp
+    unitcolumndelegate.cpp \
+    models/part.cpp \
+    models/category.cpp \
+    models/partattribute.cpp \
+    models/parttablemodel.cpp \
+    models/attributeformatter.cpp \
+    partscontainerwidget.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -83,7 +89,14 @@ HEADERS  += mainwindow.h \
     widgets/stylehelper.h \
     unitparser.h \
     unitcolumndelegate.h \
-    database/parametervalue.h
+    database/parametervalue.h \
+    models/part.h \
+    models/category.h \
+    models/partattribute.h \
+    models/parttablemodel.h \
+    models/attributeformatter.h \
+    database/entities.h \
+    partscontainerwidget.h
 
 FORMS    += mainwindow.ui \
     partsmainwidget.ui \
@@ -98,7 +111,8 @@ RESOURCES += \
     resources.qrc
 
 OTHER_FILES += \
-    Todo.txt
+    Todo.txt \
+    create.sql
 
 
 

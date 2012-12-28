@@ -10,7 +10,7 @@
 #include "database/parttype.h"
 #include "database/partparameter.h"
 #include "database/part.h"
-#include "database/parametervalue.h"
+//#include "database/parametervalue.h"
 #include "database/database.h"
 #include "AutoTest.h"
 
@@ -22,8 +22,9 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     DQConnection connection;    
-    if (!EParts::Database::initTables(connection))
+    if (!Database::Database::initTables(connection))
             return 1;
+    Database::Database::generateMockData();
     MainWindow w;
     w.show();
     int res = a.exec();
