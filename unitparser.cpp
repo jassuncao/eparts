@@ -51,9 +51,9 @@ double UnitParser::parseUnit(const QString& num, bool * ok)
                 *ok=false;
             return 0;
         }
-     }
-
-     double value = QString(charBuff.constData()).toDouble(ok);
+     }     
+     const QChar * buf = charBuff.constData();
+     double value = QString(buf, charBuff.size()).toDouble(ok);
      if(prefix!=0){
          switch(prefix.unicode()){
          case 'r':
@@ -110,6 +110,6 @@ double UnitParser::parseUnit(const QString& num, bool * ok)
              value*=1E-15;
              break;
          }
-     }
+     }    
      return value;
 }

@@ -13,6 +13,7 @@
 //#include "database/parametervalue.h"
 #include "database/database.h"
 #include "AutoTest.h"
+#include "selectattributedialog.h"
 
 #if 0
 // This is all you need to run all the tests
@@ -24,7 +25,7 @@ int main(int argc, char *argv[])
     DQConnection connection;    
     if (!Database::Database::initTables(connection))
             return 1;
-    Database::Database::generateMockData();
+    Database::Database::generateMockData();    
     MainWindow w;
     w.show();
     int res = a.exec();

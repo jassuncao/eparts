@@ -2,11 +2,11 @@
 
 namespace Models {
 
-PartAttribute::PartAttribute(int id, const QString &name, AttributeType type, bool virtualAttr) :
+PartAttribute::PartAttribute(const int id, const QString & name, const QString & description, const AttributeType type) :
     _id(id),
     _name(name),
-    _type(type),
-    _virtualAttr(virtualAttr)
+    _description(description),
+    _type(type)
 {
 }
 

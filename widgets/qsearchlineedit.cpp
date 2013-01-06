@@ -13,7 +13,7 @@ QSearchLineEdit::QSearchLineEdit(QWidget *parent)
     imageLabel = new QLabel(this);
     imageLabel->setPixmap(searchIcon.pixmap(16,16));
     clearButton = new QToolButton(this);
-    QIcon icon(":/images/edit_clear_16x16.png");
+    QIcon icon(":/images/edit-clear-locationbar-rtl.png");
     clearButton->setIcon(icon);
     //clearButton->setIconSize(icon.);
     clearButton->setCursor(Qt::ArrowCursor);

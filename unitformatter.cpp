@@ -1,9 +1,11 @@
 #include "unitformatter.h"
 #include "qtextstream.h"
 #include "qdebug.h"
+#include <math.h>
 
 static const ushort BIG_PREFIXES[] = {0,'k','M','G','T','P','E','Z','Y'};
 static const ushort SMALL_PREFIXES[] = {0,'m',0x03BC,'n','p','f','a','z','y'};
+static const double SMALLEST_VALUE = 10e-24;
 
 UnitFormatter::UnitFormatter()
 {
@@ -93,6 +95,11 @@ QString UnitFormatter::format(double value)
     return format(value, 0);
 }
 
+float epsilonEqual( double a, double b, double epsilon )
+{
+    return fabsf( a - b ) < epsilon;
+}
+
 QString UnitFormatter::format(const double value, QChar unit)
 {
     QString result;
@@ -111,13 +118,15 @@ QString UnitFormatter::format(const double value, QChar unit)
         out.setNumberFlags(out.numberFlags() & ~QTextStream::ForcePoint);
         out.setRealNumberNotation(QTextStream::FixedNotation);
         out<<aux;        
-    }
-    else{
+    }    
+    else {
         double aux = value;
         int divider = 0;
-        while(aux<0.999999999){
-            ++divider;
-            aux=aux*1000;
+        if(aux>SMALLEST_VALUE){
+            while(aux<0.999999999){
+                ++divider;
+                aux=aux*1000;
+            }
         }
         prefix = SMALL_PREFIXES[divider];
         out.setRealNumberPrecision(2);        

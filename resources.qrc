@@ -22,5 +22,6 @@
         <file>images/list_48x48.png</file>
         <file>images/folder_48x48.png</file>
         <file>images/chip_48x48.png</file>
+        <file>images/edit-clear-locationbar-rtl.png</file>
     </qresource>
 </RCC>

@@ -5,6 +5,9 @@
 #include "parttypedialog.h"
 #include "widgets/fancytabwidget.h"
 #include "widgets/stylehelper.h"
+#include "editattributedialog.h"
+#include "selectattributedialog.h"
+#include "editpartdialog.h"
 
 //using namespace Widgets;
 
@@ -32,7 +35,7 @@ MainWindow::MainWindow(QWidget *parent) :
     Widgets::StyleHelper::setBaseColor(Qt::darkGray);
     _tabWidget= new Widgets::FancyTabWidget(this);
 
-    partsMainWidget = new PartsMainWidget();
+    partsMainWidget = new PartsMainWidget(this);
 
     _tabWidget->insertTab(0, partsMainWidget,QIcon(":/images/folder_48x48.png"),"Parts" );
     _tabWidget->insertTab(1, new QWidget(this),QIcon(":/images/list_48x48.png"),"Shopping List" );
@@ -78,7 +81,13 @@ void MainWindow::selectedOtherView()
 
 void MainWindow::showOptions()
 {
-    SettingsDialog dlg(this);
+    //SettingsDialog dlg(this);        
+    //EditAttributeDialog dlg(this);
+    //SelectAttributeDialog dlg(this);
+    DQQuery<DQAttribute> query;
+    DQList<DQAttribute> result;
+    result = query.orderBy("name").all();
+    EditPartDialog dlg(result,this);
     dlg.exec();
 }
 

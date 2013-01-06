@@ -11,7 +11,7 @@ namespace Database {
         Database();
     public:
         static bool initTables(DQConnection &connection);
-        static void generateMockData();
+        static void generateMockData();        
     };
 }
 

@@ -48,7 +48,13 @@ SOURCES += main.cpp\
     models/partattribute.cpp \
     models/parttablemodel.cpp \
     models/attributeformatter.cpp \
-    partscontainerwidget.cpp
+    partscontainerwidget.cpp \
+    editpartdialog.cpp \
+    widgets/flowlayout.cpp \
+    selectattributedialog.cpp \
+    editattributedialog.cpp \
+    widgets/attributeeditorwidget.cpp \
+    widgets/qlineedit2.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -96,7 +102,13 @@ HEADERS  += mainwindow.h \
     models/parttablemodel.h \
     models/attributeformatter.h \
     database/entities.h \
-    partscontainerwidget.h
+    partscontainerwidget.h \
+    editpartdialog.h \
+    widgets/flowlayout.h \
+    selectattributedialog.h \
+    editattributedialog.h \
+    widgets/attributeeditorwidget.h \
+    widgets/qlineedit2.h
 
 FORMS    += mainwindow.ui \
     partsmainwidget.ui \
@@ -105,7 +117,10 @@ FORMS    += mainwindow.ui \
     categorydialog.ui \
     parttypesform.ui \
     parttypedialog.ui \
-    testwindow.ui
+    testwindow.ui \
+    editpartdialog.ui \
+    selectattributedialog.ui \
+    editattributedialog.ui
 
 RESOURCES += \
     resources.qrc
@@ -113,42 +128,3 @@ RESOURCES += \
 OTHER_FILES += \
     Todo.txt \
     create.sql
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
