@@ -32,8 +32,9 @@ bool Database::initTables(DQConnection &connection)
      connection.open(db); // Establish the connection to database. It will become the "default connection" shared by all DQModel
 
      connection.addModel<DQCategory>();
-     connection.addModel<DQPart>();
+     connection.addModel<DQUnit>();
      connection.addModel<DQAttribute>();
+     connection.addModel<DQPart>();
      connection.addModel<DQFloatValue>();
      connection.addModel<DQTextValue>();
      connection.addModel<DQCategoryActiveAttributes>();
@@ -71,18 +72,66 @@ void Database::generateMockData()
     fixedCapsCat.parent = capacitorsCat.id;
     fixedCapsCat.save();
 
+    DQUnit ohm;
+    ohm.symbol=QString(QChar(0x2126));
+    ohm.name="Ohm";
+    ohm.save();
+
+    DQUnit watt;
+    watt.symbol="W";
+    watt.name="Watt";
+    watt.save();
+
+    DQUnit volt;
+    volt.symbol="V";
+    volt.name="Volt";
+    volt.save();
+
+    DQUnit hertz;
+    hertz.symbol="Hz";
+    hertz.name="Hertz";
+    hertz.save();
+
+    DQUnit henry;
+    henry.symbol="H";
+    henry.name="Henry";
+    henry.save();
+
+    DQUnit celsius;
+    celsius.symbol="°C";
+    celsius.name="Celsius";
+    celsius.save();
+
+    DQUnit ampere;
+    ampere.symbol="A";
+    ampere.name="Ampere";
+    ampere.save();
+
+    DQUnit kelvin;
+    kelvin.symbol="K";
+    kelvin.name="Kelvin";
+    kelvin.save();
+
+    DQUnit second;
+    second.symbol="s";
+    second.name="Second";
+    second.save();
+
+
     //Some attributes
 
     DQAttribute resistanceAttr;
-    resistanceAttr.type = Models::ATTRIBUTE_RESISTANCE;
+    resistanceAttr.type = Models::ATTRIBUTE_UNIT;
     resistanceAttr.name = "Resistance";
     resistanceAttr.description = "Ohmic value";
+    resistanceAttr.unit = ohm;
     resistanceAttr.save();
 
     DQAttribute powerAttr;
-    powerAttr.type = Models::ATTRIBUTE_POWER;
+    powerAttr.type = Models::ATTRIBUTE_UNIT;
     powerAttr.name = "Power";
     powerAttr.description = "Maximum power dissipation value";
+    powerAttr.unit = watt;
     powerAttr.save();
 
     DQAttribute toleranceAttr;

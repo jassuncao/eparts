@@ -8,8 +8,11 @@
 #include "editattributedialog.h"
 #include "selectattributedialog.h"
 #include "editpartdialog.h"
+#include "models/attributesrepository.h"
+#include <QList>
 
 //using namespace Widgets;
+using namespace Models;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
@@ -84,10 +87,16 @@ void MainWindow::showOptions()
     //SettingsDialog dlg(this);        
     //EditAttributeDialog dlg(this);
     //SelectAttributeDialog dlg(this);
+    AttributesRepository repo;
+    repo.load();
+    //const QList<const AbstractPartAttribute*> mostUsed = repo.listMostUsedAttributes(10);
+    /*
+    DQQuery<DQFloatValue> query;
     DQQuery<DQAttribute> query;
     DQList<DQAttribute> result;
     result = query.orderBy("name").all();
-    EditPartDialog dlg(result,this);
+    */
+    EditPartDialog dlg(&repo,this);
     dlg.exec();
 }
 

@@ -40,7 +40,7 @@ public:
         _formatter(AttributeFormatterFactory::formatterFor(type)),
         _alignment(Qt::AlignRight|Qt::AlignVCenter)
     {
-        if(PartAttribute::isTextAttribute(type)) {
+        if(type==Models::ATTRIBUTE_TEXT) {
             _findAttributeValueQuery.prepare("SELECT value FROM text_value WHERE part=:partId AND attribute=:attrId");
         }
         else {
@@ -195,8 +195,8 @@ void PartTableModel::loadColumns()
     qDeleteAll(_columns);
     _columns.clear();
 
-    _columns.append(new PartColumn(QString("quantity"),tr("Quantity"),ATTRIBUTE_GENERIC_NUMBER));
-    _columns.append(new PartColumn(QString("minimumQuantity"),tr("Min. Quantity"),ATTRIBUTE_GENERIC_NUMBER));
+    _columns.append(new PartColumn(QString("quantity"),tr("Quantity"),Models::ATTRIBUTE_GENERIC_INTEGER));
+    _columns.append(new PartColumn(QString("minimumQuantity"),tr("Min. Quantity"),ATTRIBUTE_GENERIC_INTEGER));
     _columns.append(new PartColumn(QString("partNumber"),tr("Part Number"),ATTRIBUTE_TEXT));
     _columns.append(new PartColumn(QString("description"),tr("Description"),ATTRIBUTE_TEXT));
 
@@ -227,7 +227,7 @@ void PartTableModel::loadRows()
         QString columnName = column->columnName();
         if(columnName.isNull())
         { //Sort by attribute value
-            const char* valueTable = PartAttribute::isTextAttribute(column->type()) ?
+            const char* valueTable = column->type()==Models::ATTRIBUTE_TEXT ?
                         "text_value" :
                         "float_value";
 

@@ -29,6 +29,7 @@ public:
     DQField<int> minimumQuantity;
     DQField<QString> partNumber;
     DQField<QString> description;
+    //DQForeignKey<DQPartBin> partBin;
 };
 
 DQ_DECLARE_MODEL(DQPart,
@@ -40,17 +41,32 @@ DQ_DECLARE_MODEL(DQPart,
                  DQ_FIELD(description)
                  )
 
+class DQUnit : public DQModel {
+    DQ_MODEL
+public:
+    DQField<QString> symbol;
+    DQField<QString> name;
+};
+
+DQ_DECLARE_MODEL(DQUnit,
+                 "unit", // the table name.
+                 DQ_FIELD(symbol, DQNotNull),
+                 DQ_FIELD(name , DQNotNull)
+                 )
+
 class DQAttribute : public DQModel {
     DQ_MODEL
 public:
     DQField<int> type;
+    DQForeignKey<DQUnit> unit;
     DQField<QString> name;
-    DQField<QString> description;
+    DQField<QString> description;    
 };
 
 DQ_DECLARE_MODEL(DQAttribute,
                  "attribute", // the table name.
                  DQ_FIELD(type, DQNotNull),
+                 DQ_FIELD(unit),
                  DQ_FIELD(name),
                  DQ_FIELD(description)
                  )

@@ -5,7 +5,7 @@
 
 using namespace Widgets;
 
-QUnitLineEdit::QUnitLineEdit(QChar unit, QWidget *parent) :
+QUnitLineEdit::QUnitLineEdit(const QString &unit, QWidget *parent) :
     QLineEdit(parent), _unit(unit)
 {
     QLocale locale;

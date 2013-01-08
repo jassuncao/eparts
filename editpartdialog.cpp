@@ -8,12 +8,54 @@
 #include "widgets/qlineedit2.h"
 #include "selectattributedialog.h"
 #include <QList>
+#include <QSignalMapper>
+#include <QDebug>
 
 
-EditPartDialog::EditPartDialog(const DQList<DQAttribute> & mostUsedAttributes, QWidget *parent) :
+class AttributeEditorFactory : public PartAttributeVisitor {
+public:        
+
+    void visit(FloatAttribute * attr)
+    {
+        _widget = new FloatAttributeEditor(attr, _parent);
+    }
+
+    void visit(IntegerAttribute * attr)
+    {
+        _widget = new IntegerAttributeEditor(attr, _parent);
+    }
+
+    void visit(UnitAttribute * attr)
+    {
+        _widget = new UnitAttributeEditor(attr, _parent);
+    }
+
+    void visit(PercentageAttribute * attr)
+    {
+        _widget = new PercentageAttributeEditor(attr, _parent);
+    }
+
+    void visit(TextAttribute * attr)
+    {
+        _widget = new TextAttributeEditor(attr, _parent);
+    }
+    static AbstractAttributeEditorWidget* createFor(AbstractPartAttribute* attribute, QWidget *parent=0) {
+        AttributeEditorFactory visitor(parent);
+        attribute->accept(visitor);
+        return visitor._widget;
+    }
+private:
+    AttributeEditorFactory(QWidget *parent) : _parent(parent) {}
+    QWidget * _parent;
+    AbstractAttributeEditorWidget* _widget;
+};
+
+
+EditPartDialog::EditPartDialog(AttributesRepository * attributesRepository, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::EditPartDialog),
-    _mostUsedAttributes(mostUsedAttributes)
+    _attributesRepository(attributesRepository)
+    //_mostUsedAttributes(mostUsedAttributes)
 {
     ui->setupUi(this);    
 
@@ -23,6 +65,16 @@ EditPartDialog::EditPartDialog(const DQList<DQAttribute> & mostUsedAttributes, Q
     flowLayout->addWidget(otherAttributeButton);
 
     _signalMapper = new QSignalMapper(this);
+    const AbstractPartAttribute* attr;
+    foreach(attr,attributesRepository->listMostUsedAttributes(10)){
+        QPushButton * button = new QPushButton(attr->name());
+        button->setToolTip(attr->description());
+        _signalMapper->setMapping(button, (QObject*)attr);
+        connect(button,SIGNAL(clicked()),_signalMapper,SLOT(map()));
+        flowLayout->addWidget(button);
+    }
+
+    /*
     for(int i=0; i<mostUsedAttributes.size();++i) {
         DQAttribute * attr = mostUsedAttributes.at(i);
         QPushButton * button = new QPushButton(attr->name.get().toString());
@@ -32,8 +84,9 @@ EditPartDialog::EditPartDialog(const DQList<DQAttribute> & mostUsedAttributes, Q
         connect(button,SIGNAL(clicked()),_signalMapper,SLOT(map()));
         flowLayout->addWidget(button);
     }
+    */
     ui->attributesframe->setLayout(flowLayout);
-    connect(_signalMapper,SIGNAL(mapped(int)), this, SLOT(attributeButtonClicked(int)));
+    connect(_signalMapper,SIGNAL(mapped(QObject*)), this, SLOT(attributeButtonClicked(QObject*)));
 }
 
 EditPartDialog::~EditPartDialog()
@@ -41,14 +94,18 @@ EditPartDialog::~EditPartDialog()
     delete ui;
 }
 
-void EditPartDialog::attributeButtonClicked(int attributeId)
+void EditPartDialog::attributeButtonClicked(QObject *object)
 {
-    qDebug()<<"Attribute button "<<attributeId<<" pushed";
-    addAttribute(attributeId);
+    AbstractPartAttribute* attr = qobject_cast<AbstractPartAttribute*>(object);
+    if(attr){
+        qDebug()<<"Attribute button "<<attr->name()<<" pushed";
+        addAttributeEditor(attr);
+    }
 }
 
-void EditPartDialog::removeAttributeClicked(int attributeId)
+void EditPartDialog::removeAttributeClicked(const AbstractPartAttribute *attribute)
 {
+    int attributeId = attribute->id();
     QWidget * editor = _attributeEditors[attributeId];
     QWidget * editorLabel = ui->formLayout_2->labelForField(editor);
     int idx = ui->formLayout_2->indexOf(editor);
@@ -64,7 +121,7 @@ void EditPartDialog::removeAttributeClicked(int attributeId)
         delete item;
     }
     _attributeEditors.remove(attributeId);
-    QObject * source = _signalMapper->mapping(attributeId);
+    QObject * source = _signalMapper->mapping((QObject*)attribute);
     if(source){
         QPushButton* button = dynamic_cast<QPushButton*>(source);
         if(button)
@@ -74,31 +131,43 @@ void EditPartDialog::removeAttributeClicked(int attributeId)
 
 void EditPartDialog::addOtherAttributeButtonClicked()
 {
-    QList<int> keys = _attributeEditors.keys();
-    SelectAttributeDialog dlg(keys, this);
+    QList<int> attributesToExclude = _attributeEditors.keys();
+    SelectAttributeDialog dlg(_attributesRepository, attributesToExclude, this);
+    //dlg.filterAttributes(attributesToExclude);
+    //dlg.setAttributes(_attributesRepository->attributes(), attributesToExclude);
     if(dlg.exec()){
-        int attrId = dlg.getSelectedAttribute();
-        addAttribute(attrId);
+        AbstractPartAttribute * attr = dlg.getSelectedAttribute();
+        if(attr){
+            addAttributeEditor(attr);
+        }
     }
 }
 
-void EditPartDialog::addAttribute(int attributeId)
+
+void EditPartDialog::addAttributeEditor(AbstractPartAttribute* attribute)
 {
+    AbstractAttributeEditorWidget* attributeEditor = AttributeEditorFactory::createFor(attribute);
+    connect(attributeEditor,SIGNAL(removeAttributeClicked(const AbstractPartAttribute*)),this,SLOT(removeAttributeClicked(const AbstractPartAttribute*)));
+    int idx = ui->formLayout_2->rowCount();
+    ui->formLayout_2->insertRow(idx, attribute->name(),attributeEditor);
+    _attributeEditors[attribute->id()]=attributeEditor;
+    QObject * source = _signalMapper->mapping(attribute);
+    if(source){
+        QPushButton* button = dynamic_cast<QPushButton*>(source);
+        if(button)
+            button->hide();
+    }
+    /*
     DQAttribute attr;
-    DQQuery query;
+    DQQuery<DQAttribute> query;
     query = query.filter(DQWhere("id","=",QVariant(attributeId)));
     if(query.exec() && query.next()){
         query.recordTo(attr);
     }
-    AbstractAttributeEditorWidget * attributeEditor;
-    switch(attr.type.get().toInt())
-    {
-    case Models::ATTRIBUTE_TEXT:
-        break;
-    case Models::ATTRIBUTE_RESISTANCE:
-        break;
-    }
+    */
+    //AbstractAttributeEditorWidget * attributeEditor;
 
+/*
     UnitAttributeEditor  * attributeEditor = new UnitAttributeEditor(attributeId,'F');
     connect(attributeEditor,SIGNAL(removeAttributeClicked(int)),this,SLOT(removeAttributeClicked(int)));
     int idx = ui->formLayout_2->rowCount();
@@ -110,5 +179,6 @@ void EditPartDialog::addAttribute(int attributeId)
         if(button)
             button->hide();
     }
+    */
 }
 

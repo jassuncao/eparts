@@ -1,6 +1,9 @@
 #ifndef DATABASE_H
 #define DATABASE_H
 
+#include <QList>
+#include <QtSql>
+
 class DQConnection;
 
 namespace Database {
@@ -11,7 +14,7 @@ namespace Database {
         Database();
     public:
         static bool initTables(DQConnection &connection);
-        static void generateMockData();        
+        static void generateMockData();
     };
 }
 

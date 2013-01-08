@@ -94,9 +94,9 @@ void AttributeEditorWidget::prettyPrint()
 }
 
 */
-AbstractAttributeEditorWidget::AbstractAttributeEditorWidget(int attributeId, QWidget *parent) :
+AbstractAttributeEditorWidget::AbstractAttributeEditorWidget(const AbstractPartAttribute * attribute, QWidget *parent) :
     QWidget(parent),
-    _attributeId(attributeId)
+    _attribute(attribute)
 {
     _boxLayout = new QHBoxLayout(this);
     _boxLayout->setSpacing(0);
@@ -111,11 +111,11 @@ AbstractAttributeEditorWidget::AbstractAttributeEditorWidget(int attributeId, QW
 
 void AbstractAttributeEditorWidget::removeButtonClicked()
 {
-    emit removeAttributeClicked(_attributeId);
+    emit removeAttributeClicked(_attribute);
 }
 
-TextAttributeEditor::TextAttributeEditor(int attributeId, QWidget *parent) :
-    AbstractAttributeEditorWidget(attributeId,parent)
+TextAttributeEditor::TextAttributeEditor(const TextAttribute *attribute, QWidget *parent) :
+    AbstractAttributeEditorWidget(attribute,parent)
 {
     _lineEdit = new QLineEdit(this);
     boxLayout()->insertWidget(0,_lineEdit);
@@ -131,8 +131,8 @@ void TextAttributeEditor::setValue(QVariant value)
     _lineEdit->setText(value.toString());
 }
 
-PercentageAttributeEditor::PercentageAttributeEditor(int attributeId, QWidget *parent) :
-    AbstractAttributeEditorWidget(attributeId,parent)
+PercentageAttributeEditor::PercentageAttributeEditor(const PercentageAttribute *attribute, QWidget *parent) :
+    AbstractAttributeEditorWidget(attribute,parent)
 {
     _spinbox = new QDoubleSpinBox(this);
     _spinbox->setMinimum(0.01);
@@ -140,7 +140,8 @@ PercentageAttributeEditor::PercentageAttributeEditor(int attributeId, QWidget *p
     _spinbox->setValue(0);
     _spinbox->setSuffix("%");
     _spinbox->setDecimals(2);
-    boxLayout()->insertWidget(0,_spinbox);
+    boxLayout()->insertWidget(0,_spinbox);    
+    boxLayout()->insertSpacerItem(1, new  QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum));
 }
 
 QVariant PercentageAttributeEditor::value() const
@@ -155,8 +156,8 @@ void PercentageAttributeEditor::setValue(QVariant value)
         _spinbox->setValue(d);
 }
 
-GenericNumberAttributeEditor::GenericNumberAttributeEditor(int attributeId, QWidget *parent) :
-     AbstractAttributeEditorWidget(attributeId,parent)
+FloatAttributeEditor::FloatAttributeEditor(const FloatAttribute *attribute, QWidget *parent) :
+     AbstractAttributeEditorWidget(attribute,parent)
 {
     _lineEdit = new QLineEdit(this);
     _lineEdit->setValidator(new QDoubleValidator(this));
@@ -169,7 +170,7 @@ GenericNumberAttributeEditor::GenericNumberAttributeEditor(int attributeId, QWid
     boxLayout()->insertSpacerItem(1, new  QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum));
 }
 
-QVariant GenericNumberAttributeEditor::value() const
+QVariant FloatAttributeEditor::value() const
 {
     bool ok;
     double d = _lineEdit->text().toDouble(&ok);
@@ -178,7 +179,7 @@ QVariant GenericNumberAttributeEditor::value() const
     return QVariant();
 }
 
-void GenericNumberAttributeEditor::setValue(QVariant value)
+void FloatAttributeEditor::setValue(QVariant value)
 {
     bool ok;
     double d = value.toDouble(&ok);
@@ -186,10 +187,41 @@ void GenericNumberAttributeEditor::setValue(QVariant value)
         _lineEdit->setText(QString::number(d));
 }
 
-UnitAttributeEditor::UnitAttributeEditor(int attributeId, QChar suffix, QWidget *parent) :
-    AbstractAttributeEditorWidget(attributeId,parent)
+IntegerAttributeEditor::IntegerAttributeEditor(const IntegerAttribute *attribute, QWidget *parent) :
+     AbstractAttributeEditorWidget(attribute,parent)
 {
-    _lineEdit = new Widgets::QUnitLineEdit(suffix,this);
+    _lineEdit = new QLineEdit(this);
+    _lineEdit->setValidator(new QIntValidator(this));
+    boxLayout()->insertWidget(0,_lineEdit);
+    QSizePolicy sizePolicy1(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    sizePolicy1.setHorizontalStretch(0);
+    sizePolicy1.setVerticalStretch(0);
+    sizePolicy1.setHeightForWidth(_lineEdit->sizePolicy().hasHeightForWidth());
+    _lineEdit->setSizePolicy(sizePolicy1);
+    boxLayout()->insertSpacerItem(1, new  QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum));
+}
+
+QVariant IntegerAttributeEditor::value() const
+{
+    bool ok;
+    int i = _lineEdit->text().toInt(&ok);
+    if(ok)
+        return QVariant(i);
+    return QVariant();
+}
+
+void IntegerAttributeEditor::setValue(QVariant value)
+{
+    bool ok;
+    double i = value.toInt(&ok);
+    if(ok)
+        _lineEdit->setText(QString::number(i));
+}
+
+UnitAttributeEditor::UnitAttributeEditor(const UnitAttribute *attribute, QWidget *parent) :
+    AbstractAttributeEditorWidget(attribute,parent)
+{
+    _lineEdit = new Widgets::QUnitLineEdit(attribute->unitSymbol(),this);
     boxLayout()->insertWidget(0,_lineEdit);
     QSizePolicy sizePolicy1(QSizePolicy::Preferred, QSizePolicy::Fixed);
     sizePolicy1.setHorizontalStretch(0);

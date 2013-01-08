@@ -9,19 +9,22 @@
 #include <QTimer>
 #include <QShortcut>
 #include "editattributedialog.h"
+#include "models/attributestablemodel.h"
+#include <models/attributesrepository.h>
 
-using Models::PartAttribute;
+using namespace Models;
 
-SelectAttributeDialog::SelectAttributeDialog(const QList<int> attributesToFilter, QWidget *parent) :
+SelectAttributeDialog::SelectAttributeDialog(AttributesRepository * attributesRepository, const QList<int> & attributesToExclude, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::SelectAttributeDialog),
-    _selectedAttribute(-1)
+    _selectedAttribute(0),
+    _attributesRepository(attributesRepository)
 {
     ui->setupUi(this);
     ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
     _timer = new QTimer(this);
     _timer->setSingleShot(true);
-    initAttributesTree(attributesToFilter);
+    initAttributesModel(attributesToExclude);
     QShortcut * shortcut = new QShortcut(QKeySequence(QKeySequence::Find),this);
     connect(shortcut,SIGNAL( activated() ), ui->lineEdit, SLOT( setFocus() ) );
     connect( _timer, SIGNAL( timeout() ), this, SLOT( slotSearchLineActivate() ) );
@@ -33,7 +36,7 @@ SelectAttributeDialog::~SelectAttributeDialog()
     delete ui;
 }
 
-int SelectAttributeDialog::getSelectedAttribute() const
+AbstractPartAttribute *SelectAttributeDialog::getSelectedAttribute() const
 {
     return _selectedAttribute;
 }
@@ -52,32 +55,22 @@ void SelectAttributeDialog::slotSearchLineActivate()
     _proxyModel->setFilterFixedString( ui->lineEdit->text() );
 }
 
-void SelectAttributeDialog::slotClicked(const QModelIndex &index)
-{
-    if(!_sourceModel || !_proxyModel)
-        return;
-    QStandardItem *item = _sourceModel->itemFromIndex(_proxyModel->mapToSource(index));
-    if(item) {
-        qDebug()<<"Item selected:"<<item->data();
-        _selectedAttribute = item->data().toInt();
-    }
-    else{
-        _selectedAttribute=-1;
-    }
-    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(_selectedAttribute>=0);
-}
-
 void SelectAttributeDialog::slotCurrentRowChanged(const QModelIndex &current, const QModelIndex &previous)
 {
+
     QStandardItem *item = _sourceModel->itemFromIndex(_proxyModel->mapToSource(current));
     if(item) {
-        qDebug()<<"Item selected:"<<item->data();
-        _selectedAttribute = item->data().toInt();
+        QObject * obj = qvariant_cast<QObject *>(item->data());
+        AbstractPartAttribute * attr= qobject_cast<AbstractPartAttribute*>(obj);
+        if(attr){
+            qDebug()<<"Item selected:"<<attr->name();
+            _selectedAttribute = attr;
+        }
     }
     else{
-        _selectedAttribute=-1;
+        _selectedAttribute=0;
     }
-    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(_selectedAttribute>=0);
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(_selectedAttribute>=0);   
 }
 
 void SelectAttributeDialog::newAttribute()
@@ -91,7 +84,7 @@ void SelectAttributeDialog::newAttribute()
         newAttr.type.set(dlg.attributeType());
         qDebug()<<"Saving new attribute";
         if(newAttr.save()){
-            _selectedAttribute = newAttr.id.get().toInt();
+            //_selectedAttribute = newAttr.id.get().toInt();
         }
         else{
             qErrnoWarning("Unable to save new attribute");
@@ -100,41 +93,36 @@ void SelectAttributeDialog::newAttribute()
     }
 }
 
-void SelectAttributeDialog::initAttributesTree(const QList<int> &attributesToFilter)
+
+void SelectAttributeDialog::initAttributesModel(const QList<int> & attributesToExclude)
 {
     QStandardItemModel * model = new QStandardItemModel(this);
     model->setColumnCount(2);
     QStringList columnNames;
     columnNames<<tr("Attribute")<<tr("Description");
     model->setHorizontalHeaderLabels(columnNames);
-    DQQuery<DQAttribute> query;    
-    if(query.exec()){
-        DQAttribute attr;
-        while(query.next()){
-            query.recordTo(attr);
-            int attributeId = attr.id.get().toInt();
-            if(attributesToFilter.contains(attributeId))
-                continue;
-            QStandardItem * nameItem = new QStandardItem(attr.name.get().toString());
-            nameItem->setData(attr.id.get());
-            nameItem->setEditable(false);
-            QStandardItem * descriptionItem = new QStandardItem(attr.description.get().toString());
-            descriptionItem->setEditable(false);
-            descriptionItem->setData(attr.id.get());
-            QList<QStandardItem*> row;
-            row.append(nameItem);
-            row.append(descriptionItem);
-            model->appendRow(row);
-        }
-    }
-    else{
-        //TODO: Show some Error message
+    QList<AbstractPartAttribute*> attributes = _attributesRepository->attributes();
+    AbstractPartAttribute* attr;
+    foreach(attr, attributes){
+        if(attributesToExclude.contains(attr->id()))
+            continue;
+        QStandardItem * nameItem = new QStandardItem(attr->name());
+        QVariant v = qVariantFromValue((QObject*)attr);
+        nameItem->setData(v);
+        nameItem->setEditable(false);
+        QStandardItem * descriptionItem = new QStandardItem(attr->description());
+        descriptionItem->setEditable(false);
+        descriptionItem->setData(v);
+        QList<QStandardItem*> row;
+        row.append(nameItem);
+        row.append(descriptionItem);
+        model->appendRow(row);
     }
 
     _sourceModel = model;
     _proxyModel = new QSortFilterProxyModel(this);
     _proxyModel->setSourceModel(_sourceModel);
     ui->treeView->setModel(_proxyModel);
-    QItemSelectionModel * selectModel = ui->treeView->selectionModel();
-    connect(selectModel,SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),this, SLOT(slotCurrentRowChanged(QModelIndex,QModelIndex)));
+    QItemSelectionModel * selectModel = ui->treeView->selectionModel();    
+    connect(selectModel,SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),this, SLOT(slotCurrentRowChanged(QModelIndex,QModelIndex)));    
 }

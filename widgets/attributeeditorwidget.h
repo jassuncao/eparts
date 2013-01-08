@@ -4,6 +4,8 @@
 #include <QWidget>
 #include "models/partattribute.h"
 
+using namespace Models;
+
 class QLineEdit;
 class QHBoxLayout;
 class QDoubleSpinBox;
@@ -15,16 +17,16 @@ class AbstractAttributeEditorWidget : public QWidget
 public:
     virtual QVariant value() const = 0;
     virtual void setValue(QVariant value) = 0;
-    inline int attributeId() const {return _attributeId;}
+    //inline int attributeId() const {return _attributeId;}
 signals:
-    void removeAttributeClicked(int attributeId);
+    void removeAttributeClicked(const AbstractPartAttribute * attribute);
 protected:
-    explicit AbstractAttributeEditorWidget(int attributeId, QWidget *parent = 0);
+    explicit AbstractAttributeEditorWidget(const AbstractPartAttribute * attribute, QWidget *parent = 0);
     inline QHBoxLayout * boxLayout() const {return _boxLayout;}
 protected slots:
     void removeButtonClicked();
-private:
-    int _attributeId;
+protected:
+    const AbstractPartAttribute * _attribute;
     QHBoxLayout * _boxLayout;
 };
 
@@ -54,7 +56,7 @@ class TextAttributeEditor : public AbstractAttributeEditorWidget
 {
     Q_OBJECT
 public:
-    explicit TextAttributeEditor(int attributeId, QWidget *parent = 0);
+    explicit TextAttributeEditor(const TextAttribute * attribute, QWidget *parent = 0);
     QVariant value() const;
     void setValue(QVariant value);
 private:
@@ -65,18 +67,29 @@ class PercentageAttributeEditor : public AbstractAttributeEditorWidget
 {
     Q_OBJECT
 public:
-    explicit PercentageAttributeEditor(int attributeId, QWidget *parent = 0);
+    explicit PercentageAttributeEditor(const PercentageAttribute * attribute, QWidget *parent = 0);
     QVariant value() const;
     void setValue(QVariant value);
 private:
     QDoubleSpinBox * _spinbox;
 };
 
-class GenericNumberAttributeEditor : public AbstractAttributeEditorWidget
+class FloatAttributeEditor : public AbstractAttributeEditorWidget
 {
     Q_OBJECT
 public:
-    explicit GenericNumberAttributeEditor(int attributeId, QWidget *parent = 0);
+    explicit FloatAttributeEditor(const FloatAttribute * attribute, QWidget *parent = 0);
+    QVariant value() const;
+    void setValue(QVariant value);
+private:
+    QLineEdit * _lineEdit;
+};
+
+class IntegerAttributeEditor : public AbstractAttributeEditorWidget
+{
+    Q_OBJECT
+public:
+    explicit IntegerAttributeEditor(const IntegerAttribute * attribute, QWidget *parent = 0);
     QVariant value() const;
     void setValue(QVariant value);
 private:
@@ -87,7 +100,7 @@ class UnitAttributeEditor : public AbstractAttributeEditorWidget
 {
     Q_OBJECT
 public:
-    explicit UnitAttributeEditor(int attributeId, QChar suffix, QWidget *parent = 0);
+    explicit UnitAttributeEditor(const UnitAttribute * attribute, QWidget *parent = 0);
     QVariant value() const;
     void setValue(QVariant value);
 private slots:

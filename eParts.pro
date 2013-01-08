@@ -54,7 +54,9 @@ SOURCES += main.cpp\
     selectattributedialog.cpp \
     editattributedialog.cpp \
     widgets/attributeeditorwidget.cpp \
-    widgets/qlineedit2.cpp
+    widgets/qlineedit2.cpp \
+    models/attributesrepository.cpp \
+    models/attributestablemodel.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -108,7 +110,9 @@ HEADERS  += mainwindow.h \
     selectattributedialog.h \
     editattributedialog.h \
     widgets/attributeeditorwidget.h \
-    widgets/qlineedit2.h
+    widgets/qlineedit2.h \
+    models/attributesrepository.h \
+    models/attributestablemodel.h
 
 FORMS    += mainwindow.ui \
     partsmainwidget.ui \

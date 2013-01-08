@@ -10,10 +10,12 @@ EditAttributeDialog::EditAttributeDialog(QWidget *parent) :
     ui(new Ui::EditAttributeDialog)
 {
     ui->setupUi(this);    
-    initTypesCombo();    
+    initCombos();
     connect(ui->nameEditor,SIGNAL(textChanged(QString)),this, SLOT(validateInput()));
-    connect(ui->typeCombo,SIGNAL(currentIndexChanged(int)),this,SLOT(validateInput()));
+    connect(ui->typeCombo,SIGNAL(currentIndexChanged(int)),this,SLOT(typeComboChanged(int)));
+    connect(ui->unitCombo,SIGNAL(currentIndexChanged(int)),this,SLOT(validateInput()));
     ui->typeCombo->setCurrentIndex(-1);
+    ui->unitCombo->setCurrentIndex(-1);
     validateInput();
 }
 
@@ -58,23 +60,52 @@ void EditAttributeDialog::setAttributeType(int type)
     ui->typeCombo->setCurrentIndex(idx);
 }
 
-void EditAttributeDialog::initTypesCombo()
+void EditAttributeDialog::initCombos()
 {
-    QComboBox *combo = ui->typeCombo;
-    combo->clear();
-    combo->addItem(tr("Text"),QVariant(Models::ATTRIBUTE_TEXT));
-    combo->addItem(tr("Generic Number"),QVariant(Models::ATTRIBUTE_GENERIC_NUMBER));
-    combo->addItem(tr("Resistance"),QVariant(Models::ATTRIBUTE_RESISTANCE));
-    combo->addItem(tr("Capacitance"),QVariant(Models::ATTRIBUTE_CAPACITANCE));
-    combo->addItem(tr("Inductance"),QVariant(Models::ATTRIBUTE_INDUCTANCE));
-    combo->addItem(tr("Power"),QVariant(Models::ATTRIBUTE_POWER));
-    combo->addItem(tr("Percentage"),QVariant(Models::ATTRIBUTE_PERCENTAGE));
+    QComboBox *typeCombo = ui->typeCombo;
+    typeCombo->clear();
+    typeCombo->addItem(tr("Text"),QVariant(Models::ATTRIBUTE_TEXT));
+    typeCombo->addItem(tr("Float"),QVariant(Models::ATTRIBUTE_GENERIC_FLOAT));
+    typeCombo->addItem(tr("Integer"),QVariant(Models::ATTRIBUTE_GENERIC_INTEGER));
+    typeCombo->addItem(tr("Unit"),QVariant(Models::ATTRIBUTE_UNIT));
+    typeCombo->addItem(tr("Percentage"),QVariant(Models::ATTRIBUTE_PERCENTAGE));
+
+    QComboBox *unitCombo = ui->unitCombo;
+    unitCombo->clear();
+    DQQuery<DQUnit> query;
+    if(query.exec()){
+        DQUnit unit;
+        while(query.next()){
+            query.recordTo(unit);
+            QString text("%1 (%2)");
+            text=text.arg(unit.name.get().toString(),unit.symbol.get().toString());
+            unitCombo->addItem(text,unit.id);
+        }
+    }
+    unitCombo->setEnabled(false);
 }
 
 void EditAttributeDialog::validateInput()
 {
     bool valid = true;
     valid=valid && !ui->nameEditor->text().isEmpty();
-    valid=valid && ui->typeCombo->currentIndex()>=0;
+    int typeIdx = ui->typeCombo->currentIndex();
+    valid=valid && typeIdx>=0;
+    QVariant userData = ui->typeCombo->itemData(typeIdx);
+    if(userData.isValid() && userData.toInt()==Models::ATTRIBUTE_UNIT){
+        valid=valid&&ui->unitCombo->currentIndex()>=0;
+    }
     ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(valid);
+}
+
+void EditAttributeDialog::typeComboChanged(int index)
+{
+    QVariant userData = ui->typeCombo->itemData(index);
+    if(userData.isValid() && userData.toInt()==Models::ATTRIBUTE_UNIT)
+        ui->unitCombo->setEnabled(true);
+    else{
+        ui->unitCombo->setEnabled(false);
+        ui->unitCombo->setCurrentIndex(-1);
+    }
+    validateInput();
 }

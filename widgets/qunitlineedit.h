@@ -13,13 +13,13 @@ class QUnitLineEdit : public QLineEdit
 {
     Q_OBJECT
 public:
-    explicit QUnitLineEdit(QChar unit, QWidget *parent = 0);
+    explicit QUnitLineEdit(const QString & unit, QWidget *parent = 0);
 
 protected:
     //void resizeEvent(QResizeEvent *);
     void paintEvent ( QPaintEvent * );
 private:
-    QChar _unit;
+    const QString _unit;
 signals:
 
 public slots:

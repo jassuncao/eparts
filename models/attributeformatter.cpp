@@ -132,16 +132,11 @@ AttributeFormatter *AttributeFormatterFactory::formatterFor(int attributeType)
 {
     switch(attributeType)
     {
-    case ATTRIBUTE_GENERIC_NUMBER:
+    case ATTRIBUTE_GENERIC_FLOAT:
+    case ATTRIBUTE_GENERIC_INTEGER:
         return new GenericNumberAttributeFormatter();
-    case ATTRIBUTE_RESISTANCE:
-        return new UnitAttributeFormatter(SYMBOL_RESISTANCE);
-    case ATTRIBUTE_CAPACITANCE:
-        return new UnitAttributeFormatter(SYMBOL_CAPACITANCE);
-    case ATTRIBUTE_INDUCTANCE:
-        return new UnitAttributeFormatter(SYMBOL_INDUCTANCE);
-    case ATTRIBUTE_POWER:
-        return new UnitAttributeFormatter(SYMBOL_POWER);
+    case ATTRIBUTE_UNIT:
+        return new UnitAttributeFormatter(SYMBOL_RESISTANCE);    
     case ATTRIBUTE_PERCENTAGE:
         return new PercentageAttributeFormatter();
     case ATTRIBUTE_TEXT:

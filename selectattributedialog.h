@@ -3,9 +3,16 @@
 
 #include <QDialog>
 #include <QList>
+#include <models/partattribute.h>
+
+using namespace Models;
 
 namespace Ui {
 class SelectAttributeDialog;
+}
+
+namespace Models {
+class AttributesRepository;
 }
 
 class QStandardItemModel;
@@ -18,22 +25,23 @@ class SelectAttributeDialog : public QDialog
     Q_OBJECT
     
 public:
-    explicit SelectAttributeDialog(const QList<int> attributesToFilter, QWidget *parent = 0);
+    explicit SelectAttributeDialog(AttributesRepository * attributesRepository, const QList<int> & attributesToExclude, QWidget *parent = 0);
     ~SelectAttributeDialog();
-    int getSelectedAttribute() const;
+    AbstractPartAttribute * getSelectedAttribute() const;
+    //void setAttributes(const QList<AbstractPartAttribute*> &attributes, const QList<int> &attributesToExclude);
 private slots:
     void slotSearchLineChange( const QString& newText );
     void slotSearchLineActivate();
-    void slotClicked(const QModelIndex &index);
     void slotCurrentRowChanged(const QModelIndex &current, const QModelIndex &previous);
     void newAttribute();
 private:
-    void initAttributesTree(const QList<int> & attributesToFilter);
+    void initAttributesModel(const QList<int> &attributesToExclude);
     Ui::SelectAttributeDialog *ui;
     QStandardItemModel *_sourceModel;
     QSortFilterProxyModel *_proxyModel;
     QTimer* _timer;
-    int _selectedAttribute;
+    AbstractPartAttribute * _selectedAttribute;
+    AttributesRepository * _attributesRepository;
 };
 
 #endif // SELECTATTRIBUTEDIALOG_H
