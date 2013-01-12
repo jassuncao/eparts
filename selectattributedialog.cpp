@@ -77,19 +77,14 @@ void SelectAttributeDialog::newAttribute()
 {
     qDebug()<<"New attribute";
     EditAttributeDialog dlg(this);
-    if(dlg.exec()){
-        DQAttribute newAttr;
-        newAttr.name.set(dlg.attributeName());
-        newAttr.description.set(dlg.attributeDescription());
-        newAttr.type.set(dlg.attributeType());
-        qDebug()<<"Saving new attribute";
-        if(newAttr.save()){
-            //_selectedAttribute = newAttr.id.get().toInt();
-        }
-        else{
-            qErrnoWarning("Unable to save new attribute");
-            //TODO: SHow some error msg
-        }
+    if(dlg.exec()){        
+        _selectedAttribute = _attributesRepository->addAttribute(
+                    dlg.attributeName(),
+                    dlg.attributeDescription(),
+                    dlg.attributeType(),
+                    dlg.attributeUnit()
+                    );
+        done(Accepted);
     }
 }
 

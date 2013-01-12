@@ -55,7 +55,6 @@ EditPartDialog::EditPartDialog(AttributesRepository * attributesRepository, QWid
     QDialog(parent),
     ui(new Ui::EditPartDialog),
     _attributesRepository(attributesRepository)
-    //_mostUsedAttributes(mostUsedAttributes)
 {
     ui->setupUi(this);    
 
@@ -74,17 +73,6 @@ EditPartDialog::EditPartDialog(AttributesRepository * attributesRepository, QWid
         flowLayout->addWidget(button);
     }
 
-    /*
-    for(int i=0; i<mostUsedAttributes.size();++i) {
-        DQAttribute * attr = mostUsedAttributes.at(i);
-        QPushButton * button = new QPushButton(attr->name.get().toString());
-        button->setToolTip(attr->description.get().toString());
-        int attributeId = attr->id.get().toInt();
-        _signalMapper->setMapping(button, attributeId);
-        connect(button,SIGNAL(clicked()),_signalMapper,SLOT(map()));
-        flowLayout->addWidget(button);
-    }
-    */
     ui->attributesframe->setLayout(flowLayout);
     connect(_signalMapper,SIGNAL(mapped(QObject*)), this, SLOT(attributeButtonClicked(QObject*)));
 }
@@ -132,9 +120,7 @@ void EditPartDialog::removeAttributeClicked(const AbstractPartAttribute *attribu
 void EditPartDialog::addOtherAttributeButtonClicked()
 {
     QList<int> attributesToExclude = _attributeEditors.keys();
-    SelectAttributeDialog dlg(_attributesRepository, attributesToExclude, this);
-    //dlg.filterAttributes(attributesToExclude);
-    //dlg.setAttributes(_attributesRepository->attributes(), attributesToExclude);
+    SelectAttributeDialog dlg(_attributesRepository, attributesToExclude, this);   
     if(dlg.exec()){
         AbstractPartAttribute * attr = dlg.getSelectedAttribute();
         if(attr){
@@ -142,7 +128,6 @@ void EditPartDialog::addOtherAttributeButtonClicked()
         }
     }
 }
-
 
 void EditPartDialog::addAttributeEditor(AbstractPartAttribute* attribute)
 {
@@ -157,28 +142,6 @@ void EditPartDialog::addAttributeEditor(AbstractPartAttribute* attribute)
         if(button)
             button->hide();
     }
-    /*
-    DQAttribute attr;
-    DQQuery<DQAttribute> query;
-    query = query.filter(DQWhere("id","=",QVariant(attributeId)));
-    if(query.exec() && query.next()){
-        query.recordTo(attr);
-    }
-    */
-    //AbstractAttributeEditorWidget * attributeEditor;
-
-/*
-    UnitAttributeEditor  * attributeEditor = new UnitAttributeEditor(attributeId,'F');
-    connect(attributeEditor,SIGNAL(removeAttributeClicked(int)),this,SLOT(removeAttributeClicked(int)));
-    int idx = ui->formLayout_2->rowCount();
-    ui->formLayout_2->insertRow(idx, QString(attr.name.get().toString()),attributeEditor);
-    _attributeEditors[attributeId]=attributeEditor;
-    QObject * source = _signalMapper->mapping(attributeId);
-    if(source){
-        QPushButton* button = dynamic_cast<QPushButton*>(source);
-        if(button)
-            button->hide();
-    }
-    */
+    attributeEditor->setFocus();
 }
 

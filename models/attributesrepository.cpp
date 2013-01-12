@@ -28,6 +28,23 @@ AttributesRepository::~AttributesRepository()
     _attributes.clear();
 }
 
+AbstractPartAttribute *AttributesRepository::addAttribute(const QString &name, const QString &description, int type, int unitId)
+{
+     DQAttribute newAttr;
+     newAttr.name.set(name);
+     newAttr.description.set(description);
+     newAttr.type.set(type);
+     newAttr.unit.set(unitId);
+     if(newAttr.save()){
+         return readAttribute(newAttr);
+     }
+     else{
+         qErrnoWarning("Unable to save attribute");
+         //TODO: SHow some error msg
+         return 0;
+     }
+}
+
 void AttributesRepository::load()
 {
     DQQuery<DQAttribute> query;
@@ -35,30 +52,7 @@ void AttributesRepository::load()
         DQAttribute attr;
         while(query.next()){
             query.recordTo(attr);
-            AbstractPartAttribute * partAttr;
-            int id = attr.id.get().toInt();
-            QString name = attr.name.get().toString();
-            QString description = attr.description.get().toString();
-            switch(attr.type.get().toInt()){
-            case Models::ATTRIBUTE_GENERIC_FLOAT:
-                partAttr = new FloatAttribute(id,name,description, this);
-                break;
-            case Models::ATTRIBUTE_GENERIC_INTEGER:
-                partAttr = new IntegerAttribute(id,name,description, this);
-                break;
-            case Models::ATTRIBUTE_PERCENTAGE:
-                partAttr = new PercentageAttribute(id,name,description, this);
-                break;
-            case Models::ATTRIBUTE_TEXT:
-                partAttr = new TextAttribute(id,name,description, this);
-                break;
-            case Models::ATTRIBUTE_UNIT:
-                QString unitName = attr.unit->name.get().toString();
-                QString unitSymbol = attr.unit->symbol.get().toString();
-                partAttr = new UnitAttribute(id,name,description,unitName, unitSymbol, this);
-                break;
-            }
-            _attributes[id]=partAttr;
+            readAttribute(attr);
         }
     }
 }
@@ -107,7 +101,9 @@ const QList<const AbstractPartAttribute*> AttributesRepository::listMostUsedAttr
     QList<AuxItem>::const_iterator it;
     //Add to the result list up to max attributes
     for(it=auxList.constBegin(); it!=auxList.constEnd() && attributes.count()<max; ++it){
-        attributes.append(findById((*it).attributeId));
+        const AbstractPartAttribute* attr = findById((*it).attributeId);
+        if(attr)
+            attributes.append(attr);
     }
     return attributes;
 }
@@ -120,6 +116,35 @@ int AttributesRepository::count() const
 QList<AbstractPartAttribute *> AttributesRepository::attributes() const
 {
     return _attributes.values();
+}
+
+AbstractPartAttribute *AttributesRepository::readAttribute(DQAttribute &attr)
+{
+    AbstractPartAttribute * partAttr=0;
+    int id = attr.id.get().toInt();
+    QString name = attr.name.get().toString();
+    QString description = attr.description.get().toString();
+    switch(attr.type.get().toInt()){
+    case Models::ATTRIBUTE_GENERIC_FLOAT:
+        partAttr = new FloatAttribute(id,name,description, this);
+        break;
+    case Models::ATTRIBUTE_GENERIC_INTEGER:
+        partAttr = new IntegerAttribute(id,name,description, this);
+        break;
+    case Models::ATTRIBUTE_PERCENTAGE:
+        partAttr = new PercentageAttribute(id,name,description, this);
+        break;
+    case Models::ATTRIBUTE_TEXT:
+        partAttr = new TextAttribute(id,name,description, this);
+        break;
+    case Models::ATTRIBUTE_UNIT:
+        QString unitName = attr.unit->name.get().toString();
+        QString unitSymbol = attr.unit->symbol.get().toString();
+        partAttr = new UnitAttribute(id,name,description,unitName, unitSymbol, this);
+        break;
+    }
+    _attributes[id]=partAttr;
+    return partAttr;
 }
 
 }//namespace

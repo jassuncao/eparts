@@ -17,17 +17,22 @@ class AbstractAttributeEditorWidget : public QWidget
 public:
     virtual QVariant value() const = 0;
     virtual void setValue(QVariant value) = 0;
-    //inline int attributeId() const {return _attributeId;}
+    //inline int attributeId() const {return _attributeId;}    
+    inline bool isModified() const {return _modified;}
 signals:
     void removeAttributeClicked(const AbstractPartAttribute * attribute);
+    void modified(const AbstractPartAttribute * attribute);
 protected:
     explicit AbstractAttributeEditorWidget(const AbstractPartAttribute * attribute, QWidget *parent = 0);
     inline QHBoxLayout * boxLayout() const {return _boxLayout;}
 protected slots:
     void removeButtonClicked();
+    void valueChanged();
 protected:
+    virtual bool checkModified() const = 0;
     const AbstractPartAttribute * _attribute;
     QHBoxLayout * _boxLayout;
+    bool _modified;
 };
 
 /*
@@ -59,8 +64,11 @@ public:
     explicit TextAttributeEditor(const TextAttribute * attribute, QWidget *parent = 0);
     QVariant value() const;
     void setValue(QVariant value);
-private:
+protected:
+    bool checkModified() const;
+private:    
     QLineEdit * _lineEdit;
+    QString _originalValue;
 };
 
 class PercentageAttributeEditor : public AbstractAttributeEditorWidget
@@ -70,8 +78,11 @@ public:
     explicit PercentageAttributeEditor(const PercentageAttribute * attribute, QWidget *parent = 0);
     QVariant value() const;
     void setValue(QVariant value);
+protected:
+    bool checkModified() const;
 private:
     QDoubleSpinBox * _spinbox;
+    double _originalValue;
 };
 
 class FloatAttributeEditor : public AbstractAttributeEditorWidget
@@ -81,8 +92,11 @@ public:
     explicit FloatAttributeEditor(const FloatAttribute * attribute, QWidget *parent = 0);
     QVariant value() const;
     void setValue(QVariant value);
+protected:
+    bool checkModified() const;
 private:
     QLineEdit * _lineEdit;
+    QString _originalValue;
 };
 
 class IntegerAttributeEditor : public AbstractAttributeEditorWidget
@@ -92,8 +106,11 @@ public:
     explicit IntegerAttributeEditor(const IntegerAttribute * attribute, QWidget *parent = 0);
     QVariant value() const;
     void setValue(QVariant value);
+protected:
+    bool checkModified() const;
 private:
     QLineEdit * _lineEdit;
+    QString _originalValue;
 };
 
 class UnitAttributeEditor : public AbstractAttributeEditorWidget
@@ -105,8 +122,11 @@ public:
     void setValue(QVariant value);
 private slots:
     void prettyPrint();
+protected:
+    bool checkModified() const;
 private:
     QLineEdit * _lineEdit;
+    QString _originalValue;
 };
 
 #endif // ATTRIBUTEEDITORWIDGET_H

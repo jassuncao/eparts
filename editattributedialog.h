@@ -23,6 +23,7 @@ public:
     QString attributeName() const;
     QString attributeDescription() const;
     int attributeType() const;
+    int attributeUnit() const;
     void setAttributeName(const QString &name);
     void setAttributeDescription(const QString &description);
     void setAttributeType(int type);
