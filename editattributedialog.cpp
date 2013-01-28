@@ -44,6 +44,16 @@ int EditAttributeDialog::attributeType() const
     return -1;
 }
 
+int EditAttributeDialog::attributeUnit() const
+{
+    int idx = ui->unitCombo->currentIndex();
+    if(idx>=0){
+        QVariant tmp = ui->unitCombo->itemData(idx);
+        return tmp.toInt();
+    }
+    return -1;
+}
+
 void EditAttributeDialog::setAttributeName(const QString &name)
 {
     ui->nameEditor->setText(name);

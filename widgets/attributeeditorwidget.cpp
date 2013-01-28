@@ -114,11 +114,24 @@ void AbstractAttributeEditorWidget::removeButtonClicked()
     emit removeAttributeClicked(_attribute);
 }
 
+void AbstractAttributeEditorWidget::valueChanged()
+{
+    bool oldValue = _modified;
+    _modified = checkModified();
+    if(_modified && !oldValue){
+        emit modified(_attribute);
+    }
+}
+
 TextAttributeEditor::TextAttributeEditor(const TextAttribute *attribute, QWidget *parent) :
     AbstractAttributeEditorWidget(attribute,parent)
 {
     _lineEdit = new QLineEdit(this);
     boxLayout()->insertWidget(0,_lineEdit);
+    if(_lineEdit->focusPolicy() != Qt::NoFocus) {
+        setFocusProxy(_lineEdit);
+    }
+    connect(_lineEdit,SIGNAL(textEdited(QString)),this,SLOT(valueChanged()));
 }
 
 QVariant TextAttributeEditor::value() const
@@ -128,8 +141,15 @@ QVariant TextAttributeEditor::value() const
 
 void TextAttributeEditor::setValue(QVariant value)
 {
-    _lineEdit->setText(value.toString());
+    _originalValue = value.toString();
+    _lineEdit->setText(_originalValue);
 }
+
+bool TextAttributeEditor::checkModified() const
+{
+    return _originalValue!=_lineEdit->text();
+}
+
 
 PercentageAttributeEditor::PercentageAttributeEditor(const PercentageAttribute *attribute, QWidget *parent) :
     AbstractAttributeEditorWidget(attribute,parent)
@@ -142,6 +162,10 @@ PercentageAttributeEditor::PercentageAttributeEditor(const PercentageAttribute *
     _spinbox->setDecimals(2);
     boxLayout()->insertWidget(0,_spinbox);    
     boxLayout()->insertSpacerItem(1, new  QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum));
+    if(_spinbox->focusPolicy() != Qt::NoFocus) {
+        setFocusProxy(_spinbox);
+    }
+    connect(_spinbox,SIGNAL(valueChanged(double)), this, SLOT(valueChanged()));
 }
 
 QVariant PercentageAttributeEditor::value() const
@@ -151,9 +175,14 @@ QVariant PercentageAttributeEditor::value() const
 
 void PercentageAttributeEditor::setValue(QVariant value)
 {
-    double d = value.toDouble();
-    if(d>=0.01 || d<100)
-        _spinbox->setValue(d);
+    _originalValue = value.toDouble();
+    if(_originalValue>=0.01 || _originalValue<100)
+        _spinbox->setValue(_originalValue);
+}
+
+bool PercentageAttributeEditor::checkModified() const
+{
+    return _originalValue!=_spinbox->value();
 }
 
 FloatAttributeEditor::FloatAttributeEditor(const FloatAttribute *attribute, QWidget *parent) :
@@ -168,6 +197,10 @@ FloatAttributeEditor::FloatAttributeEditor(const FloatAttribute *attribute, QWid
     sizePolicy1.setHeightForWidth(_lineEdit->sizePolicy().hasHeightForWidth());
     _lineEdit->setSizePolicy(sizePolicy1);
     boxLayout()->insertSpacerItem(1, new  QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum));
+    if(_lineEdit->focusPolicy() != Qt::NoFocus) {
+        setFocusProxy(_lineEdit);
+    }
+    connect(_lineEdit,SIGNAL(textEdited(QString)),this,SLOT(valueChanged()));
 }
 
 QVariant FloatAttributeEditor::value() const
@@ -183,14 +216,21 @@ void FloatAttributeEditor::setValue(QVariant value)
 {
     bool ok;
     double d = value.toDouble(&ok);
-    if(ok)
-        _lineEdit->setText(QString::number(d));
+    if(ok){
+        _originalValue = QString::number(d);
+        _lineEdit->setText(_originalValue);
+    }
+}
+
+bool FloatAttributeEditor::checkModified() const
+{
+    return _originalValue!=_lineEdit->text();
 }
 
 IntegerAttributeEditor::IntegerAttributeEditor(const IntegerAttribute *attribute, QWidget *parent) :
      AbstractAttributeEditorWidget(attribute,parent)
 {
-    _lineEdit = new QLineEdit(this);
+    _lineEdit = new QLineEdit(this);    
     _lineEdit->setValidator(new QIntValidator(this));
     boxLayout()->insertWidget(0,_lineEdit);
     QSizePolicy sizePolicy1(QSizePolicy::Preferred, QSizePolicy::Fixed);
@@ -199,6 +239,10 @@ IntegerAttributeEditor::IntegerAttributeEditor(const IntegerAttribute *attribute
     sizePolicy1.setHeightForWidth(_lineEdit->sizePolicy().hasHeightForWidth());
     _lineEdit->setSizePolicy(sizePolicy1);
     boxLayout()->insertSpacerItem(1, new  QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum));
+    if(_lineEdit->focusPolicy() != Qt::NoFocus) {
+        setFocusProxy(_lineEdit);
+    }
+    connect(_lineEdit,SIGNAL(textEdited(QString)),this,SLOT(valueChanged()));
 }
 
 QVariant IntegerAttributeEditor::value() const
@@ -214,14 +258,24 @@ void IntegerAttributeEditor::setValue(QVariant value)
 {
     bool ok;
     double i = value.toInt(&ok);
-    if(ok)
-        _lineEdit->setText(QString::number(i));
+    if(ok){
+        _originalValue = QString::number(i);
+        _lineEdit->setText(_originalValue);
+    }
+}
+
+bool IntegerAttributeEditor::checkModified() const
+{
+    return _originalValue!=_lineEdit->text();
 }
 
 UnitAttributeEditor::UnitAttributeEditor(const UnitAttribute *attribute, QWidget *parent) :
     AbstractAttributeEditorWidget(attribute,parent)
 {
     _lineEdit = new Widgets::QUnitLineEdit(attribute->unitSymbol(),this);
+    if(_lineEdit->focusPolicy() != Qt::NoFocus) {
+        setFocusProxy(_lineEdit);
+    }
     boxLayout()->insertWidget(0,_lineEdit);
     QSizePolicy sizePolicy1(QSizePolicy::Preferred, QSizePolicy::Fixed);
     sizePolicy1.setHorizontalStretch(0);
@@ -230,6 +284,7 @@ UnitAttributeEditor::UnitAttributeEditor(const UnitAttribute *attribute, QWidget
     _lineEdit->setSizePolicy(sizePolicy1);
     boxLayout()->insertSpacerItem(1, new  QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum));
     connect(_lineEdit,SIGNAL(editingFinished()),this,SLOT(prettyPrint()));
+    connect(_lineEdit,SIGNAL(textEdited(QString)),this,SLOT(valueChanged()));
 }
 
 QVariant UnitAttributeEditor::value() const
@@ -245,8 +300,10 @@ void UnitAttributeEditor::setValue(QVariant value)
 {
     bool ok;
     double d = value.toDouble(&ok);
-    if(ok)
-        _lineEdit->setText(UnitFormatter::format(d));
+    if(ok){
+        _originalValue = UnitFormatter::format(d);
+        _lineEdit->setText(_originalValue);
+    }
 }
 
 void UnitAttributeEditor::prettyPrint()
@@ -255,7 +312,11 @@ void UnitAttributeEditor::prettyPrint()
     QString text = _lineEdit->text();
     double value = UnitParser::parseUnit(text,&ok);
     if(ok){
-        QString text = UnitFormatter::format(value);
-        _lineEdit->setText(text);
+        _lineEdit->setText(UnitFormatter::format(value));
     }
+}
+
+bool UnitAttributeEditor::checkModified() const
+{
+    return _originalValue!=_lineEdit->text();
 }
