@@ -10,6 +10,7 @@ QUnitLineEdit::QUnitLineEdit(const QString &unit, QWidget *parent) :
 {
     QLocale locale;
     QChar decimalPoint = locale.decimalPoint();
+    //TODO: Handle expressions like 1/4
     QString rgex("\\b[0-9]+(\\%1[0-9]+)?[k,M,G,T,P,E,Z,Y,m,u,n,p,f,a,z,y]?\\b");
     QFontMetrics fm(font());
     int padding = fm.width(_unit);

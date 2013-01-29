@@ -222,9 +222,31 @@ void EditPartDialog::savePart()
     part.description.set(ui->descriptionLineEdit_2->text());
     part.minimumQuantity.set(ui->minQuantitySpinBox_2->value());
     part.quantity.set(ui->quantitySpinBox_2->value());
-    part.partNumber.set(ui->partNumberLineEdit_2->text());
+    part.partNumber.set(ui->partNumberLineEdit_2->text());    
     if(part.save()) {
-
+        _partId = part.id.get().toInt();
+        DQQuery<DQTextValue> textAttrQuery;
+        DQQuery<DQFloatValue> floatsQuery;
+        textAttrQuery.filter(DQWhere("part","=",_partId)).remove();
+        floatsQuery.filter(DQWhere("part","=",_partId)).remove();
+        QWidget* widget;
+        foreach(widget, _attributeEditors.values()){
+            AbstractAttributeEditorWidget * editor = dynamic_cast<AbstractAttributeEditorWidget*>(widget);
+            if(editor->attribute()->isText()){
+                DQTextValue textValue;
+                textValue.value.set(editor->value());
+                textValue.part.set(part.id);
+                textValue.attribute.set(editor->attribute()->id());
+                textValue.save();
+            }
+            else{
+                DQFloatValue floatValue;
+                floatValue.value.set(editor->value());
+                floatValue.part.set(part.id);
+                floatValue.attribute.set(editor->attribute()->id());
+                floatValue.save();
+            }
+        }
     }
     else{
         //TODO: Show some error

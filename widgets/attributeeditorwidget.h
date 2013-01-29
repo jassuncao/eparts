@@ -16,9 +16,9 @@ class AbstractAttributeEditorWidget : public QWidget
     Q_OBJECT
 public:
     virtual QVariant value() const = 0;
-    virtual void setValue(QVariant value) = 0;
-    //inline int attributeId() const {return _attributeId;}    
+    virtual void setValue(QVariant value) = 0; 
     inline bool isModified() const {return _modified;}
+    inline const AbstractPartAttribute * attribute() const {return _attribute;}
 signals:
     void removeAttributeClicked(const AbstractPartAttribute * attribute);
     void modified(const AbstractPartAttribute * attribute);

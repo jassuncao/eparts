@@ -38,6 +38,7 @@ public:
 
     //virtual AttributeType type() const = 0;
     virtual void accept(class PartAttributeVisitor &visitor) const = 0;
+    virtual bool isText() const = 0;
 
 protected:
     AbstractPartAttribute(const int id, const QString &name, const QString &description, QObject *parent = 0);
@@ -54,6 +55,7 @@ class FloatAttribute : public AbstractPartAttribute {
 public:
     FloatAttribute(const int id, const QString &name, const QString &description, QObject *parent = 0);
     void accept(PartAttributeVisitor &visitor) const;
+    bool isText() const {return false;}
 };
 
 class IntegerAttribute : public AbstractPartAttribute {
@@ -61,6 +63,7 @@ class IntegerAttribute : public AbstractPartAttribute {
 public:
     IntegerAttribute(const int id, const QString &name, const QString &description, QObject *parent = 0);
     void accept(PartAttributeVisitor &visitor) const;
+    bool isText() const {return false;}
 };
 
 class UnitAttribute : public AbstractPartAttribute {
@@ -70,6 +73,7 @@ public:
     void accept(PartAttributeVisitor &visitor) const;
     inline QString unitSymbol() const {return _unitSymbol;}
     inline QString unitName() const {return _unitName;}
+    bool isText() const {return false;}
 private:    
     const QString _unitName;
     const QString _unitSymbol;
@@ -80,6 +84,7 @@ class PercentageAttribute : public AbstractPartAttribute {
 public:
     PercentageAttribute(const int id, const QString &name, const QString &description, QObject *parent = 0);
     void accept(PartAttributeVisitor &visitor) const;
+    bool isText() const {return false;}
 };
 
 class TextAttribute : public AbstractPartAttribute {    
@@ -87,6 +92,7 @@ class TextAttribute : public AbstractPartAttribute {
 public:
     TextAttribute(const int id, const QString &name, const QString &description, QObject *parent = 0);
     void accept(PartAttributeVisitor &visitor) const;
+    bool isText() const {return true;}
 };
 
 

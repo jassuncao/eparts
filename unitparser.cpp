@@ -6,7 +6,7 @@ UnitParser::UnitParser()
 {
 }
 
-
+//TODO: Handle expressions like 1/4
 double UnitParser::parseUnit(const QString& num, bool * ok)
 {
      QVarLengthArray<QChar, 256> charBuff;
@@ -84,9 +84,9 @@ double UnitParser::parseUnit(const QString& num, bool * ok)
          case 'Y':
              value*=1E24;
              break;
-         case 'm':
-             break;
+         case 'm':             
              value*=1E-3;
+             break;
          case 0x03BC:
          case 'u':
              value*=1E-6;

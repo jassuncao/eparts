@@ -294,7 +294,10 @@ UnitAttributeEditor::UnitAttributeEditor(const UnitAttribute *attribute, QWidget
 QVariant UnitAttributeEditor::value() const
 {
     bool ok;
-    double d = UnitParser::parseUnit(_lineEdit->text(),&ok);
+    QString text = _lineEdit->text();
+    qDebug()<<"Text to parse:"<<text;
+    double d = UnitParser::parseUnit(text,&ok);
+    qDebug()<<"Parse result:"<<d;
     if(ok)
         return QVariant(d);
     return QVariant();
