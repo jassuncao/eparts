@@ -2,8 +2,6 @@
 #define EDITPARTDIALOG_H
 
 #include <QDialog>
-//#include "database/entities.h"
-//#include <dqlist.h>
 #include <models/partattribute.h>
 #include <models/attributesrepository.h>
 #include <QMap>
@@ -25,6 +23,7 @@ public:
     explicit EditPartDialog(AttributesRepository * attributesRepository, QWidget *parent = 0);
     ~EditPartDialog();
     void setPart(int partId);
+    inline int part() const {return _partId;}
     void setCategory(int categoryId);
     void done(int r);
 private slots:
@@ -37,9 +36,7 @@ private:
 
     Ui::EditPartDialog *ui;
     QSignalMapper * _signalMapper;
-    //const QList<AbstractPartAttribute*> & _mostUsedAttributes;
     QMap<int,QWidget*> _attributeEditors;
-    //QMap<int,QWidget*> _attributeButtons;
     AttributesRepository * _attributesRepository;
     int _partId;
     int _categoryId;

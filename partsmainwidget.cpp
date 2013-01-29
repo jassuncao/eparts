@@ -71,7 +71,11 @@ PartsMainWidget::~PartsMainWidget()
 
 void PartsMainWidget::addPart()
 {
-
+    EditPartDialog dlg(_attributesRepo, this);
+    dlg.setCategory(_partTableModel.category());
+    dlg.setPart(-1);
+    if(dlg.exec()==QDialog::Accepted)
+        _partTableModel.setDirty(dlg.part());
 }
 
 void PartsMainWidget::removePart()

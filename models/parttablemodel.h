@@ -27,6 +27,7 @@ public:
     virtual Qt::ItemFlags flags ( const QModelIndex & index ) const;
     virtual void sort(int column, Qt::SortOrder order = Qt::AscendingOrder);
     void setCategory(int category);
+    inline int category() const {return _catId;}
     int itemFromIndex(const QModelIndex &index)const;
     void setDirty(int partId);
 private:
