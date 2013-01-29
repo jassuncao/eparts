@@ -71,11 +71,11 @@ PartsMainWidget::~PartsMainWidget()
 
 void PartsMainWidget::addPart()
 {
+
 }
 
 void PartsMainWidget::removePart()
 {
-
 }
 
 static QStandardItem* createCategoryItem(const QVariant &id, const QString &name, const QString &description)
@@ -139,8 +139,8 @@ void PartsMainWidget::tableDoubleClicked(const QModelIndex &index)
         return;
     EditPartDialog dlg(_attributesRepo, this);
     dlg.setPart(partId);
-    dlg.exec();
-
+    if(dlg.exec()==QDialog::Accepted)
+        _partTableModel.setDirty(partId);
 }
 
 void PartsMainWidget::currentRowChanged ( const QModelIndex & current, const QModelIndex & previous ){  

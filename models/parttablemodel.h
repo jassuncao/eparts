@@ -28,6 +28,7 @@ public:
     virtual void sort(int column, Qt::SortOrder order = Qt::AscendingOrder);
     void setCategory(int category);
     int itemFromIndex(const QModelIndex &index)const;
+    void setDirty(int partId);
 private:
     void loadColumns();
     void loadRows();

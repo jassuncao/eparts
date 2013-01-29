@@ -125,11 +125,13 @@ QVariant PartTableModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
         return QVariant();
+    QVariant result;
+    if (role & ~(Qt::DisplayRole | Qt::EditRole))
+        return result;
     int row = index.row();
     int column = index.column();
     if(row<0 || row>=_rows.count())
-        return QVariant();
-    QVariant result;
+        return result;
     switch(role)
     {
         case Qt::DisplayRole:
@@ -187,7 +189,7 @@ void PartTableModel::setCategory(int category)
     beginResetModel();
     loadColumns();
     loadRows();
-    endResetModel();
+    endResetModel();    
 }
 
 int PartTableModel::itemFromIndex(const QModelIndex &index) const
@@ -198,6 +200,13 @@ int PartTableModel::itemFromIndex(const QModelIndex &index) const
     if(row<0 || row>=_rows.count())
         return -1;
     return _rows.at(row)->partId();
+}
+
+void PartTableModel::setDirty(int partId)
+{
+    beginResetModel();
+    loadRows();
+    endResetModel();
 }
 
 void PartTableModel::loadColumns()

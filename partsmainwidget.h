@@ -31,9 +31,7 @@ class PartsMainWidget : public QWidget
 public:
     explicit PartsMainWidget(QWidget *parent = 0);
     ~PartsMainWidget();
-private:    
-    PartModel _partModel;    
-    QSortFilterProxyModel * _proxyModel;
+private:
     QStandardItemModel * _treeModel;
     Ui::PartsMainWidget *ui;
     PartTableModel _partTableModel;
@@ -44,7 +42,7 @@ private slots:
     void currentRowChanged ( const QModelIndex & current, const QModelIndex & previous );
     void treeSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
     void addPart();
-    void removePart();
+    void removePart();    
 };
 
 
