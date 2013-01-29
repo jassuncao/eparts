@@ -9,7 +9,7 @@ using namespace Models;
 class QLineEdit;
 class QHBoxLayout;
 class QDoubleSpinBox;
-
+class QToolButton;
 
 class AbstractAttributeEditorWidget : public QWidget
 {
@@ -33,6 +33,7 @@ protected:
     const AbstractPartAttribute * _attribute;
     QHBoxLayout * _boxLayout;
     bool _modified;
+    QToolButton * _remButton;
 };
 
 /*

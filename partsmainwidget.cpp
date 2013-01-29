@@ -17,6 +17,7 @@
 #include "unitcolumndelegate.h"
 #include "database/entities.h"
 #include "database/database.h"
+#include "editpartdialog.h"
 
 using namespace Widgets;
 
@@ -42,6 +43,8 @@ PartsMainWidget::PartsMainWidget(QWidget *parent) :
 
     ui->setupUi(this);    
     _spinBoxDelegate = new SpinBoxDelegate(this);           
+    _attributesRepo = new AttributesRepository();
+    _attributesRepo->load();
     /*
     ui->tableView->setColumnHidden(1,true);
     ui->tableView->setColumnHidden(2,true);
@@ -74,9 +77,10 @@ PartsMainWidget::PartsMainWidget(QWidget *parent) :
     */
     initCategoriesTree();
     ui->tableView->setSortingEnabled(true);
-    ui->tableView->setModel(&_partTableModel);
+    ui->tableView->setModel(&_partTableModel);    
     //_partTableModel.setCategory(Database::Database::resistorsCat);
-    //_partTableModel.set
+
+    connect(ui->tableView,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(tableDoubleClicked(QModelIndex)));
 }
 
 PartsMainWidget::~PartsMainWidget()
@@ -161,6 +165,19 @@ void PartsMainWidget::initCategoriesTree()
             SLOT(treeSelectionChanged(const QItemSelection &, const QItemSelection &)));
 }
 
+void PartsMainWidget::tableDoubleClicked(const QModelIndex &index)
+{
+    int partId = _partTableModel.itemFromIndex(index);
+    if(partId==-1)
+        return;
+    EditPartDialog dlg(_attributesRepo, this);
+    dlg.setPart(partId);
+    dlg.exec();
+
+
+}
+
+
 void PartsMainWidget::buildPartsModel()
 {
     qDebug("Building parts tree model");
@@ -223,6 +240,8 @@ void PartsMainWidget::buildPartsModel()
             SIGNAL(selectionChanged (const QItemSelection &, const QItemSelection &)),
             this,
             SLOT(treeSelectionChanged(const QItemSelection &, const QItemSelection &)));
+
+    connect(ui->treeView,SIGNAL(doubleClicked(QModelIndex)), this, SLOT(editPart(QModelIndex)));
 
     //QModelIndex index = _tableModel.index(1,0);
     //qDebug()<<"Valid:"<<index.isValid();
@@ -341,14 +360,14 @@ void PartsMainWidget::initDetailsViewWidget()
 */
 
 void PartsMainWidget::currentRowChanged ( const QModelIndex & current, const QModelIndex & previous ){
-    QAbstractItemModel * model = ui->tableView->model();
-    if(model!=NULL){
-        /*
+   // QAbstractItemModel * model = ui->tableView->model();
+    /*
+    if(model!=NULL){      
         PartRow * rowData = _tableModel->rowData(current);
         qDebug()<<"Setting data in details view";
-        _detailsWidget->setData(rowData);
-        */
+        _detailsWidget->setData(rowData);        
     }
+    */
     qDebug()<<"Row changed"<<current.row();
 }
 

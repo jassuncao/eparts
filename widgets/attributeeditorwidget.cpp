@@ -101,12 +101,12 @@ AbstractAttributeEditorWidget::AbstractAttributeEditorWidget(const AbstractPartA
     _boxLayout = new QHBoxLayout(this);
     _boxLayout->setSpacing(0);
     _boxLayout->setMargin(0);
-    QToolButton * remButton = new QToolButton(this);
+    _remButton = new QToolButton(this);
     QIcon icon(QString::fromUtf8(":/images/edit_clear_16x16.png"));
-    remButton->setIcon(icon);
-    _boxLayout->addWidget(remButton);
+    _remButton->setIcon(icon);
+    _boxLayout->addWidget(_remButton);
     setLayout(_boxLayout);
-    connect(remButton,SIGNAL(clicked()),this,SLOT(removeButtonClicked()));
+    connect(_remButton,SIGNAL(clicked()),this,SLOT(removeButtonClicked()));
 }
 
 void AbstractAttributeEditorWidget::removeButtonClicked()
@@ -132,6 +132,7 @@ TextAttributeEditor::TextAttributeEditor(const TextAttribute *attribute, QWidget
         setFocusProxy(_lineEdit);
     }
     connect(_lineEdit,SIGNAL(textEdited(QString)),this,SLOT(valueChanged()));
+    setTabOrder(_lineEdit,_remButton);
 }
 
 QVariant TextAttributeEditor::value() const
@@ -166,6 +167,7 @@ PercentageAttributeEditor::PercentageAttributeEditor(const PercentageAttribute *
         setFocusProxy(_spinbox);
     }
     connect(_spinbox,SIGNAL(valueChanged(double)), this, SLOT(valueChanged()));
+    setTabOrder(_spinbox,_remButton);
 }
 
 QVariant PercentageAttributeEditor::value() const
@@ -201,6 +203,7 @@ FloatAttributeEditor::FloatAttributeEditor(const FloatAttribute *attribute, QWid
         setFocusProxy(_lineEdit);
     }
     connect(_lineEdit,SIGNAL(textEdited(QString)),this,SLOT(valueChanged()));
+    setTabOrder(_lineEdit,_remButton);
 }
 
 QVariant FloatAttributeEditor::value() const
@@ -243,6 +246,7 @@ IntegerAttributeEditor::IntegerAttributeEditor(const IntegerAttribute *attribute
         setFocusProxy(_lineEdit);
     }
     connect(_lineEdit,SIGNAL(textEdited(QString)),this,SLOT(valueChanged()));
+    setTabOrder(_lineEdit,_remButton);
 }
 
 QVariant IntegerAttributeEditor::value() const

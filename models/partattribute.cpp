@@ -26,7 +26,7 @@ FloatAttribute::FloatAttribute(const int id, const QString &name, const QString 
 {
 }
 
-void FloatAttribute::accept(PartAttributeVisitor &visitor)
+void FloatAttribute::accept(PartAttributeVisitor &visitor) const
 {
     visitor.visit(this);
 }
@@ -36,7 +36,7 @@ IntegerAttribute::IntegerAttribute(const int id, const QString &name, const QStr
 {
 }
 
-void IntegerAttribute::accept(PartAttributeVisitor &visitor)
+void IntegerAttribute::accept(PartAttributeVisitor &visitor) const
 {
     visitor.visit(this);
 }
@@ -48,7 +48,7 @@ UnitAttribute::UnitAttribute(const int id, const QString &name, const QString &d
 {
 }
 
-void UnitAttribute::accept(PartAttributeVisitor &visitor)
+void UnitAttribute::accept(PartAttributeVisitor &visitor) const
 {
     visitor.visit(this);
 }
@@ -58,7 +58,7 @@ PercentageAttribute::PercentageAttribute(const int id, const QString &name, cons
 {
 }
 
-void PercentageAttribute::accept(PartAttributeVisitor &visitor)
+void PercentageAttribute::accept(PartAttributeVisitor &visitor) const
 {
     visitor.visit(this);
 }
@@ -68,7 +68,7 @@ TextAttribute::TextAttribute(const int id, const QString &name, const QString &d
 {
 }
 
-void TextAttribute::accept(PartAttributeVisitor &visitor)
+void TextAttribute::accept(PartAttributeVisitor &visitor) const
 {
     visitor.visit(this);
 }

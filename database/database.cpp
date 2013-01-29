@@ -140,6 +140,12 @@ void Database::generateMockData()
     toleranceAttr.description = "Resistor tolerance";
     toleranceAttr.save();
 
+    DQAttribute packageAttr;
+    packageAttr.type = Models::ATTRIBUTE_TEXT;
+    packageAttr.name = "Package";
+    packageAttr.description = "Package";
+    packageAttr.save();
+
     DQPart resistor1;
     resistor1.category = fixedResistorsCat;
     resistor1.quantity = 10;
@@ -183,6 +189,12 @@ void Database::generateMockData()
         resistor2Power.part = resistor2.id;
         resistor2Power.value = 0.25f;
         resistor2Power.save();
+
+        DQTextValue resistorPackage;
+        resistorPackage.attribute = packageAttr.id;
+        resistorPackage.part = resistor2.id;
+        resistorPackage.value = "0603";
+        resistorPackage.save();
     }
 
     DQCategoryActiveAttributes catAttr;

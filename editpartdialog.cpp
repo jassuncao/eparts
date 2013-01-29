@@ -10,36 +10,38 @@
 #include <QList>
 #include <QSignalMapper>
 #include <QDebug>
+#include <dquest.h>
+#include <database/entities.h>
 
 
 class AttributeEditorFactory : public PartAttributeVisitor {
 public:        
 
-    void visit(FloatAttribute * attr)
+    void visit(const FloatAttribute * attr)
     {
         _widget = new FloatAttributeEditor(attr, _parent);
     }
 
-    void visit(IntegerAttribute * attr)
+    void visit(const IntegerAttribute * attr)
     {
         _widget = new IntegerAttributeEditor(attr, _parent);
     }
 
-    void visit(UnitAttribute * attr)
+    void visit(const UnitAttribute * attr)
     {
         _widget = new UnitAttributeEditor(attr, _parent);
     }
 
-    void visit(PercentageAttribute * attr)
+    void visit(const PercentageAttribute * attr)
     {
         _widget = new PercentageAttributeEditor(attr, _parent);
     }
 
-    void visit(TextAttribute * attr)
+    void visit(const TextAttribute * attr)
     {
         _widget = new TextAttributeEditor(attr, _parent);
     }
-    static AbstractAttributeEditorWidget* createFor(AbstractPartAttribute* attribute, QWidget *parent=0) {
+    static AbstractAttributeEditorWidget* createFor(const AbstractPartAttribute* attribute, QWidget *parent=0) {
         AttributeEditorFactory visitor(parent);
         attribute->accept(visitor);
         return visitor._widget;
@@ -54,7 +56,8 @@ private:
 EditPartDialog::EditPartDialog(AttributesRepository * attributesRepository, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::EditPartDialog),
-    _attributesRepository(attributesRepository)
+    _attributesRepository(attributesRepository),
+    _partId(-1)
 {
     ui->setupUi(this);    
 
@@ -73,8 +76,11 @@ EditPartDialog::EditPartDialog(AttributesRepository * attributesRepository, QWid
         flowLayout->addWidget(button);
     }
 
-    ui->attributesframe->setLayout(flowLayout);
+    ui->attributesgroupBox->setLayout(flowLayout);
     connect(_signalMapper,SIGNAL(mapped(QObject*)), this, SLOT(attributeButtonClicked(QObject*)));
+
+    QPushButton * cloneButton = new QPushButton(QIcon(":/images/edit-copy_16x16.png"),"Clone");
+    ui->buttonBox->addButton(cloneButton,QDialogButtonBox::ActionRole);
 }
 
 EditPartDialog::~EditPartDialog()
@@ -82,12 +88,14 @@ EditPartDialog::~EditPartDialog()
     delete ui;
 }
 
+
+
 void EditPartDialog::attributeButtonClicked(QObject *object)
 {
     AbstractPartAttribute* attr = qobject_cast<AbstractPartAttribute*>(object);
     if(attr){
         qDebug()<<"Attribute button "<<attr->name()<<" pushed";
-        addAttributeEditor(attr);
+        addAttributeEditor(attr)->setFocus();
     }
 }
 
@@ -124,24 +132,103 @@ void EditPartDialog::addOtherAttributeButtonClicked()
     if(dlg.exec()){
         AbstractPartAttribute * attr = dlg.getSelectedAttribute();
         if(attr){
-            addAttributeEditor(attr);
+            addAttributeEditor(attr)->setFocus();
         }
     }
 }
 
-void EditPartDialog::addAttributeEditor(AbstractPartAttribute* attribute)
+void EditPartDialog::setPart(int partId)
+{
+    _partId = partId;
+    DQPart part;
+    if(part.load(DQWhere("id","=",partId)))
+    {
+        _categoryId = part.category.get().toInt();
+        ui->quantitySpinBox_2->setValue(part.quantity.get().toInt());
+        ui->minQuantitySpinBox_2->setValue(part.minimumQuantity.get().toInt());
+        ui->partNumberLineEdit_2->setText(part.partNumber.get().toString());
+        ui->descriptionLineEdit_2->setText(part.description.get().toString());
+        QWidget * previousWidget = ui->descriptionLineEdit_2;
+        DQQuery<DQFloatValue> floatsQuery;
+        floatsQuery = floatsQuery.filter(DQWhere("part","=",partId));
+        if(floatsQuery.exec()){
+            DQFloatValue floatValue;
+            while(floatsQuery.next()){
+                floatsQuery.recordTo(floatValue);
+                const AbstractPartAttribute* attr = _attributesRepository->findById(floatValue.attribute.get().toInt());
+                AbstractAttributeEditorWidget * editor = addAttributeEditor(attr);
+                editor->setValue(floatValue.value.get());
+                QWidget::setTabOrder(previousWidget,editor);
+                previousWidget = editor;
+            }
+        }
+        DQQuery<DQTextValue> textAttrQuery;
+        textAttrQuery = textAttrQuery.filter(DQWhere("part","=",partId));
+        if(textAttrQuery.exec()){
+            DQTextValue textValue;
+            while(textAttrQuery.next()){
+                textAttrQuery.recordTo(textValue);
+                const AbstractPartAttribute* attr = _attributesRepository->findById(textValue.attribute.get().toInt());
+                AbstractAttributeEditorWidget * editor = addAttributeEditor(attr);
+                editor->setValue(textValue.value.get());
+                QWidget::setTabOrder(previousWidget,editor);
+                previousWidget = editor;
+            }
+        }
+        QWidget::setTabOrder(previousWidget,ui->buttonBox);
+    }
+    else{
+        //TODO: SHow some error
+    }
+}
+
+void EditPartDialog::setCategory(int categoryId)
+{
+    _categoryId = categoryId;
+}
+
+void EditPartDialog::done(int r)
+{
+    if(QDialog::Accepted == r){
+        savePart();
+    }
+    QDialog::done(r);
+}
+
+
+AbstractAttributeEditorWidget *EditPartDialog::addAttributeEditor(const AbstractPartAttribute* attribute)
 {
     AbstractAttributeEditorWidget* attributeEditor = AttributeEditorFactory::createFor(attribute);
     connect(attributeEditor,SIGNAL(removeAttributeClicked(const AbstractPartAttribute*)),this,SLOT(removeAttributeClicked(const AbstractPartAttribute*)));
     int idx = ui->formLayout_2->rowCount();
     ui->formLayout_2->insertRow(idx, attribute->name(),attributeEditor);
     _attributeEditors[attribute->id()]=attributeEditor;
-    QObject * source = _signalMapper->mapping(attribute);
+    QObject * source = _signalMapper->mapping((QObject *)attribute);
     if(source){
         QPushButton* button = dynamic_cast<QPushButton*>(source);
         if(button)
             button->hide();
+    }    
+    return attributeEditor;
+}
+
+void EditPartDialog::savePart()
+{
+    DQPart part;
+    if(_partId!=-1){
+        part.id.set(_partId);
     }
-    attributeEditor->setFocus();
+    part.category.set(_categoryId);
+    part.description.set(ui->descriptionLineEdit_2->text());
+    part.minimumQuantity.set(ui->minQuantitySpinBox_2->value());
+    part.quantity.set(ui->quantitySpinBox_2->value());
+    part.partNumber.set(ui->partNumberLineEdit_2->text());
+    if(part.save()) {
+
+    }
+    else{
+        //TODO: Show some error
+    }
+
 }
 

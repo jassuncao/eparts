@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Edit Part</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -25,7 +25,7 @@
         <x>0</x>
         <y>0</y>
         <width>855</width>
-        <height>341</height>
+        <height>336</height>
        </rect>
       </property>
       <property name="sizePolicy">
@@ -42,6 +42,9 @@
         <widget class="QLabel" name="label_7">
          <property name="text">
           <string>Quantity:</string>
+         </property>
+         <property name="buddy">
+          <cstring>quantitySpinBox_2</cstring>
          </property>
         </widget>
        </item>
@@ -69,6 +72,9 @@
          <property name="text">
           <string>Minimum Quantity:</string>
          </property>
+         <property name="buddy">
+          <cstring>minQuantitySpinBox_2</cstring>
+         </property>
         </widget>
        </item>
        <item row="1" column="1">
@@ -86,6 +92,9 @@
          <property name="text">
           <string>Part Number:</string>
          </property>
+         <property name="buddy">
+          <cstring>partNumberLineEdit_2</cstring>
+         </property>
         </widget>
        </item>
        <item row="3" column="1">
@@ -96,76 +105,22 @@
          <property name="text">
           <string>Description:</string>
          </property>
+         <property name="buddy">
+          <cstring>descriptionLineEdit_2</cstring>
+         </property>
         </widget>
        </item>
        <item row="4" column="1">
         <widget class="QLineEdit" name="descriptionLineEdit_2"/>
-       </item>
-       <item row="5" column="1">
-        <widget class="QWidget" name="horizontalWidget" native="true">
-         <layout class="QHBoxLayout" name="horizontalLayout">
-          <property name="spacing">
-           <number>0</number>
-          </property>
-          <property name="sizeConstraint">
-           <enum>QLayout::SetDefaultConstraint</enum>
-          </property>
-          <property name="margin">
-           <number>0</number>
-          </property>
-          <item>
-           <widget class="QLineEdit" name="lineEdit"/>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QToolButton" name="toolButton">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>PushButton</string>
-            </property>
-            <property name="icon">
-             <iconset resource="resources.qrc">
-              <normaloff>:/images/edit_clear_16x16.png</normaloff>:/images/edit_clear_16x16.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>16</width>
-              <height>16</height>
-             </size>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
        </item>
       </layout>
      </widget>
     </widget>
    </item>
    <item>
-    <widget class="QFrame" name="attributesframe">
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
+    <widget class="QGroupBox" name="attributesgroupBox">
+     <property name="title">
+      <string>Attributes</string>
      </property>
     </widget>
    </item>
@@ -177,10 +132,33 @@
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
+     <property name="centerButtons">
+      <bool>false</bool>
+     </property>
     </widget>
    </item>
   </layout>
+  <action name="actionClone">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/images/edit-copy_16x16.png</normaloff>:/images/edit-copy_16x16.png</iconset>
+   </property>
+   <property name="text">
+    <string>Clone</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+C</string>
+   </property>
+  </action>
  </widget>
+ <tabstops>
+  <tabstop>scrollArea</tabstop>
+  <tabstop>quantitySpinBox_2</tabstop>
+  <tabstop>minQuantitySpinBox_2</tabstop>
+  <tabstop>partNumberLineEdit_2</tabstop>
+  <tabstop>descriptionLineEdit_2</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
  <resources>
   <include location="resources.qrc"/>
  </resources>
@@ -192,8 +170,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
+     <x>252</x>
+     <y>393</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -208,8 +186,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
+     <x>320</x>
+     <y>393</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>

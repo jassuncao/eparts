@@ -11,7 +11,7 @@
 #include <QVector>
 #include <QSqlTableModel>
 #include "models/parttablemodel.h"
-
+#include "models/attributesrepository.h"
 
 class QModelIndex;
 class SpinBoxDelegate;
@@ -44,8 +44,9 @@ class PartsMainWidget : public QWidget
 public:
     explicit PartsMainWidget(QWidget *parent = 0);
     ~PartsMainWidget();
-
-private:
+signals:
+    void editPart(const int partId);
+private:    
     QList<QAbstractItemDelegate*> _temporaryDelegates;
    // PartDetailsWidget * _detailsWidget;
     PartModel _partModel;
@@ -57,12 +58,13 @@ private:
     Ui::PartsMainWidget *ui;
     SpinBoxDelegate * _spinBoxDelegate;
     PartTableModel _partTableModel;
-
+    AttributesRepository * _attributesRepo;
     void buildPartsModel();
 //    void initDetailsViewWidget();
     void setupTableModel();
 private slots:
     void initCategoriesTree();
+    void tableDoubleClicked(const QModelIndex &index);
     void currentRowChanged ( const QModelIndex & current, const QModelIndex & previous );
     void treeSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
     void buttonBoxClicked(QAbstractButton*);

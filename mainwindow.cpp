@@ -54,6 +54,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setCentralWidget(_tabWidget);
     setMenuBar(_menuBar);
 
+
 }
 
 MainWindow::~MainWindow()

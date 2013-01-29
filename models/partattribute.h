@@ -37,7 +37,7 @@ public:
     //inline void setType() {_type=type;}
 
     //virtual AttributeType type() const = 0;
-    virtual void accept(class PartAttributeVisitor &visitor) = 0;
+    virtual void accept(class PartAttributeVisitor &visitor) const = 0;
 
 protected:
     AbstractPartAttribute(const int id, const QString &name, const QString &description, QObject *parent = 0);
@@ -53,21 +53,21 @@ class FloatAttribute : public AbstractPartAttribute {
     Q_OBJECT
 public:
     FloatAttribute(const int id, const QString &name, const QString &description, QObject *parent = 0);
-    void accept(PartAttributeVisitor &visitor);
+    void accept(PartAttributeVisitor &visitor) const;
 };
 
 class IntegerAttribute : public AbstractPartAttribute {
     Q_OBJECT
 public:
     IntegerAttribute(const int id, const QString &name, const QString &description, QObject *parent = 0);
-    void accept(PartAttributeVisitor &visitor);
+    void accept(PartAttributeVisitor &visitor) const;
 };
 
 class UnitAttribute : public AbstractPartAttribute {
     Q_OBJECT
 public:
     UnitAttribute(const int id, const QString &name, const QString &description, const QString &unitName, const QString &unitSymbol, QObject *parent = 0);
-    void accept(PartAttributeVisitor &visitor);
+    void accept(PartAttributeVisitor &visitor) const;
     inline QString unitSymbol() const {return _unitSymbol;}
     inline QString unitName() const {return _unitName;}
 private:    
@@ -79,24 +79,24 @@ class PercentageAttribute : public AbstractPartAttribute {
     Q_OBJECT
 public:
     PercentageAttribute(const int id, const QString &name, const QString &description, QObject *parent = 0);
-    void accept(PartAttributeVisitor &visitor);
+    void accept(PartAttributeVisitor &visitor) const;
 };
 
 class TextAttribute : public AbstractPartAttribute {    
     Q_OBJECT
 public:
     TextAttribute(const int id, const QString &name, const QString &description, QObject *parent = 0);
-    void accept(PartAttributeVisitor &visitor);
+    void accept(PartAttributeVisitor &visitor) const;
 };
 
 
 class PartAttributeVisitor {
 public:
-    virtual void visit(FloatAttribute *) = 0;
-    virtual void visit(IntegerAttribute *) = 0;
-    virtual void visit(UnitAttribute *) = 0;
-    virtual void visit(PercentageAttribute *) = 0;
-    virtual void visit(TextAttribute *) = 0;
+    virtual void visit(const FloatAttribute *) = 0;
+    virtual void visit(const IntegerAttribute *) = 0;
+    virtual void visit(const UnitAttribute *) = 0;
+    virtual void visit(const PercentageAttribute *) = 0;
+    virtual void visit(const TextAttribute *) = 0;
 };
 
 

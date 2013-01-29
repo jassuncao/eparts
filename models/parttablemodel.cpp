@@ -190,6 +190,16 @@ void PartTableModel::setCategory(int category)
     endResetModel();
 }
 
+int PartTableModel::itemFromIndex(const QModelIndex &index) const
+{
+    if (!index.isValid())
+        return -1;
+    int row = index.row();
+    if(row<0 || row>=_rows.count())
+        return -1;
+    return _rows.at(row)->partId();
+}
+
 void PartTableModel::loadColumns()
 {
     qDeleteAll(_columns);
