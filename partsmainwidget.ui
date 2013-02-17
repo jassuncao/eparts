@@ -204,7 +204,7 @@ QCheckBox::indicator:unchecked{image: url(:/images/expand.png);}</string>
           <number>4</number>
          </property>
          <item>
-          <widget class="QPushButton" name="applyFilterButton_2">
+          <widget class="QPushButton" name="applyFilterButton">
            <property name="text">
             <string>Apply</string>
            </property>

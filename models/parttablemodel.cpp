@@ -29,66 +29,44 @@ private:
     bool _loaded;
 };
 
-class PartColumn
+PartColumn::PartColumn(QString columnName, QString label, int type, int attrId) :
+    _columnName(columnName),
+    _label(label),
+    _attributeId(attrId),
+    _type(type),
+    _formatter(AttributeFormatterFactory::formatterFor(type)),
+    _alignment(Qt::AlignRight|Qt::AlignVCenter)
 {
-public:
-    PartColumn(QString columnName, QString label, int type, int attrId=-1) :
-        _columnName(columnName),
-        _label(label),
-        _attributeId(attrId),
-        _type(type),
-        _formatter(AttributeFormatterFactory::formatterFor(type)),
-        _alignment(Qt::AlignRight|Qt::AlignVCenter)
-    {
-        if(type==Models::ATTRIBUTE_TEXT) {
-            _findAttributeValueQuery.prepare("SELECT value FROM text_value WHERE part=:partId AND attribute=:attrId");
-        }
-        else {
-            _findAttributeValueQuery.prepare("SELECT value FROM float_value WHERE part=:partId AND attribute=:attrId");
+    if(type==Models::ATTRIBUTE_TEXT) {
+        _findAttributeValueQuery.prepare("SELECT value FROM text_value WHERE part=:partId AND attribute=:attrId");
+    }
+    else {
+        _findAttributeValueQuery.prepare("SELECT value FROM float_value WHERE part=:partId AND attribute=:attrId");
+    }
+}
+
+PartColumn::~PartColumn()
+{
+    delete _formatter;
+}
+
+QVariant PartColumn::loadAttrValue(int partId, bool * ok)
+{
+    QVariant res;
+    _findAttributeValueQuery.bindValue(0,partId);
+    _findAttributeValueQuery.bindValue(1,_attributeId);
+    if(_findAttributeValueQuery.exec()){
+        *ok=true;
+        if(_findAttributeValueQuery.next()){
+             res=_findAttributeValueQuery.value(0);
         }
     }
-
-    ~PartColumn()
-    {
-        delete _formatter;
+    else{
+        *ok=false;
     }
-
-    inline const QString columnName() const {return _columnName;}
-    inline const QString label() const {return _label;}
-    inline const int attributeId() const {return _attributeId;}
-    inline const int type() const {return _type;}
-    inline const AttributeFormatter * formatter() const {return _formatter;}
-    inline Qt::Alignment alignment() const { return _alignment;}
-    inline void setAlignment(Qt::Alignment alignment) {_alignment=alignment;}
-
-
-    QVariant loadAttrValue(int partId, bool * ok)
-    {
-        QVariant res;
-        _findAttributeValueQuery.bindValue(0,partId);
-        _findAttributeValueQuery.bindValue(1,_attributeId);
-        if(_findAttributeValueQuery.exec()){
-            *ok=true;
-            if(_findAttributeValueQuery.next()){
-                 res=_findAttributeValueQuery.value(0);
-            }
-        }
-        else{
-            *ok=false;
-        }
-        _findAttributeValueQuery.finish();
-        return res;
-    }
-
-private:
-    const QString _columnName;
-    const QString _label;
-    const int _attributeId;
-    const int _type;
-    const AttributeFormatter * _formatter;
-    QSqlQuery _findAttributeValueQuery;
-    Qt::Alignment _alignment;
-};
+    _findAttributeValueQuery.finish();
+    return res;
+}
 
 
 PartTableModel::PartTableModel(QObject *parent) :
@@ -209,6 +187,11 @@ void PartTableModel::setDirty(int partId)
     beginResetModel();
     loadRows();
     endResetModel();
+}
+
+const QVector<PartColumn *> PartTableModel::columns()
+{
+    return _columns;
 }
 
 void PartTableModel::loadColumns()

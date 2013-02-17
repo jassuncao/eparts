@@ -44,14 +44,15 @@ private:
 
     void addFilterForAttribute(int attributeId);    
     void initAddFilterCombo(const QList<const AbstractPartAttribute*> & attributes);
+    void initAddFilterCombo();
 private slots:
     void initCategoriesTree();
     void tableDoubleClicked(const QModelIndex &index);
     void currentRowChanged ( const QModelIndex & current, const QModelIndex & previous );
     void treeSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
     void addPart();
-    void removePart();    
-    void toggleFilterWidget(bool checked);
+    void removePart();
+    void applyFilter();
     void clearFilter();
     void addFilterComboSelected(int index);
     void filterRemoved(const AbstractPartAttribute *attr);

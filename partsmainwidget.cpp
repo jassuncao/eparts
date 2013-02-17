@@ -18,9 +18,7 @@
 #include "database/entities.h"
 #include "database/database.h"
 #include "editpartdialog.h"
-#include "widgets/filterwidget.h"
 #include "widgets/qcloseableheaderview.h"
-#include "widgets/attributefilterwidget.h"
 
 using namespace Widgets;
 using namespace Models;
@@ -58,14 +56,8 @@ PartsMainWidget::PartsMainWidget(QWidget *parent) :
     spacerWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     spacerWidget->setVisible(true);
     toolbar->addWidget(spacerWidget);
-
-    QSearchLineEdit * searchLineEdit = new QSearchLineEdit(this);
-    searchLineEdit->setPlaceholderText("Search...");
-    toolbar->addWidget(searchLineEdit);
-    ui->verticalLayout_3->insertWidget(1,toolbar);   
-    FilterWidget *filterWidget = new FilterWidget(this);
-    ui->verticalLayout_3->insertWidget(2,filterWidget);
     */
+
     initCategoriesTree();
     ui->tableView->setSortingEnabled(true);
     ui->tableView->setModel(&_partTableModel);
@@ -74,10 +66,10 @@ PartsMainWidget::PartsMainWidget(QWidget *parent) :
     const QList<const AbstractPartAttribute*> attributes;
     initAddFilterCombo(attributes);
 
-    connect(ui->tableView,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(tableDoubleClicked(QModelIndex)));
-    //connect(ui->clearFilterButton,SIGNAL(clicked()),this,SLOT(clearFilter()));
+    connect(ui->tableView,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(tableDoubleClicked(QModelIndex)));    
     connect(ui->addFilterComboBox,SIGNAL(activated(int)),this,SLOT(addFilterComboSelected(int)));
     connect(ui->clearFilterButton,SIGNAL(clicked()),this,SLOT(clearFilter()));
+    connect(ui->applyFilterButton,SIGNAL(clicked()),this,SLOT(applyFilter()));
 }
 
 PartsMainWidget::~PartsMainWidget()
@@ -110,6 +102,25 @@ void PartsMainWidget::initAddFilterCombo(const QList<const AbstractPartAttribute
     ui->clearFilterButton->setEnabled(m_attributeFilterRows.count()>0);
 }
 
+void PartsMainWidget::initAddFilterCombo()
+{
+    QStandardItemModel * model = new QStandardItemModel(0,1,ui->addFilterComboBox);
+    QStandardItem * emptyItem = new QStandardItem(tr("<filter attribute>"));
+    emptyItem->setSelectable(false);
+    model->appendRow(emptyItem);
+    foreach(const PartColumn * column, _partTableModel.columns()){
+        QStandardItem * item = new QStandardItem(column->label());
+        item->setData(VPtr<const PartColumn>::asQVariant(column));
+        model->appendRow(item);
+    }
+    ui->addFilterComboBox->setSizeAdjustPolicy(QComboBox::AdjustToContentsOnFirstShow);//Workaround for a bug in QComboBox
+    ui->addFilterComboBox->setModel(model);
+    ui->addFilterComboBox->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+    ui->addFilterComboBox->setEnabled(true);
+    ui->clearFilterButton->setEnabled(m_attributeFilterRows.count()>0);
+
+}
+
 void PartsMainWidget::addPart()
 {
     EditPartDialog dlg(_attributesRepo, this);
@@ -123,8 +134,9 @@ void PartsMainWidget::removePart()
 {
 }
 
-void PartsMainWidget::toggleFilterWidget(bool checked)
+void PartsMainWidget::applyFilter()
 {
+    if(m_attributeFilterRows.count()==0) return;
 }
 
 void PartsMainWidget::clearFilter()
@@ -266,6 +278,7 @@ void PartsMainWidget::treeSelectionChanged(const QItemSelection &selected, const
         qDebug()<<"Selected category type"<<categoryId;
         _partTableModel.setCategory(categoryId);        
         clearFilter();                
-        initAddFilterCombo(_attributesRepo->listCategoryAttributes(categoryId));
+        //initAddFilterCombo(_attributesRepo->listCategoryAttributes(categoryId));
+        initAddFilterCombo();
     }
 }
