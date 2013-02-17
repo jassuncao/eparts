@@ -62,19 +62,14 @@ const AbstractPartAttribute* AttributesRepository::findById(int id) const
     return _attributes.value(id, 0);
 }
 
-const QList<const AbstractPartAttribute*> AttributesRepository::listMostUsedAttributes(int max) const
+void countAttributes(QSqlQuery query, QList<AuxItem> & dest)
 {
-    QString statement("SELECT attribute, COUNT(attribute) FROM %1 GROUP BY attribute LIMIT %2");
-    QSqlQuery query;
-    //First we account float attributes
-    query.prepare(statement.arg("float_value").arg(max));
-    QList<AuxItem> auxList;
     if(query.exec()){
         while(query.next())
         {
             int attrId = query.value(0).toInt();
             int count = query.value(1).toInt();
-            auxList.append(AuxItem(attrId,count));
+            dest.append(AuxItem(attrId,count));
         }
         query.finish();
     }
@@ -82,30 +77,36 @@ const QList<const AbstractPartAttribute*> AttributesRepository::listMostUsedAttr
         qDebug()<<query.lastError();
         qDebug()<<query.lastQuery();
     }
+}
 
-    //Now we account text attributes
-    query.prepare(statement.arg("text_value").arg(max));
-    if(query.exec()){
-        while(query.next())
-        {
-            int attrId = query.value(0).toInt();
-            int count = query.value(1).toInt();
-            auxList.append(AuxItem(attrId,count));
-        }
-        query.finish();
-    }
-
-    //Sort by hits
-    qSort(auxList);
+QList<const AbstractPartAttribute*> AttributesRepository::mapToAttributes(QList<AuxItem> & list, int max) const
+{
     QList<const AbstractPartAttribute*> attributes;
     QList<AuxItem>::const_iterator it;
+    qDebug()<<"Mapping "<<list.count()<<" attributes";
     //Add to the result list up to max attributes
-    for(it=auxList.constBegin(); it!=auxList.constEnd() && attributes.count()<max; ++it){
+    for(it=list.constBegin(); it!=list.constEnd() && attributes.count()<max; ++it){
         const AbstractPartAttribute* attr = findById((*it).attributeId);
         if(attr)
             attributes.append(attr);
     }
     return attributes;
+}
+
+const QList<const AbstractPartAttribute*> AttributesRepository::listMostUsedAttributes(int max) const
+{
+    QList<AuxItem> auxList;
+    QString statement("SELECT attribute, COUNT(attribute) FROM %1 GROUP BY attribute LIMIT %2");
+    QSqlQuery query;
+    //First we account float attributes
+    query.prepare(statement.arg("float_value").arg(max));
+    countAttributes(query,auxList);
+    //Now we account text attributes
+    query.prepare(statement.arg("text_value").arg(max));
+    countAttributes(query,auxList);
+    //Sort by hits
+    qSort(auxList);
+    return mapToAttributes(auxList,max);
 }
 
 int AttributesRepository::count() const
@@ -116,6 +117,23 @@ int AttributesRepository::count() const
 QList<AbstractPartAttribute *> AttributesRepository::attributes() const
 {
     return _attributes.values();
+}
+
+
+QList<const AbstractPartAttribute *> AttributesRepository::listCategoryAttributes(int categoryId) const
+{
+    QList<AuxItem> auxList;
+    QString statement("SELECT v.attribute, COUNT(v.attribute) FROM %1 v INNER JOIN part p WHERE v.part=p.id AND p.category=%2 GROUP BY v.attribute");
+    QSqlQuery query;
+    //First we account float attributes
+    query.prepare(statement.arg("float_value").arg(categoryId));
+    countAttributes(query,auxList);
+    //Now we account text attributes
+    query.prepare(statement.arg("text_value").arg(categoryId));
+    countAttributes(query,auxList);
+    //Sort by hits
+    qSort(auxList);
+    return mapToAttributes(auxList);
 }
 
 AbstractPartAttribute *AttributesRepository::readAttribute(DQAttribute &attr)

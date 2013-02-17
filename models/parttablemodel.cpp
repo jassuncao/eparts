@@ -176,9 +176,11 @@ void PartTableModel::sort(int column, Qt::SortOrder order)
     if(column!=_sortColumn || _sortOrder!=order) {
         _sortColumn = column;
         _sortOrder = order;
-        beginResetModel();
+        emit layoutAboutToBeChanged();
+        //beginResetModel();
         loadRows();
-        endResetModel();
+        //endResetModel();
+        emit layoutChanged();
     }
 }
 

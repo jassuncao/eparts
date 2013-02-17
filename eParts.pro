@@ -56,7 +56,12 @@ SOURCES += main.cpp\
     widgets/attributeeditorwidget.cpp \
     widgets/qlineedit2.cpp \
     models/attributesrepository.cpp \
-    models/attributestablemodel.cpp
+    models/attributestablemodel.cpp \
+    widgets/filterwidget.cpp \
+    widgets/qcloseableheaderview.cpp \
+    models/readonlyattributeslistmodel.cpp \
+    attributefilterrow.cpp \
+    widgets/attributefilterwidget.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -112,7 +117,12 @@ HEADERS  += mainwindow.h \
     widgets/attributeeditorwidget.h \
     widgets/qlineedit2.h \
     models/attributesrepository.h \
-    models/attributestablemodel.h
+    models/attributestablemodel.h \
+    widgets/filterwidget.h \
+    widgets/qcloseableheaderview.h \
+    models/readonlyattributeslistmodel.h \
+    attributefilterrow.h \
+    widgets/attributefilterwidget.h
 
 FORMS    += mainwindow.ui \
     partsmainwidget.ui \

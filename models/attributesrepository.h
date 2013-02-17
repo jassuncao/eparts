@@ -8,6 +8,8 @@ class DQAttribute;
 
 namespace Models {
 
+struct AuxItem;
+
 class AttributesRepository : public QObject
 {
 public:
@@ -19,7 +21,9 @@ public:
     const QList<const AbstractPartAttribute*> listMostUsedAttributes(int max) const;
     int count() const;
     QList<AbstractPartAttribute*> attributes() const;
+    QList<const AbstractPartAttribute*> listCategoryAttributes(int categoryId) const;
 private:
+    QList<const AbstractPartAttribute*> mapToAttributes(QList<AuxItem> & list, int max=INT_MAX) const;
     AbstractPartAttribute* readAttribute(DQAttribute &attr);
     QMap<int,AbstractPartAttribute*> _attributes;
 };
