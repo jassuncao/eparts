@@ -7,15 +7,6 @@
 
 namespace Models {
 
-enum AttributeType
-{
-    ATTRIBUTE_GENERIC_FLOAT,
-    ATTRIBUTE_GENERIC_INTEGER,
-    ATTRIBUTE_UNIT,
-    ATTRIBUTE_PERCENTAGE,    
-    ATTRIBUTE_TEXT=1<<16
-};
-
 class AbstractPartAttribute : public QObject
 {
     Q_OBJECT

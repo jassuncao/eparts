@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <models/partattribute.h>
+#include "constants.h"
 
 using namespace Models;
 
@@ -16,15 +17,6 @@ class AttributeFilterRow : public QObject
 {
     Q_OBJECT
 public:
-    enum FilterOperator{
-        FILTER_OP_EQUAL,
-        FILTER_OP_NOT_EQUAL,
-        FILTER_OP_LESS_EQUAL_THAN,
-        FILTER_OP_GREATER_EQUAL_THAN,
-        FILTER_OP_BETWEEN,
-        FILTER_OP_CONTAINS,
-        FILTER_OP_NOT_CONTAINS
-    };
 
     explicit AttributeFilterRow(const AbstractPartAttribute *attr, QGridLayout *layout, int row, int tag=-1, QObject * parent=0);
     ~AttributeFilterRow();

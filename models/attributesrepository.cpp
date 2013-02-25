@@ -3,6 +3,7 @@
 #include <database/entities.h>
 #include <QSqlQuery>
 #include <QSqlError>
+#include "constants.h"
 
 
 namespace Models {
@@ -143,19 +144,19 @@ AbstractPartAttribute *AttributesRepository::readAttribute(DQAttribute &attr)
     QString name = attr.name.get().toString();
     QString description = attr.description.get().toString();
     switch(attr.type.get().toInt()){
-    case Models::ATTRIBUTE_GENERIC_FLOAT:
+    case EParts::ATTRIBUTE_GENERIC_FLOAT:
         partAttr = new FloatAttribute(id,name,description, this);
         break;
-    case Models::ATTRIBUTE_GENERIC_INTEGER:
+    case EParts::ATTRIBUTE_GENERIC_INTEGER:
         partAttr = new IntegerAttribute(id,name,description, this);
         break;
-    case Models::ATTRIBUTE_PERCENTAGE:
+    case EParts::ATTRIBUTE_PERCENTAGE:
         partAttr = new PercentageAttribute(id,name,description, this);
         break;
-    case Models::ATTRIBUTE_TEXT:
+    case EParts::ATTRIBUTE_TEXT:
         partAttr = new TextAttribute(id,name,description, this);
         break;
-    case Models::ATTRIBUTE_UNIT:
+    case EParts::ATTRIBUTE_UNIT:
         QString unitName = attr.unit->name.get().toString();
         QString unitSymbol = attr.unit->symbol.get().toString();
         partAttr = new UnitAttribute(id,name,description,unitName, unitSymbol, this);

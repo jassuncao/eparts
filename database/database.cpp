@@ -5,6 +5,7 @@
 #include <dquest.h>
 #include "entities.h"
 #include <models/partattribute.h>
+#include <constants.h>
 
 //using namespace Database;
 
@@ -121,27 +122,27 @@ void Database::generateMockData()
     //Some attributes
 
     DQAttribute resistanceAttr;
-    resistanceAttr.type = Models::ATTRIBUTE_UNIT;
+    resistanceAttr.type = EParts::ATTRIBUTE_UNIT;
     resistanceAttr.name = "Resistance";
     resistanceAttr.description = "Ohmic value";
     resistanceAttr.unit = ohm;
     resistanceAttr.save();
 
     DQAttribute powerAttr;
-    powerAttr.type = Models::ATTRIBUTE_UNIT;
+    powerAttr.type = EParts::ATTRIBUTE_UNIT;
     powerAttr.name = "Power";
     powerAttr.description = "Maximum power dissipation value";
     powerAttr.unit = watt;
     powerAttr.save();
 
     DQAttribute toleranceAttr;
-    toleranceAttr.type = Models::ATTRIBUTE_PERCENTAGE;
+    toleranceAttr.type = EParts::ATTRIBUTE_PERCENTAGE;
     toleranceAttr.name = "Tolerance";
     toleranceAttr.description = "Resistor tolerance";
     toleranceAttr.save();
 
     DQAttribute packageAttr;
-    packageAttr.type = Models::ATTRIBUTE_TEXT;
+    packageAttr.type = EParts::ATTRIBUTE_TEXT;
     packageAttr.name = "Package";
     packageAttr.description = "Package";
     packageAttr.save();

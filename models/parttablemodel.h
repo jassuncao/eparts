@@ -16,17 +16,17 @@ typedef struct PartRow * PartRowPtr;
 class PartColumn
 {
 public:
-    PartColumn(QString columnName, QString label, int type, int attrId=-1);
+    PartColumn(QString columnName, QString label, int type, int index, int attrId=-1);
     ~PartColumn();
 
     inline const QString columnName() const {return _columnName;}
     inline const QString label() const {return _label;}
-    inline const int attributeId() const {return _attributeId;}
-    inline const int type() const {return _type;}
+    inline int attributeId() const {return _attributeId;}
+    inline int type() const {return _type;}
+    inline int index() const {return _index;}
     inline const AttributeFormatter * formatter() const {return _formatter;}
     inline Qt::Alignment alignment() const { return _alignment;}
     inline void setAlignment(Qt::Alignment alignment) {_alignment=alignment;}
-
     QVariant loadAttrValue(int partId, bool * ok);
 
 private:
@@ -34,6 +34,7 @@ private:
     const QString _label;
     const int _attributeId;
     const int _type;
+    const int _index;
     const AttributeFormatter * _formatter;
     QSqlQuery _findAttributeValueQuery;
     Qt::Alignment _alignment;

@@ -2,6 +2,7 @@
 #include "qtextstream.h"
 #include "qdebug.h"
 #include "partattribute.h"
+#include "constants.h"
 
 namespace Models {
 
@@ -132,14 +133,14 @@ AttributeFormatter *AttributeFormatterFactory::formatterFor(int attributeType)
 {
     switch(attributeType)
     {
-    case ATTRIBUTE_GENERIC_FLOAT:
-    case ATTRIBUTE_GENERIC_INTEGER:
+    case EParts::ATTRIBUTE_GENERIC_FLOAT:
+    case EParts::ATTRIBUTE_GENERIC_INTEGER:
         return new GenericNumberAttributeFormatter();
-    case ATTRIBUTE_UNIT:
+    case EParts::ATTRIBUTE_UNIT:
         return new UnitAttributeFormatter(SYMBOL_RESISTANCE);    
-    case ATTRIBUTE_PERCENTAGE:
+    case EParts::ATTRIBUTE_PERCENTAGE:
         return new PercentageAttributeFormatter();
-    case ATTRIBUTE_TEXT:
+    case EParts::ATTRIBUTE_TEXT:
     default:
         return new TextAttributeFormatter();
     }

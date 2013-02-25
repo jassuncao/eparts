@@ -13,7 +13,9 @@
 #include <QSqlTableModel>
 #include "models/parttablemodel.h"
 #include "models/attributesrepository.h"
-#include "attributefilterrow.h"
+//#include "attributefilterrow.h"
+#include "partfilterrow.h"
+#include "models/partsfilterproxymodel.h"
 
 class QModelIndex;
 class SpinBoxDelegate;
@@ -40,7 +42,8 @@ private:
     Ui::PartsMainWidget *ui;
     PartTableModel _partTableModel;
     AttributesRepository * _attributesRepo;
-    QMap<int,AttributeFilterRow*> m_attributeFilterRows;
+    QMap<int,PartFilterRow*> m_attributeFilterRows;
+    PartsFilterProxyModel m_partsFilterProxyModel;
 
     void addFilterForAttribute(int attributeId);    
     void initAddFilterCombo(const QList<const AbstractPartAttribute*> & attributes);
@@ -55,7 +58,7 @@ private slots:
     void applyFilter();
     void clearFilter();
     void addFilterComboSelected(int index);
-    void filterRemoved(const AbstractPartAttribute *attr);
+    void filterRemoved(int tag);
 };
 
 template <class T> class VPtr

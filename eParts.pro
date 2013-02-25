@@ -60,7 +60,9 @@ SOURCES += main.cpp\
     widgets/qcloseableheaderview.cpp \
     models/readonlyattributeslistmodel.cpp \
     attributefilterrow.cpp \
-    models/partsfilterproxymodel.cpp
+    models/partsfilterproxymodel.cpp \
+    partfilterrow.cpp \
+    models/criteria.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -120,7 +122,9 @@ HEADERS  += mainwindow.h \
     widgets/qcloseableheaderview.h \
     models/readonlyattributeslistmodel.h \
     attributefilterrow.h \
-    models/partsfilterproxymodel.h
+    models/partsfilterproxymodel.h \
+    partfilterrow.h \
+    models/criteria.h
 
 FORMS    += mainwindow.ui \
     partsmainwidget.ui \

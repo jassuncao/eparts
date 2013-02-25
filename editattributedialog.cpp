@@ -4,6 +4,7 @@
 #include <QPushButton>
 #include "database/entities.h"
 #include <dquest.h>
+#include "constants.h"
 
 EditAttributeDialog::EditAttributeDialog(QWidget *parent) :
     QDialog(parent),
@@ -74,11 +75,11 @@ void EditAttributeDialog::initCombos()
 {
     QComboBox *typeCombo = ui->typeCombo;
     typeCombo->clear();
-    typeCombo->addItem(tr("Text"),QVariant(Models::ATTRIBUTE_TEXT));
-    typeCombo->addItem(tr("Float"),QVariant(Models::ATTRIBUTE_GENERIC_FLOAT));
-    typeCombo->addItem(tr("Integer"),QVariant(Models::ATTRIBUTE_GENERIC_INTEGER));
-    typeCombo->addItem(tr("Unit"),QVariant(Models::ATTRIBUTE_UNIT));
-    typeCombo->addItem(tr("Percentage"),QVariant(Models::ATTRIBUTE_PERCENTAGE));
+    typeCombo->addItem(tr("Text"),QVariant(EParts::ATTRIBUTE_TEXT));
+    typeCombo->addItem(tr("Float"),QVariant(EParts::ATTRIBUTE_GENERIC_FLOAT));
+    typeCombo->addItem(tr("Integer"),QVariant(EParts::ATTRIBUTE_GENERIC_INTEGER));
+    typeCombo->addItem(tr("Unit"),QVariant(EParts::ATTRIBUTE_UNIT));
+    typeCombo->addItem(tr("Percentage"),QVariant(EParts::ATTRIBUTE_PERCENTAGE));
 
     QComboBox *unitCombo = ui->unitCombo;
     unitCombo->clear();
@@ -102,7 +103,7 @@ void EditAttributeDialog::validateInput()
     int typeIdx = ui->typeCombo->currentIndex();
     valid=valid && typeIdx>=0;
     QVariant userData = ui->typeCombo->itemData(typeIdx);
-    if(userData.isValid() && userData.toInt()==Models::ATTRIBUTE_UNIT){
+    if(userData.isValid() && userData.toInt()==EParts::ATTRIBUTE_UNIT){
         valid=valid&&ui->unitCombo->currentIndex()>=0;
     }
     ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(valid);
@@ -111,7 +112,7 @@ void EditAttributeDialog::validateInput()
 void EditAttributeDialog::typeComboChanged(int index)
 {
     QVariant userData = ui->typeCombo->itemData(index);
-    if(userData.isValid() && userData.toInt()==Models::ATTRIBUTE_UNIT)
+    if(userData.isValid() && userData.toInt()==EParts::ATTRIBUTE_UNIT)
         ui->unitCombo->setEnabled(true);
     else{
         ui->unitCombo->setEnabled(false);

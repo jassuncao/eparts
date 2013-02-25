@@ -58,9 +58,10 @@ PartsMainWidget::PartsMainWidget(QWidget *parent) :
     toolbar->addWidget(spacerWidget);
     */
 
-    initCategoriesTree();
+    initCategoriesTree();    
+    m_partsFilterProxyModel.setSourceModel(&_partTableModel);
+    ui->tableView->setModel(&m_partsFilterProxyModel);
     ui->tableView->setSortingEnabled(true);
-    ui->tableView->setModel(&_partTableModel);
     QCloseableHeaderView * header = new QCloseableHeaderView(Qt::Horizontal, ui->tableView);
     ui->tableView->setHorizontalHeader(header);
     const QList<const AbstractPartAttribute*> attributes;
@@ -137,6 +138,11 @@ void PartsMainWidget::removePart()
 void PartsMainWidget::applyFilter()
 {
     if(m_attributeFilterRows.count()==0) return;
+    QMap<int,PartFilterRow*>::const_iterator it = m_attributeFilterRows.constBegin();
+    while (it != m_attributeFilterRows.constEnd()) {
+        int column = it.key();
+        PartFilterRow * filterRow = it.value();
+    }
 }
 
 void PartsMainWidget::clearFilter()
@@ -161,21 +167,21 @@ void PartsMainWidget::addFilterComboSelected(int index)
     }
     QStandardItem *item = model->item(index);
     item->setEnabled(false);
-    const AbstractPartAttribute* attr =VPtr<const AbstractPartAttribute>::asPtr(item->data());
-    qDebug("Select attribute %s",qPrintable(attr->name()));
-    int row = ui->filterGridLayout->rowCount();
-    AttributeFilterRow *filterRow = new AttributeFilterRow(attr,ui->filterGridLayout,row, index);
-    m_attributeFilterRows[attr->id()]=filterRow;
-    connect(filterRow,SIGNAL(filterRemoved(const AbstractPartAttribute*)),this,SLOT(filterRemoved(const AbstractPartAttribute*)));
+    const PartColumn* column =VPtr<const PartColumn>::asPtr(item->data());
+    qDebug("Select attribute %s",qPrintable(column->label()));
+    PartFilterRow * filterRow = new PartFilterRow(column->label(),column->type(),ui->filterGridLayout,index);
+    //AttributeFilterRow *filterRow = new AttributeFilterRow(column,ui->filterGridLayout,row, index);
+    m_attributeFilterRows[index]=filterRow;
+    connect(filterRow,SIGNAL(filterRemoved(int)),this,SLOT(filterRemoved(int)));
     ui->clearFilterButton->setEnabled(true);
 }
 
-void PartsMainWidget::filterRemoved(const AbstractPartAttribute *attr)
-{
-    AttributeFilterRow *filterRow = m_attributeFilterRows[attr->id()];
+void PartsMainWidget::filterRemoved(int tag)
+{    
+    PartFilterRow *filterRow = m_attributeFilterRows.value(tag);
     if(filterRow){
-        int row = filterRow->row();
-        int comboxIndex = filterRow->tag();
+        //int row = filterRow->row();
+        //int comboxIndex = filterRow->tag();
         /*
         QGridLayout *layout = ui->filterGridLayout;
         for(int column=0;column<3;++column){
@@ -186,7 +192,7 @@ void PartsMainWidget::filterRemoved(const AbstractPartAttribute *attr)
             }
         }
         */
-        m_attributeFilterRows.remove(attr->id());
+        m_attributeFilterRows.remove(tag);
         filterRow->deleteLater();
         //Reenable the item in the combo
         QStandardItemModel *model = qobject_cast<QStandardItemModel *>(ui->addFilterComboBox->model());
@@ -194,7 +200,7 @@ void PartsMainWidget::filterRemoved(const AbstractPartAttribute *attr)
             qWarning("Model for filter ComboBox not set");
             return;
         }
-        QStandardItem *item = model->item(comboxIndex);
+        QStandardItem *item = model->item(tag);
         item->setEnabled(true);
         ui->clearFilterButton->setEnabled(m_attributeFilterRows.count()>0);
     }

@@ -1,5 +1,6 @@
 #include <QVariant>
 #include "parttablemodel.h"
+#include "constants.h"
 
 
 namespace Models {
@@ -29,15 +30,16 @@ private:
     bool _loaded;
 };
 
-PartColumn::PartColumn(QString columnName, QString label, int type, int attrId) :
+PartColumn::PartColumn(QString columnName, QString label, int type, int index, int attrId) :
     _columnName(columnName),
     _label(label),
     _attributeId(attrId),
     _type(type),
+    _index(index),
     _formatter(AttributeFormatterFactory::formatterFor(type)),
     _alignment(Qt::AlignRight|Qt::AlignVCenter)
 {
-    if(type==Models::ATTRIBUTE_TEXT) {
+    if(type==EParts::ATTRIBUTE_TEXT) {
         _findAttributeValueQuery.prepare("SELECT value FROM text_value WHERE part=:partId AND attribute=:attrId");
     }
     else {
@@ -198,11 +200,11 @@ void PartTableModel::loadColumns()
 {
     qDeleteAll(_columns);
     _columns.clear();
-
-    _columns.append(new PartColumn(QString("quantity"),tr("Quantity"),Models::ATTRIBUTE_GENERIC_INTEGER));
-    _columns.append(new PartColumn(QString("minimumQuantity"),tr("Min. Quantity"),ATTRIBUTE_GENERIC_INTEGER));
-    _columns.append(new PartColumn(QString("partNumber"),tr("Part Number"),ATTRIBUTE_TEXT));
-    _columns.append(new PartColumn(QString("description"),tr("Description"),ATTRIBUTE_TEXT));
+    int index = 0;
+    _columns.append(new PartColumn(QString("quantity"),tr("Quantity"),EParts::ATTRIBUTE_GENERIC_INTEGER,index++));
+    _columns.append(new PartColumn(QString("minimumQuantity"),tr("Min. Quantity"),EParts::ATTRIBUTE_GENERIC_INTEGER,index++));
+    _columns.append(new PartColumn(QString("partNumber"),tr("Part Number"),EParts::ATTRIBUTE_TEXT,index++));
+    _columns.append(new PartColumn(QString("description"),tr("Description"),EParts::ATTRIBUTE_TEXT,index++));
 
     _selectActiveAttributes.bindValue(":catId",_catId);
     _selectActiveAttributes.exec();
@@ -210,7 +212,7 @@ void PartTableModel::loadColumns()
         int attrId = _selectActiveAttributes.value(0).toInt();
         int attrType = _selectActiveAttributes.value(1).toInt();
         QVariant attrName = _selectActiveAttributes.value(2);
-        _columns.append(new PartColumn(QString(), attrName.toString(), attrType,attrId));
+        _columns.append(new PartColumn(QString(), attrName.toString(), attrType,index++, attrId));
         qDebug()<<"Added attribute column "<<attrName;
     }
     _selectActiveAttributes.finish();
@@ -231,7 +233,7 @@ void PartTableModel::loadRows()
         QString columnName = column->columnName();
         if(columnName.isNull())
         { //Sort by attribute value
-            const char* valueTable = column->type()==Models::ATTRIBUTE_TEXT ?
+            const char* valueTable = column->type()==EParts::ATTRIBUTE_TEXT ?
                         "text_value" :
                         "float_value";
 
