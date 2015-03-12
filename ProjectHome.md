@@ -1,0 +1,1 @@
+This application has the objective of helping the electronics hobbyist keep a record of his electronic components.
